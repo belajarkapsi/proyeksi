@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
 
-    public function create()
+    public function login()
     {
         return view('auth.login');
     }
@@ -38,6 +38,6 @@ class LoginController extends Controller
 
     public function destroy()
     {
-        return view('auth.login');
+        return redirect()->route('login');
     }
 }

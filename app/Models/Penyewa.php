@@ -14,8 +14,16 @@ class Penyewa extends Authenticatable
     protected $table = 'penyewa';
     protected $primaryKey = 'id_penyewa';
     protected $fillable = [
+        'nama_lengkap',
+        'no_telp',
+        'email',
         'username',
         'password'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     /**

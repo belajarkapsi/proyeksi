@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -16,6 +17,9 @@ Route::get('/dashboard', function () {
 })->middleware('auth');
 
 
-Route::get('login', [LoginController::class, 'create'])->name('login');
+Route::get('login', [LoginController::class, 'login'])->name('login');
 Route::post('login', [LoginController::class, 'authenticate']);
 Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
+Route::get('register', [RegisterController::class, 'register'])->name('register');
+Route::post('register', [RegisterController::class, 'store']);

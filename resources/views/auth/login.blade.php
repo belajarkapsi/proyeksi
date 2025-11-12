@@ -6,8 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Login - Pondok Siti Hajar</title>
-
-    <!-- Vite (Tailwind + JS) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -22,24 +20,25 @@
         
         {{-- Centered frosted container --}}
         <div class="relative z-10 min-h-screen flex items-center justify-center p-6">
-            
+        
             <div class="w-full max-w-6xl rounded-2xl overflow-hidden bg-white/10 backdrop-blur-md shadow-2xl ring-1 ring-black/10">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     
                     <!-- LEFT: Welcome / Logo -->
-                    <div class="p-8 md:p-12 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo Pondok Siti Hajar" class="w-36 h-36 mb-6 md:mb-8 object-contain drop-shadow-lg">
-                        <h1 class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
+                    <div class="p-8 md:p-12 flex flex-col justify-center items-center md:items-start text-center md:text-left relative overflow-hidden">
+                        <!-- Logo besar tapi tidak mendorong layout -->
+                        <div class="absolute top-10 ml-20 md:ml-20 transform -translate-x-1/2 md:translate-x-0 opacity-20 md:opacity-30 scale-150 pointer-events-none select-none">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo Background" class="object-contain w-72 h-72 md:w-96 md:h-96">
+                        </div>
+                        
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4 relative z-10">
                             Selamat Datang di<br class="hidden md:inline"> Pondok Siti Hajar
                         </h1>
-                        <p class="text-sm md:text-base text-white/85 max-w-xl">
+                        <p class="text-sm md:text-base text-white/85 max-w-xl relative z-10">
                             Pondok Siti Hajar merupakan jaringan penginapan yang menyediakan layanan sewa kamar harian dan bulanan bagi masyarakat, mahasiswa, dan wisatawan. Sistem ini mengintegrasikan pemesanan, validasi pembayaran, dan manajemen antar cabang sehingga operasional lebih efisien dan terpusat.
-                        </p>
-                        
-                        {{-- optional large watermark logo in background of left panel (semi-transparent) --}}
-                        <img src="{{ asset('images/logo.png') }}" alt="" class="hidden md:block mt-8 w-48 opacity-10">
-                    </div>
+                        </p></div>
+
                     
                     <!-- RIGHT: Login Card -->
                     <div class="p-6 md:p-12 flex items-center justify-center">
@@ -122,7 +121,7 @@
                                 {{-- Register link --}}
                                 <p class="text-center text-sm text-white/80 pt-2">
                                     Tidak punya Akun?
-                                    <a href="" class="underline text-white">Buat Akun</a>
+                                    <a href="{{ route('register') }}" class="underline text-white">Buat Akun</a>
                                 </p>
                             </form>
                         </div>
