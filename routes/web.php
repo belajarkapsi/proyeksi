@@ -12,6 +12,10 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
+Route::get('/lokasi', function () {
+    return view('lokasi');
+});
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth');
