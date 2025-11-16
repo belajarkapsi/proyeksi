@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Pondok Siti Hajar</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-    
-<!-- Komponen Navbar -->
-<x-navbar></x-navbar>
+@extends('layout.master')
 
-<!-- Komponen Footer -->
-<x-footer></x-footer>
+@section('title', 'Dashboard - Pondok Siti Hajar')
 
-</body>
-
-</html>
+@section('content')
+    <h1>Selamat Datang di Home!</h1>
+    <p>Ini adalah halaman beranda dari website kita.</p>
+@endsection
