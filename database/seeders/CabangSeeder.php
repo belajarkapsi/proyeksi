@@ -20,8 +20,8 @@ class CabangSeeder extends Seeder
 
         DB::table('cabang')->insert([
             [
-                'nama_cabang' => 'Pondok Siti Hajar (Kost Parepare)',
-                'deskripsi' => $faker->text(),
+                'nama_cabang' => 'Pondok Siti Hajar',
+                'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => '20',
                 'lokasi' => 'Parepare',
                 'kategori_cabang' => 'kost',
@@ -31,7 +31,7 @@ class CabangSeeder extends Seeder
             ],
             [
                 'nama_cabang' => 'The Green Villa Parepare',
-                'deskripsi' => $faker->text(),
+                'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => '2',
                 'lokasi' => 'Parepare',
                 'kategori_cabang' => 'villa',
@@ -40,8 +40,8 @@ class CabangSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'nama_cabang' => 'Pondok Siti Hajar (Kost Pangkep)',
-                'deskripsi' => $faker->text(),
+                'nama_cabang' => 'Pondok Satu',
+                'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => '10',
                 'lokasi' => 'Pangkep',
                 'kategori_cabang' => 'kost',
