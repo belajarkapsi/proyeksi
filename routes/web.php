@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CabangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -12,14 +13,13 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
-Route::get('/lokasi', function () {
-    return view('lokasi');
-});
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth');
 
+// Route Cabang
+Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
+    ->name('cabang.show');
 
 Route::get('login', [LoginController::class, 'login'])->name('login');
 Route::post('login', [LoginController::class, 'authenticate']);

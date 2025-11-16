@@ -1,5 +1,5 @@
-<nav class="bg-white sticky top-0 z-50">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+<nav class="bg-white sticky top-0 z-50 drop-shadow-xl">
+    <div class="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
         
         <!-- KIRI: Logo & Nama Aplikasi -->
         <a href="/" class="flex items-center space-x-3">
@@ -15,7 +15,7 @@
                         <a href="#" class="text-gray-800 hover:text-green-700 font-medium px-3 py-2 rounded-full transition-colors duration-300">Home</a>
                     </li>
                     <li>
-                        <a href="/lokasi" class="text-gray-800 hover:text-green-700 font-medium px-3 py-2 rounded-full transition-colors duration-300">Lokasi</a>
+                        <a href="/cabang" class="text-gray-800 hover:text-green-700 font-medium px-3 py-2 rounded-full transition-colors duration-300">Lokasi</a>
                     </li>
                     <li>
                         <a href="#" class="text-gray-800 hover:text-green-700 font-medium px-3 py-2 rounded-full transition-colors duration-300">Pusat Bantuan</a>
@@ -45,10 +45,10 @@
                 <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Home</a>
             </li>
             <li>
-                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Location</a>
+                <a href="/cabang" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Lokasi</a>
             </li>
             <li>
-                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Help Center</a>
+                <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Pusat Bantuan</a>
             </li>
         </ul>
     </div>
