@@ -25,6 +25,6 @@ class Cabang extends Model
 
     public function kamars(): HasMany
     {
-        return $this->hasMany(Kamar::class, 'id_cabang');
+        return $this->hasMany(Kamar::class, 'id_cabang', 'id_cabang');
     }
 }

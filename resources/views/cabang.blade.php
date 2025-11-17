@@ -10,7 +10,6 @@
     <h2 class="relative text-4xl md:text-5xl font-extrabold text-gray-900 font-serif">
         {{ $cabang->nama_cabang }}
     </h2>
-
 </header>
 
 
@@ -83,7 +82,79 @@
 
     </div>
 </section>
+
+
+<!-- Daftar Kamar -->
+<header class="relative w-full py-12  flex justify-center items-center overflow-hidden">
+    <h1 class="absolute text-[120px] font-bold text-gray-400 opacity-20 select-none whitespace-nowrap font-serif">
+        Our Rooms
+    </h1>
+    <h2 class="relative text-4xl md:text-5xl font-extrabold text-gray-900 font-serif">
+        Our Rooms
+    </h2>
+</header>
+
+<!-- Data -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-8 justify-items-center">
+        @if($types->isEmpty())
+        <div>Tidak ada tipe kamar untuk cabang ini.</div>
+        @else
+        @foreach($types as $tipe => $roomsForType)
+            @php
+            $example = $roomsForType->first();
+            $count = $roomsForType->count();
+            $price = $example->harga_kamar ?? 0;
+            $thumbnail = $example->image_url ?? asset('images/penginapan.jpg');
+            @endphp
             
+            <div class="card-type bg-white rounded-lg shadow p-4">
+                <img src="{{ $thumbnail }}" alt="{{ $tipe }}" class="w-full h-40 object-cover rounded">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold">{{ $tipe }}</h3>
+                    <p class="text-sm text-gray-600 mb-3">
+                        {{ \Illuminate\Support\Str::limit($example->deskripsi ?? 'Deskripsi singkat tipe kamar', 120) }}
+                    </p>
+                    
+                    {{-- divider --}}
+                    <div class="border-t border-gray-200 pt-3 mb-1"></div>
+                    
+                    {{-- Features row (3 columns) --}}
+                    <div class="grid grid-cols-3 gap-2 text-md text-gray-600 mb-10">
+                        {{-- facility 1 --}}
+                        <div class="text-left">
+                            <div class="text-gray-600">Campur</div>
+                        </div>
+                        {{-- facility 2 --}}
+                        <div class="text-center">
+                            <div class="text-gray-600">Kipas Angin</div>
+                        </div>
+                        {{-- capacity --}}
+                        <div class="text-right">
+                            <div class="text-gray-600 font-medium">Max. 3 Orang</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-lg font-bold text-gray-900">Rp {{ number_format($price,0,',','.') }} / Bulan</div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="text-xs font-bold text-gray-900">Tersisa <a href="#" class="text-green-500 pointer-events-none">{{ $count }} Kamar</a></div>
+                            
+                            {{-- Link ke halaman yang menampilkan semua kamar tipe ini (kamu buat route-nya) --}}
+                            <a href="#" class="inline-block mt-2 px-4 py-2 bg-green-500 text-white rounded-full">Lihat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+        @endif
+    </div>
+</div>
+
+
 @elseif(strtolower($cabang->kategori_cabang) === 'villa')
 <div class="cabang-detail">
         <h1>{{ $cabang->nama_cabang }}</h1>

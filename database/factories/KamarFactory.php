@@ -22,10 +22,10 @@ class KamarFactory extends Factory
         $faker = Faker\Factory::create('id_ID');
         return [
             'no_kamar' => $faker->numerify('kmr-###'),
-            'tipe_kamar' => $faker->sentence(1),
+            'tipe_kamar' => $faker->randomElement(['Ekonomis', 'Standar']),
             'harga_kamar' => $faker->randomNumber(5, true),
             'deskripsi' => $faker->text(200),
-            'status' => 'Tersedia',
+            'status' => $faker->randomElement(['Tersedia', 'Dihuni']),
             'slug' => Str::slug($faker->sentence())
 
         ];

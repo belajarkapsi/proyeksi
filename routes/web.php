@@ -34,4 +34,7 @@ Route::middleware('guest.only')->group(function() {
 // Route untuk Pesan Kamar
 
 
-Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+// Route Logout
+Route::post('logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');

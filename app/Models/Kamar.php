@@ -18,6 +18,6 @@ class Kamar extends Model
     
     public function cabang(): BelongsTo
     {
-        return $this->belongsTo(Cabang::class);
+        return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
     }
 }

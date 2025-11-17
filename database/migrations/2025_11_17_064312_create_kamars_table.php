@@ -20,7 +20,7 @@ return new class extends Migration
                 column: 'id_cabang'
             )->onUpdate('cascade')->onDelete('cascade');
             $table->char('no_kamar', length:10);
-            $table->string('tipe_kamar', length:50);
+            $table->enum('tipe_kamar', ['Ekonomis', 'Standar']);
             $table->integer('harga_kamar');
             $table->text('deskripsi');
             $table->enum('status', ['Tersedia', 'Dihuni'])->default('Tersedia');
