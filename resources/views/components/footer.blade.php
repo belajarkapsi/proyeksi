@@ -1,5 +1,5 @@
 <footer class="bg-green-600 text-white border-t border-gray-800">
-    <div class="max-w-screen-xl mx-auto px-6 md:px-10 py-10">
+    <div class="max-w-screen-xl mx-auto px-6 md:px-10 py-3">
 
         <!-- Grid 2 kolom besar -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-165">
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Divider -->
-        <div class="mt-10 border-t border-white/20"></div>
+        <div class="mt-4 border-t border-white/20"></div>
 
         <!-- Copyright -->
         <div class="mt-4">
