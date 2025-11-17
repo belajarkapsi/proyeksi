@@ -18,7 +18,7 @@
             </h1>
 
             <p class="mt-3 text-sm md:text-base text-green-900/90 max-w-[420px] mx-auto md:mx-0 text-center md:text-left">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                Pondok Siti Hajar adalah. 
                 Sed dignissim metus vitae lorem tincidunt, vitae blandit ligula tempor.
             </p>
         </div>
