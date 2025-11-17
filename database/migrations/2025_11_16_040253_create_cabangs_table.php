@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cabang', function (Blueprint $table) {
             $table->id('id_cabang');
             $table->string('nama_cabang');
-            $table->string('deskripsi');
+            $table->text('deskripsi');
             $table->integer('jumlah_kamar');
             $table->string('lokasi');
             $table->enum('kategori_cabang', ['kost', 'villa']);
