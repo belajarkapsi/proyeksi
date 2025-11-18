@@ -97,85 +97,81 @@
 <!-- Data -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-    @if($types->isEmpty())
-      <div class="col-span-full text-center text-gray-500 py-10">
-        Tidak ada tipe kamar untuk cabang ini.
-      </div>
-    @else
-      @foreach($types as $tipe => $roomsForType)
-        @php
-          // contoh kamar untuk tipe ini (dipakai untuk thumbnail, price, slug)
-          $example = $roomsForType->first();
-          $count = $roomsForType->count();
-          $price = $example->harga_kamar ?? 0;
-          $slug = $example->slug ?? null;
-        @endphp
-
-        <div class="w-full bg-white rounded-xl shadow overflow-hidden">
-          <div class="h-48 bg-gray-100 overflow-hidden">
-            <img src="{{ asset('images/penginapan.jpg') }}" alt="{{ $tipe }}" class="w-full h-full object-cover">
-          </div>
-
-          <div class="p-5">
-            <h3 class="text-xl font-serif font-semibold text-gray-800 mb-2">{{ $tipe }}</h3>
-
-            <p class="text-sm text-gray-600 mb-4">
-              {{ \Illuminate\Support\Str::limit($example->deskripsi ?? 'Deskripsi singkat tipe kamar', 120) }}
-            </p>
-
-            <div class="border-t border-gray-200 pt-3 mb-3"></div>
-
-            <div class="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-4">
-              <div class="text-left">
-                <div class="text-gray-500">Fasilitas</div>
-              </div>
-              <div class="text-center">
-                <div class="text-gray-500">AC / Ventilasi</div>
-              </div>
-              <div class="text-right">
-                <div class="text-gray-500">Kapasitas</div>
-                <div class="text-gray-800 font-medium">Max. 3 Orang</div>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="text-sm text-gray-500">Rp.</div>
-                <div class="text-lg font-bold text-gray-900">
-                  {{ number_format($price, 0, ',', '.') }} <span class="text-sm font-normal text-gray-500">/ Bulan</span>
-                </div>
-              </div>
-
-              <div class="flex flex-col items-end">
-                <div class="text-xs text-gray-500 mb-2">
-                  Tersisa <span class="text-green-600 font-semibold">{{ $count }} Kamar</span>
-                </div>
-
-                {{-- Jika slug tersedia, arahkan ke route cabang.type --}}
-                @if($slug)
-                  <a href="{{ route('cabang.type', [
-                        'lokasi' => $cabang->lokasi,
-                        'kategori' => $cabang->kategori_cabang,
-                        'slug' => $slug
-                      ]) }}"
-                     class="inline-block px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-medium shadow">
-                    Lihat
-                  </a>
-                @else
-                  {{-- fallback: arahkan ke halaman tipe tanpa slug --}}
-                  <a href="{{ route('cabang.show', ['lokasi' => $cabang->lokasi, 'kategori' => $cabang->kategori_cabang]) }}"
-                     class="inline-block px-4 py-2 bg-gray-400 text-white rounded-full text-sm font-medium shadow">
-                    Lihat
-                  </a>
-                @endif
-              </div>
-            </div>
-          </div>
+        
+        @if($types->isEmpty())
+        <div class="col-span-full text-center text-gray-500 py-10">
+            Tidak ada tipe kamar untuk cabang ini.
         </div>
-
-      @endforeach
-    @endif
-  </div>
+        
+        @else
+        
+        @foreach($types as $tipe => $roomsForType)
+        @php
+            // contoh kamar untuk tipe ini (dipakai untuk thumbnail, price, slug)
+            $example = $roomsForType->first();
+            $count = $roomsForType->count();
+            $price = $example->harga_kamar ?? 0;
+            $slug = $example->slug ?? null;
+        @endphp
+        
+        <div class="w-full bg-white rounded-xl shadow overflow-hidden">
+            <div class="h-48 bg-gray-100 overflow-hidden">
+                <img src="{{ asset('images/penginapan.jpg') }}" alt="{{ $tipe }}" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="p-5">
+                <h3 class="text-xl font-serif font-semibold text-gray-800 mb-2">{{ $tipe }}</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    {{ $example->deskripsi }}
+                </p>
+                
+                <div class="border-t border-gray-200 pt-3 mb-3"></div>
+                
+                <div class="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-4">
+                    <div class="text-left">
+                        <div class="text-gray-500">Fasilitas</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-gray-500">AC / Ventilasi</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-gray-500">Kapasitas</div>
+                        <div class="text-gray-800 font-medium">Max. 3 Orang</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500">Rp.</div>
+                        <div class="text-lg font-bold text-gray-900">
+                            {{ number_format($price, 0, ',', '.') }} <span class="text-sm font-normal text-gray-500">/ Bulan</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col items-end">
+                        <div class="text-xs text-gray-500 mb-2">
+                            Tersisa <span class="text-green-600 font-semibold">{{ $count }} Kamar</span>
+                        </div>
+                        
+                        {{-- Jika slug tersedia, arahkan ke route cabang.type --}}
+                        @if($slug)
+                        <a href="/cabang/parepare/kost/{{ $slug }}" class="inline-block px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-medium shadow">
+                            Lihat
+                        </a>
+                        @else
+                        {{-- fallback: arahkan ke halaman tipe tanpa slug --}}
+                        <a href="/cabang/parepare/kost"
+                        class="inline-block px-4 py-2 bg-gray-400 text-white rounded-full text-sm font-medium shadow">
+                        Lihat
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+        @endif
+    </div>
 </div>
 
 
