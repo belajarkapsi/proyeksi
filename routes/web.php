@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
+use App\Http\Controllers\ProfileController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -39,6 +40,14 @@ Route::middleware('guest.only')->group(function() {
 
 // Route untuk Detail Kamar
 Route::get('/kamar/detail-kamar/{no_kamar}', [KamarController::class, 'show'])->name('kamar.show');
+
+
+// Route untuk Profil
+Route::middleware('auth')->group(function(){
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
 
 
 // Route Logout
