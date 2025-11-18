@@ -18,8 +18,8 @@
             </h1>
 
             <p class="mt-3 text-sm md:text-base text-green-900/90 max-w-[420px] mx-auto md:mx-0 text-center md:text-left">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                Sed dignissim metus vitae lorem tincidunt, vitae blandit ligula tempor.
+                Penginapan kami memadukan fasilitas lengkap, kenyamanan, dan harga terjangkau. 
+                Didukung pelayanan ramah dan area yang aman, setiap kebutuhan menginap Anda terpenuhi tanpa kompromi.
             </p>
         </div>
 
@@ -33,20 +33,59 @@
     </div>
 
     {{-- Dua Gambar Room di Kanan --}}
-    <div class="hidden md:flex flex-col gap-3 absolute right-10 top-10 w-44 z-30">
-        
-        <div class="w-full h-32 rounded-xl overflow-hidden border-4 border-white/70 shadow-xl">
-            <img src="{{ asset('images/hero-room1.jpg') }}" 
-                 class="w-full h-full object-cover" 
-                 alt="Room 1">
-        </div>
 
-        <div class="w-full h-32 rounded-xl overflow-hidden border-4 border-white/70 shadow-xl">
-            <img src="{{ asset('images/hero-room2.jpg') }}" 
-                 class="w-full h-full object-cover" 
-                 alt="Room 2">
+{{-- === GALLERY KANAN DENGAN SCROLL + AUTO ZOOM === --}}
+<div class="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 z-40">
+    <div class="w-[270px]"> {{-- container luar --}}
+        
+        {{-- scroll area --}}
+        <div id="heroGallery"
+             class="overflow-x-auto flex gap-6 px-2 py-2 scrollbar-hide snap-x snap-mandatory">
+            
+            {{-- ITEM 1 --}}
+            <div class="gallery-item flex-shrink-0 snap-center 
+                        w-[250px] h-[350px] rounded-xl overflow-hidden 
+                        border-4 border-white/70 shadow-xl bg-white
+                        transition-transform duration-300 ease-out scale-75">
+                <img src="{{ asset('images/background.jpg') }}"
+                     alt="Room 1"
+                     class="w-full h-full object-cover">
+            </div>
+
+            {{-- ITEM 2 --}}
+            <div class="gallery-item flex-shrink-0 snap-center 
+                        w-[250px] h-[350px] rounded-xl overflow-hidden 
+                        border-4 border-white/70 shadow-xl bg-white
+                        transition-transform duration-300 ease-out scale-75">
+                <img src="{{ asset('images/villa.jpg') }}"
+                     alt="Room 2"
+                     class="w-full h-full object-cover">
+            </div>
+
+            {{-- ITEM 3 --}}
+            <div class="gallery-item flex-shrink-0 snap-center 
+                        w-[250px] h-[350px] rounded-xl overflow-hidden 
+                        border-4 border-white/70 shadow-xl bg-white
+                        transition-transform duration-300 ease-out scale-75">
+                <img src="{{ asset('images/pondok.jpg') }}"
+                     alt="Room 2"
+                     class="w-full h-full object-cover">
+            </div>
+
+            {{-- TAMBAH ITEM LAIN JIKA PERLU --}}
         </div>
     </div>
+</div>
+
+<style>
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script>
+@vite(['resources/js/app.js', 'resources/css/app.css'])
+</script>
 
 </section>
 
@@ -131,7 +170,7 @@
 
                 {{-- Tombol --}}
                 <div class="mt-4">
-                    <a href="#" 
+                    <a href="/cabang/parepare/kost" 
                        class="block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold">
                         Detail
                     </a>
@@ -144,7 +183,7 @@
         <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
             
             <div class="relative h-48 w-full">
-                <img src="{{ asset('images/penginapan2.jpg') }}" 
+                <img src="{{ asset('images/villa.jpg') }}" 
                      class="w-full h-full object-cover" alt="Penginapan">
 
                 <span class="absolute top-2 left-2 bg-white text-gray-800 text-xs px-3 py-1 rounded-full shadow">
@@ -170,7 +209,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="#" 
+                    <a href="/cabang/parepare/villa" 
                        class="block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold">
                         Detail
                     </a>
@@ -183,7 +222,7 @@
         <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
             
             <div class="relative h-48 w-full">
-                <img src="{{ asset('images/penginapan3.jpg') }}" 
+                <img src="{{ asset('images/pondok.jpg') }}" 
                      class="w-full h-full object-cover" alt="Penginapan">
 
                 <span class="absolute top-2 left-2 bg-white text-gray-800 text-xs px-3 py-1 rounded-full shadow">
@@ -209,7 +248,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="#" 
+                    <a href="/cabang/pangkep/kost" 
                        class="block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold">
                         Detail
                     </a>
@@ -235,7 +274,7 @@
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.
             </p>
 
-            <a href="#" 
+            <a href="/cabang/parepare/kost" 
                class="mt-6 inline-block px-5 py-2 border border-green-700 text-green-700 rounded">
                 Selengkapnya
             </a>
@@ -256,13 +295,13 @@
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.
             </p>
 
-            <a href="#" 
+            <a href="/cabang/parepare/villa" 
                class="mt-6 inline-block px-5 py-2 border border-green-700 text-green-700 rounded">
                 Selengkapnya
             </a>
         </div>
 
-        <img src="{{ asset('img/green-villa.jpg') }}" class="rounded-lg shadow">
+        <img src="{{ asset('images/villa.jpg') }}" class="rounded-lg shadow">
 
     </div>
 </section>
@@ -272,7 +311,7 @@
 <section class="py-20 container mx-auto px-5">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-        <img src="{{ asset('img/pondok-satu.jpg') }}" class="rounded-lg shadow">
+        <img src="{{ asset('images/pondok.jpg') }}" class="rounded-lg shadow">
 
         <div class="flex flex-col justify-center">
             <h3 class="text-2xl font-bold font-serif text-green-700">Pondok Satu</h3>
@@ -281,7 +320,7 @@
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.
             </p>
 
-            <a href="#" 
+            <a href="/cabang/pangkep/kost" 
                class="mt-6 inline-block px-5 py-2 border border-green-700 text-green-700 rounded">
                 Selengkapnya
             </a>
