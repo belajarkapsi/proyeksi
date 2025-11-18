@@ -22,6 +22,11 @@ Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
     ->middleware('validasi.cabang')
     ->name('cabang.show');
 
+// Route Cabang Kamar Berdasarkan Tipe
+Route::get('/cabang/{lokasi}/{kategori}/{slug?}', [CabangController::class, 'type'])
+    ->middleware('validasi.cabang')
+    ->name('cabang.type');
+
 // Route untuk user belum login
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');

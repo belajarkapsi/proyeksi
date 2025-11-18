@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('harga_kamar');
             $table->text('deskripsi');
             $table->enum('status', ['Tersedia', 'Dihuni'])->default('Tersedia');
-            $table->string('slug')->unique();
+            $table->string('slug');
             $table->timestamps();
         });
     }
