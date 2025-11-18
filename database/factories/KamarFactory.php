@@ -26,8 +26,7 @@ class KamarFactory extends Factory
             'harga_kamar' => $faker->randomNumber(5, true),
             'deskripsi' => $faker->text(200),
             'status' => $faker->randomElement(['Tersedia', 'Dihuni']),
-            'slug' => Str::slug($faker->sentence())
-
+            'slug' => Str::slug($faker->randomElement(['kamar-standar', 'kamar-ekonomis']))
         ];
     }
 }
