@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cabang;
 use Illuminate\Http\Request;
 
 class CabangController extends Controller
 {
-    public function show(string $lokasi, string $kategori)
+    public function show(Request $request)
     {
-        $lokasiQuery = str_replace('-', ' ', $lokasi);
-        $kategoriQuery = str_replace('-', ' ', $kategori);
+        $cabang = $request->get('cabang'); // atau $request->attributes->get('cabang')
+
+        $allRooms = $cabang->kamars()->get();
+        $types = $allRooms->groupBy('tipe_kamar');
         
-        $cabang = Cabang::whereRaw('LOWER(lokasi) = ?', [strtolower($lokasiQuery)])
-                    ->whereRaw('LOWER(kategori_cabang) = ?', [strtolower($kategoriQuery)])
-                    ->firstOrFail();
+        $kamars = $cabang->kamars()->latest()->paginate(12);
                     
-        return view('cabang', compact('cabang'));
+        return view('cabang', compact('cabang', 'types', 'kamars'));
     }
 }

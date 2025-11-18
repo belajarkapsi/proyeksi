@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-
     public function login()
     {
         return view('auth.login');
@@ -28,16 +27,25 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard');
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([
             'username' => 'Username / Password Salah!',
-        ])->onlyInput('email');
+        ])->onlyInput('username');
     }
 
-    public function destroy()
+    /**
+     * Logout user safely.
+     */
+    public function destroy(Request $request): RedirectResponse
     {
+        Auth::logout();
+
+        // invalidate session dan regenerate token
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
         return redirect()->route('login');
     }
 }

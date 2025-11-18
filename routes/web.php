@@ -15,15 +15,26 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware('auth');
+})->name('dashboard');
 
 // Route Cabang
 Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
+    ->middleware('validasi.cabang')
     ->name('cabang.show');
 
-Route::get('login', [LoginController::class, 'login'])->name('login');
-Route::post('login', [LoginController::class, 'authenticate']);
-Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+// Route untuk user belum login
+Route::middleware('guest.only')->group(function() {
+    Route::get('login', [LoginController::class, 'login'])->name('login');
+    Route::post('login', [LoginController::class, 'authenticate']);
+    
+    Route::get('register', [RegisterController::class, 'register'])->name('register');
+    Route::post('register', [RegisterController::class, 'store']);
+});
 
-Route::get('register', [RegisterController::class, 'register'])->name('register');
-Route::post('register', [RegisterController::class, 'store']);
+// Route untuk Pesan Kamar
+
+
+// Route Logout
+Route::post('logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
