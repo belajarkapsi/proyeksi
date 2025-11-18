@@ -20,13 +20,16 @@ class KamarFactory extends Factory
     public function definition(): array
     {
         $faker = Faker\Factory::create('id_ID');
+
+        $tipe_kamar = $faker->randomElement(['Ekonomis', 'Standar']);
+
         return [
             'no_kamar' => $faker->numerify('kmr-###'),
-            'tipe_kamar' => $faker->randomElement(['Ekonomis', 'Standar']),
+            'tipe_kamar' => $tipe_kamar,
             'harga_kamar' => $faker->randomNumber(5, true),
             'deskripsi' => $faker->text(200),
             'status' => $faker->randomElement(['Tersedia', 'Dihuni']),
-            'slug' => Str::slug($faker->randomElement(['kamar-standar', 'kamar-ekonomis']))
+            'slug' => 'kamar-' . Str::slug($tipe_kamar),
         ];
     }
 }

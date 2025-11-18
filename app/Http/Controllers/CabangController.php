@@ -10,11 +10,18 @@ class CabangController extends Controller
     {
         $cabang = $request->get('cabang'); // atau $request->attributes->get('cabang')
 
-        $allRooms = $cabang->kamars()->get();
-        $types = $allRooms->groupBy('tipe_kamar');
-        
-        $kamars = $cabang->kamars()->latest()->paginate(12);
+        $rooms = $cabang->kamars()->get();
+        $types = $rooms->groupBy('tipe_kamar');
                     
-        return view('cabang', compact('cabang', 'types', 'kamars'));
+        return view('cabang', compact('cabang', 'types'));
+    }
+
+    public function type(Request $request)
+    {
+        $cabang = $request->get('cabang');
+        
+        $rooms = $cabang->kamars()->latest()->paginate(12);
+
+        return view('tipe-kamar', compact( 'rooms'));
     }
 }
