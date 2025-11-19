@@ -11,6 +11,8 @@ use App\Http\Controllers\ProfileController;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
+// Redirect sama ke dashboard
+Route::redirect('/dashboard', '/');
 
 
 // Route Cabang
@@ -35,7 +37,8 @@ Route::middleware('guest.only')->group(function() {
 });
 
 // Route untuk Detail Kamar
-Route::get('/kamar/detail-kamar/{no_kamar}', [KamarController::class, 'show'])->name('kamar.show');
+Route::get('/kamar/detail-kamar/{no_kamar}', [KamarController::class, 'show'])
+    ->name('kamar.show');
 
 
 // Route untuk Profil
@@ -55,7 +58,7 @@ Route::get('logout', function() {
 });
 
 
-//Route Booking
-Route::get('/kamar/detail-kamar/{no_kamar}', function () {
-    return view('kamar/booking');
-});
+//Route Booking (Mau diubah)
+Route::get('/kamar/booking', function () {
+    return view('kamar.booking');
+})->middleware('auth', 'lengkapi.profil');

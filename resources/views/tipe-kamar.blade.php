@@ -17,7 +17,7 @@
         {{-- image --}}
         <div class="rounded-lg overflow-hidden">
           <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}"
-               alt="Kamar {{ $room->number ?? '—' }}"
+               alt="Kamar {{ $room->no_kamar ?? '—' }}"
                class="w-full h-44 object-cover rounded-md">
         </div>
 
@@ -25,7 +25,7 @@
         <div class="absolute left-6 top-36 transform -translate-y-1/2">
           <div class="flex items-center space-x-2">
             <div class="bg-green-600 text-white font-extrabold px-3 py-1 rounded-md text-lg">
-              {{ $room->number ?? '101' }}
+              {{ $room->no_kamar ?? '101' }}
             </div>
             <div class="bg-white/90 text-green-700 text-xs px-2 py-0.5 rounded-full border border-green-100">
               Lantai {{ $room->floor ?? '1' }}
