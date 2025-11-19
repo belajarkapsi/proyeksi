@@ -4,6 +4,7 @@ use App\Http\Controllers\CabangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\KamarController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -36,10 +37,40 @@ Route::middleware('guest.only')->group(function() {
     Route::post('register', [RegisterController::class, 'store']);
 });
 
-// Route untuk Pesan Kamar
+// Route untuk Detail Kamar
+Route::get('/kamar/detail-kamar/{no_kamar}', [KamarController::class, 'show'])->name('kamar.show');
 
 
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Route Booking
+Route::get('/kamar/detail-kamar/{no_kamar}', function () {
+    return view('kamar/booking');
+});
