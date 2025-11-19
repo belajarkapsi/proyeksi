@@ -127,9 +127,19 @@
 
       <div>
         {{-- tombol scroll ke form --}}
-        <a href="/kamar/booking" class="block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-semibold">
-          Pesan Sekarang
-        </a>
+        <a href="{{ route('booking.create', [
+        'kamar' => $kamar->id_kamar ?? $kamar->id ?? 0,
+        'harga' => $kamar->harga ?? 0,
+        'nama_kamar' => $kamar->nama ?? $kamar->nama_kamar ?? 'Kamar',
+        'gambar' => $kamar->gambar ?? null,
+        'lantai' => $kamar->lantai ?? null,
+        'cabang' => $kamar->id_cabang ?? null
+    ]) }}"
+   class="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+   Pesan Sekarang
+</a>
+
+
       </div>
     </aside>
   </div>

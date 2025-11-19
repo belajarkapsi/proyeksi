@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookingController;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -47,7 +48,6 @@ Route::middleware('auth')->group(function(){
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
@@ -57,8 +57,14 @@ Route::get('logout', function() {
     return redirect()->route('dashboard');
 });
 
-
-//Route Booking (Mau diubah)
+// //Route Booking (Mau diubah)
 Route::get('/kamar/booking', function () {
     return view('kamar.booking');
-})->middleware('auth', 'lengkapi.profil');
+});
+// ->middleware('auth', 'lengkapi.profil');
+
+// tampilkan form booking untuk kamar tertentu
+Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
+
