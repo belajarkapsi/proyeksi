@@ -7,27 +7,23 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+// Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
-    return view('auth/login');
-});
-
-Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
 
 // Route Cabang
 Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
     ->middleware('validasi.cabang')
     ->name('cabang.show');
 
+
 // Route Cabang Kamar Berdasarkan Tipe
 Route::get('/cabang/{lokasi}/{kategori}/{slug?}', [CabangController::class, 'type'])
     ->middleware('validasi.cabang')
     ->name('cabang.type');
+
 
 // Route untuk user belum login
 Route::middleware('guest.only')->group(function() {
@@ -49,34 +45,14 @@ Route::middleware('auth')->group(function(){
 });
 
 
-
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Antisipasi ketika langsung cari /logout:
+Route::get('logout', function() {
+    return redirect()->route('dashboard');
+});
 
 
 //Route Booking
