@@ -2,15 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Penyewa;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Penyewa>
- */
 class PenyewaFactory extends Factory
 {
     /**
@@ -18,7 +16,7 @@ class PenyewaFactory extends Factory
      */
     protected static ?string $password;
 
-    protected $model = Penyewa::class;
+    protected $model = User::class;
     /**
      * Define the model's default state.
      *
@@ -34,6 +32,12 @@ class PenyewaFactory extends Factory
             'email' => $faker->freeEmail(),
             'username' => 'penyewa',
             'password' => static::$password ??= Hash::make('penyewa'),
+            'tanggal_lahir' => fake()->date(),
+            'usia' => $faker->randomNumber(2, true),
+            'asal' => $faker->timezone('ID'),
+            'alamat' => $faker->sentence(2),
+            'foto_profil' => $faker->sentence(2),
+            'role' => 'penyewa'
         ];
     }
 }

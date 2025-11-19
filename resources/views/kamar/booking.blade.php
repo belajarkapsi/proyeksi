@@ -154,7 +154,7 @@
 {{-- JS: Hitung total + plus minus --}}
 <script>
     let qty = 2;
-    const price = {{ $room->price_per_day ?? 125000 }};
+    // const price = {{ $room->price_per_day ?? 125000 }};
     const qtyText = document.getElementById("quantity");
     const totalText = document.getElementById("total");
 
