@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Penyewa>
@@ -34,6 +35,12 @@ class PenyewaFactory extends Factory
             'email' => $faker->freeEmail(),
             'username' => 'penyewa',
             'password' => static::$password ??= Hash::make('penyewa'),
+            'tanggal_lahir' => fake()->date(),
+            'usia' => $faker->randomNumber(2, true),
+            'asal' => $faker->timezone('ID'),
+            'alamat' => $faker->sentence(2),
+            'foto_profil' => $faker->sentence(2),
+            'role' => 'penyewa'
         ];
     }
 }
