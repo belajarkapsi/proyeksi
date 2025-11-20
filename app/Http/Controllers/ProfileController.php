@@ -25,20 +25,31 @@ class ProfileController extends Controller
 
         // Validasi dulu
         $validasiData = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]*$/'],
             'no_telp' => ['required', 'numeric'],
-            'username' => ['required', 'string', 'max:255', Rule::unique('penyewa')->ignore($penyewa->id_penyewa, 'id_penyewa')],
+            'username' => ['required', 'string', 'min:8', 'max:255', Rule::unique('penyewa')->ignore($penyewa->id_penyewa, 'id_penyewa')],
             'asal' => ['required', 'string'],
             'alamat' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
-            'tanggal_lahir' => ['required', 'date'],
+            'tanggal_lahir' => ['required', 'date', 'before:-10 years'],
             'foto_profil' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ],
             [
                 'reqired' => 'Data ini wajib diisi, jangan dikosongkan!',
                 'numeric' => 'Harus Berupa Angka!',
                 'unique' => 'Username sudah digunakan!',
+                'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+                'username.min' => 'Username minimal memiliki panjang 8 karakter',
+                'tanggal_lahir.before' => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.'
             ]);
+
+        // Sanitasi Input
+        $kolomInput = ['nama_lengkap', 'username', 'asal', 'alamat'];
+        foreach ($kolomInput as $kolom) {
+            if(isset($validasiData[$kolom])) {
+                $validasiData[$kolom] = strip_tags($validasiData[$kolom]);
+            }
+        }
 
         // Hitung usia
         if($request->filled('tanggal_lahir')) {

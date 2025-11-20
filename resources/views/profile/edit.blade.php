@@ -73,14 +73,14 @@
 
                 <div class="space-y-6">
                     <div name="nama_lengkap">
-                        <label for="nama_lengkap" class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                        <label for="nama_lengkap" class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap<span class="text-red-500">*</span></label>
                         <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap', $penyewa->nama_lengkap) }}" 
                             class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" required>
                         @error('nama_lengkap') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div name="username">
-                        <label for="username" class="block text-sm font-bold text-gray-700 mb-2">Username <span class="text-red-500">*</span></label>
+                        <label for="username" class="block text-sm font-bold text-gray-700 mb-2">Username<span class="text-red-500">*</span></label>
                         <input type="username" name="username" id="username" value="{{ old('username', $penyewa->username) }}" 
                             class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" required>
                         @error('username') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -94,14 +94,14 @@
                     </div>
 
                     <div name="no_telepon">
-                        <label for="no_telp" class="block text-sm font-bold text-gray-700 mb-2">No. Telepon <span class="text-red-500">*</span></label>
+                        <label for="no_telp" class="block text-sm font-bold text-gray-700 mb-2">No. Telepon<span class="text-red-500">*</span></label>
                         <input type="number" name="no_telp" id="no_telp" value="{{ old('no_telp', $penyewa->no_telp) }}" aria-describedby="helper-text-explanation"
                             class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" pattern="[0-9]{4}-[0-9]{4}-[0-9]{5}" required />
                         @error('no_telp') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     <div name="asal">
-                        <label for="asal" class="block text-sm font-bold text-gray-700 mb-2">Asal Kota/Daerah <span class="text-red-500">*</span></label>
+                        <label for="asal" class="block text-sm font-bold text-gray-700 mb-2">Asal Kota/Daerah<span class="text-red-500">*</span></label>
                         <div class="relative">
                             <select name="asal" id="asal" class="py-3 px-4 pe-9 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all" required>
                                 <option value="" disabled {{ !$penyewa->kota_asal ? 'selected' : '' }}>Pilih Asal Kotamu</option>
@@ -117,7 +117,7 @@
                     </div>
 
                     <div name="alamat">
-                        <label for="alamat" class="block text-sm font-bold text-gray-700 mb-2">Alamat <span class="text-red-500">*</span></label>
+                        <label for="alamat" class="block text-sm font-bold text-gray-700 mb-2">Alamat<span class="text-red-500">*</span></label>
                         <textarea name="alamat" id="alamat" rows="2"
                             class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all" required>{{ old('alamat', $penyewa->alamat) }}</textarea>
                         @error('alamat') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
@@ -125,7 +125,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div name="jenis_kelamin">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Jenis Kelamin<span class="text-red-500">*</span></label>
                             <div class="flex flex-col space-y-2 mt-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <div class="flex items-center">
                                     <input type="radio" name="jenis_kelamin" value="Laki-laki" id="gender_male" 
@@ -146,7 +146,7 @@
 
                         <!-- Tanggal Lahir -->
                         <div class="bg-purple-50/50 p-4 rounded-xl border border-purple-100" name="tanggal_lahir"> 
-                            <label for="tanggal_lahir" class="block text-sm font-bold text-gray-800 mb-2">Tanggal Lahir:</label>
+                            <label for="tanggal_lahir" class="block text-sm font-bold text-gray-800 mb-2">Tanggal Lahir<span class="text-red-500">*</span></label>
                             <div class="relative">
                                 <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $penyewa->tanggal_lahir) }}" 
                                     class="py-3 px-4 block w-full bg-gray-100 border-green-500 rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white" required>
