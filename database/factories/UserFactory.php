@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,11 +24,21 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        
+        $faker = Faker\Factory::create('id_ID');
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'nama_lengkap' => fake()->name(),
+            'no_telp' => $faker->randomNumber(8, true),
+            'email' => $faker->freeEmail(),
+            'username' => 'penyewa',
+            'password' => static::$password ??= Hash::make('penyewa'),
+            'tanggal_lahir' => fake()->date(),
+            'usia' => $faker->randomNumber(2, true),
+            'asal' => $faker->timezone('ID'),
+            'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
+            'alamat' => $faker->sentence(2),
+            'foto_profil' => $faker->sentence(2),
+            'role' => 'penyewa',
             'remember_token' => Str::random(10),
         ];
     }
@@ -35,10 +46,10 @@ class UserFactory extends Factory
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
+    // public function unverified(): static
+    // {
+    //     return $this->state(fn (array $attributes) => [
+    //         'email_verified_at' => null,
+    //     ]);
+    // }
 }

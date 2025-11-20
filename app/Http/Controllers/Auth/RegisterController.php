@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Penyewa;
+use App\Models\User;
 use Illuminate\Http\Request;
 use illuminate\Support\Facades\Auth;
 use illuminate\Support\Facades\Hash;
@@ -24,9 +24,9 @@ class RegisterController extends Controller
         $rules = [
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'no_telp' => ['required', 'numeric'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'email', 'unique:penyewa,email'],
             'username' => ['required', 'string', 'max:255', 'unique:penyewa'],
-            'password' => ['required', 'string', 'min:8', 'confirmed']
+            'password' => ['required', 'min:8', 'confirmed'],
         ];
 
         $message = [
@@ -45,7 +45,14 @@ class RegisterController extends Controller
         $validasi_data = $request->validate($rules, $message);
 
         //Simpan data penyewa kedalam database
-        $penyewa = Penyewa::create($validasi_data);
+        $penyewa = User::create([
+            'nama_lengkap' => $validasi_data['nama_lengkap'],
+            'no_telp' => $validasi_data['no_telp'],
+            'email' => $validasi_data['email'],
+            'username' => $validasi_data['username'],
+            'password' => $validasi_data['password'],
+            'role' => 'penyewa'
+        ]);
 
         return redirect()->route('login')->with('status', 'Pendaftaran berhasil! Silakan login dengan akun Anda.');
     }

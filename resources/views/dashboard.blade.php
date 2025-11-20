@@ -83,9 +83,6 @@
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<script>
-@vite(['resources/js/app.js', 'resources/css/app.css'])
-</script>
 
 </section>
 

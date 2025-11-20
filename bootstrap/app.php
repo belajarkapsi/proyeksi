@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\GuestOnly;
 use App\Http\Middleware\HarusLoginUntukPesan;
+use App\Http\Middleware\LengkapiProfil;
 use App\Http\Middleware\ValidasiCabang;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'guest.only' => GuestOnly::class,
             'booking.only' => HarusLoginUntukPesan::class,
-            'validasi.cabang' => ValidasiCabang::class
+            'validasi.cabang' => ValidasiCabang::class,
+            'lengkapi.profil' => LengkapiProfil::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

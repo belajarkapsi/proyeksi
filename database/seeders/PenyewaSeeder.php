@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Penyewa;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class PenyewaSeeder extends Seeder
@@ -12,6 +12,6 @@ class PenyewaSeeder extends Seeder
      */
     public function run(): void
     {
-        Penyewa::factory(1)->create();
+        User::factory(1)->create();
     }
 }

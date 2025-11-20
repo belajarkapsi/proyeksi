@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Penyewa::factory(1)->create();
+        $this->call([
+            PenyewaSeeder::class,
+            CabangDanKamarSeeder::class
+        ]);
     }
 }

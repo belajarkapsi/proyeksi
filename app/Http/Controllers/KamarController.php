@@ -9,6 +9,7 @@ class KamarController extends Controller
 {
      public function show(Kamar $room)
     {
+
         // jika butuh relasi, eager load mis. images atau fasilitas:
         // $room->load('images','facilities');
 

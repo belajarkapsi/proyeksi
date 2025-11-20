@@ -29,7 +29,7 @@
         {{-- BAGIAN DESKRIPSI DAN TEMPAT TERDEKAT --}}
         <div>
             {{-- Cerita Kost --}}
-            <h2 class="text-3xl font-extrabold text-green-600 mb-4">Cerita tentang kost ini</h2>
+            <h2 class="text-3xl font-extrabold text-green-600 mb-4">Cerita Tentang Kost Ini</h2>
             <p class="text-gray-600 leading-relaxed mb-8">
                 {{ $cabang->deskripsi }}
             </p>
