@@ -25,7 +25,7 @@ class Pemesanan extends Model
     // relasi
     public function penyewa()
     {
-        return $this->belongsTo(Penyewa::class, 'id_penyewa', 'id_penyewa');
+        return $this->belongsTo(User::class, 'id_penyewa', 'id_penyewa');
     }
 
     public function cabang()

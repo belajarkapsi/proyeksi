@@ -57,14 +57,20 @@ class ProfileController extends Controller
         }
 
         // Logika Upload Foto
+        $pesan = 'Data profil berhasil diperbarui!';
+        
         if ($request->hasFile('foto_profil')) {
-            if($penyewa->foto_profil && Storage::disk('public')->exists($penyewa->foto_profil)) {
-                Storage::disk('public')->delete($penyewa->foto_profil);
-            }
+            try{
+                if($penyewa->foto_profil && Storage::disk('public')->exists($penyewa->foto_profil)) {
+                    Storage::disk('public')->delete($penyewa->foto_profil);
+                }
+                // Simpan foto
+                $path = $request->file('foto_profil')->store('profile-photos', 'public');
+                $validasiData['foto_profil'] = $path;
 
-            // Simpan foto
-            $path = $request->file('foto_profil')->store('profile-photos', 'public');
-            $validasiData['foto_profil'] = $path;
+            } catch (\Exception $e) {
+                return back()->withErrors(['foto_profil' => 'Gagal merubah foto:    ' . $e->getMessage()])->withInput();
+            }
         }
 
         // Simpan

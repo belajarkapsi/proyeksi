@@ -6,8 +6,21 @@
     
     @if (session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             <strong class="font-bold">Sukses!</strong>
             <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @elseif ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <div class="flex items-center mb-1">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <strong class="font-bold">Terjadi Kesalahan!</strong>
+            </div>
+            <ul class="list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
@@ -18,25 +31,18 @@
             <div class="flex flex-col items-center mb-6">
                 <div class="relative">
                     @if($penyewa->foto_profil)
-                        <img class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md" 
-                            src="{{ asset('storage/' . $penyewa->foto_profil) }}" 
+                        <img id="img-preview" class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md transition-opacity group-hover:opacity-90" 
+                            src="{{ asset('storage/' . $penyewa->foto_profil) }}?t={{ time() }}" 
                             alt="{{ $penyewa->nama_lengkap }}">
                     @else
-                        <img class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md" 
+                        <img id="img-preview" class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md transition-opacity group-hover:opacity-90" 
                             src="https://ui-avatars.com/api/?name={{ urlencode($penyewa->nama_lengkap) }}&background=random&size=128" 
                             alt="Default Avatar">
                     @endif
-                    
-                    <label for="foto_profil_input" class="absolute bottom-0 right-0 bg-green-600 hover:bg-green-700 text-white p-2 rounded-full cursor-pointer shadow-sm transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </label>
                 </div>
                 <h2 class="mt-4 text-xl font-bold text-gray-900">{{ $penyewa->nama_lengkap }}</h2>
                 <p class="text-sm text-gray-500">Penyewa</p>
-                <a href="#" class="text-xs text-green-600 font-medium mt-1 cursor-pointer hover:underline" onclick="document.getElementById('foto_profil_input').click();">Ubah Foto Profil</a>
+                <label for="foto_profil_input" class="text-xs text-green-600 font-medium mt-1 cursor-pointer hover:underline hover:text-green-800 transition-colors">Ubah Foto Profil</label>
             </div>
 
             <div class="space-y-4">
@@ -69,7 +75,7 @@
                 @csrf
                 @method('PATCH')
 
-                <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/*" onchange="document.getElementById('form-submit-btn').classList.remove('hidden')">
+                <input type="file" name="foto_profil" id="foto_profil_input" class="hidden" accept="image/*" onchange="previewImage(event)">
 
                 <div class="space-y-6">
                     <div name="nama_lengkap">
@@ -170,4 +176,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            const output = document.getElementById('img-preview');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        
+        // Munculkan tombol simpan jika user ganti foto
+        document.getElementById('form-submit-btn').classList.remove('hidden');
+    }
+
+    // Opsional: Munculkan tombol simpan jika ada input lain yang berubah
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            document.getElementById('form-submit-btn').classList.remove('hidden');
+        });
+    });
+</script>
 @endsection
