@@ -35,6 +35,7 @@ class UserFactory extends Factory
             'tanggal_lahir' => fake()->date(),
             'usia' => $faker->randomNumber(2, true),
             'asal' => $faker->timezone('ID'),
+            'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
             'alamat' => $faker->sentence(2),
             'foto_profil' => $faker->sentence(2),
             'role' => 'penyewa',

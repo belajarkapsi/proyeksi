@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->integer('usia')->nullable();
             $table->string('asal', 100)->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->string('alamat', 255)->nullable();
             $table->string('foto_profil', 255)->nullable();
             $table->char('role', 10)->default('penyewa');
