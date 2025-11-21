@@ -63,8 +63,16 @@ Route::get('/kamar/booking', function () {
 });
 // ->middleware('auth', 'lengkapi.profil');
 
-// tampilkan form booking untuk kamar tertentu
-Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
-Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+// 1. Halaman Daftar Kamar (Halaman Awal)
+Route::get('/kamar', [BookingController::class, 'index'])->name('kamar.index');
 
+// 2. Halaman Checkout/Konfirmasi (HUBUNGAN UTAMA)
+// Menggunakan match(['get', 'post']) agar bisa menangani Single Click & Multi Select
+Route::match(['get', 'post'], '/booking/checkout', [BookingController::class, 'checkout'])->name('booking.checkout');
+
+// 3. Proses Simpan ke Database (Action dari form checkout)
+Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+
+// 4. Detail Kamar (Untuk tombol Detail)
+Route::get('/kamar/detail-kamar/{no_kamar}', [BookingController::class, 'detail'])->name('kamar.detail');
 

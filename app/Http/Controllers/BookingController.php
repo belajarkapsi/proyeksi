@@ -3,107 +3,114 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Pemesanan;
+use App\Models\Kamar; // Pastikan ini sesuai nama Model Anda
+use App\Models\Pemesanan; // Model untuk simpan
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    // Tampilkan form booking
-    public function create(Request $request)
+    // Menampilkan Daftar Kamar
+    public function index()
     {
-        $kamarId   = $request->query('kamar'); // id_kamar
-        $harga     = $request->query('harga'); // harga per hari (angka)
-        $namaKamar = $request->query('nama_kamar') ?? 'Kamar';
-        $gambar    = $request->query('gambar') ?? null;
-        $lantai    = $request->query('lantai') ?? null;
-        $cabangId  = $request->query('cabang') ?? null; // optional
-
-        $hargaInt = is_numeric($harga) ? (float) $harga : 0;
-
-        return view('/kamar/booking', compact('kamarId', 'hargaInt', 'namaKamar', 'gambar', 'lantai', 'cabangId'));
+        $rooms = Kamar::all(); // Atau logic lain sesuai kebutuhan
+        return view('kamar.index', compact('rooms'));
     }
 
-    // Simpan booking (simpan ke tabel pemesanan)
-    public function store(Request $request)
+    // === JEMBATAN PENGHUBUNG (LOGIC UTAMA) ===
+    public function checkout(Request $request)
     {
-        // validasi input
-        $validated = $request->validate([
-            'nama_lengkap'     => 'required|string|max:255',
-            'telepon'          => 'required|string|max:50',
-            'email'            => 'required|email',
-            'username'         => 'nullable|string|max:100',
-            'kota_asal'        => 'nullable|string|max:100',
-            'tanggal'          => 'required|date',
-            'durasi'           => 'required|integer|min:1',
-            'jumlah'           => 'required|integer|min:1',
-            'kamar_id'         => 'required|integer',
-            'harga_per_hari'   => 'required|numeric',
-            'cabang_id'        => 'nullable|integer',
-        ]);
+        // KONDISI 1: Datang dari Form Multi-Select (Method POST)
+        if ($request->isMethod('post') && $request->has('selected_rooms')) {
+            $ids = $request->input('selected_rooms');
+            
+            // Ambil semua kamar yang dipilih dari Database
+            // Sesuaikan 'no_kamar' dengan primary key atau kolom unik di tabel Anda
+            $rooms = Kamar::whereIn('no_kamar', $ids)->get();
+        } 
+        
+        // KONDISI 2: Datang dari Klik Cepat Single (Method GET)
+        else if ($request->has('kamar')) {
+            $noKamar = $request->query('kamar');
+            $room = Kamar::where('no_kamar', $noKamar)->first();
 
-        // Ambil id_penyewa jika user sudah login (asumsi ada kolom id_penyewa di users or related)
-        $idPenyewa = null;
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            /**
-             * PERHATIAN:
-             * - Jika model User Anda punya kolom id_penyewa, gunakan $user->id_penyewa
-             * - Jika relasi penyewa ada (mis. $user->penyewa->id_penyewa), sesuaikan di bawah.
-             * Contoh umum:
-             *   $idPenyewa = $user->id_penyewa ?? null;
-             */
-            if (isset($user->id_penyewa)) {
-                $idPenyewa = $user->id_penyewa;
-            } elseif (method_exists($user, 'penyewa') && $user->penyewa) {
-                $idPenyewa = $user->penyewa->id_penyewa;
-            } else {
-                // tidak ditemukan id_penyewa otomatis, tetap null atau Anda bisa buat logika pembuatan penyewa baru
-                $idPenyewa = null;
+            if (!$room) {
+                return redirect()->route('kamar.index')->with('error', 'Kamar tidak ditemukan');
             }
+
+            // Bungkus kamar single menjadi Collection agar formatnya sama dengan multi
+            $rooms = collect([$room]);
+        } 
+        
+        // Jika diakses tanpa data
+        else {
+            return redirect()->route('kamar.index');
         }
 
-        // Hitung total harga dan waktu pemesanan
-        $hargaPerHari = (float) $validated['harga_per_hari'];
-        $durasi = (int) $validated['durasi'];
-        $jumlah = (int) $validated['jumlah'];
+        // Hitung Total Harga Dasar (Harga per malam total semua kamar)
+        // Pastikan kolom harga di database bertipe angka (integer/double)
+        $totalBasePrice = $rooms->sum('harga');
 
-        // Total yang akan disimpan di kolom `harga` sesuai model Anda:
-        // (Anda bisa memilih menyimpan per-hari atau total; di contoh ini disimpan total)
-        $totalHarga = $hargaPerHari * $durasi * $jumlah;
+        // Lempar data ke View Checkout yang baru
+        return view('kamar/booking', compact('rooms', 'totalBasePrice'));
+    }
 
-        // Waktu pemesanan adalah sekarang
-        $waktuPemesanan = Carbon::now();
+    // Proses Simpan Akhir
+    // BookingController.php
 
-        // waktu_checkin = tanggal yg dipilih (format Y-m-d)
-        $waktuCheckin = Carbon::parse($validated['tanggal'])->startOfDay();
+public function store(Request $request)
+{
+    // 1. Validasi
+    $validated = $request->validate([
+        'nama_lengkap' => 'required|string|max:255',
+        'telepon'      => 'required|numeric',
+        'email'        => 'required|email',
+        'tanggal'      => 'required|date',
+        
+        // Validasi Durasi menjadi Array
+        'durasi'       => 'required|array', 
+        'durasi.*'     => 'integer|min:1', // Tiap durasi minimal 1 hari
+        
+        'kamar_ids'    => 'required|array',
+        'kamar_ids.*'  => 'exists:kamars,id',
+    ]);
 
-        // waktu_checkout = checkin + durasi hari
-        // Jika durasi=1 maka checkout = checkin + 1 hari (cek kebutuhan bisnis: apakah checkout = same day + 1)
-        $waktuCheckout = (clone $waktuCheckin)->addDays($durasi);
+    $waktuCheckin = Carbon::parse($validated['tanggal']);
 
-        // Simpan ke tabel pemesanan (sesuaikan nama kolom dengan migration Anda)
-        $pemesanan = Pemesanan::create([
-            'id_penyewa'       => $idPenyewa,
-            'id_cabang'        => $validated['cabang_id'] ?? null,
-            'id_kamar'         => $validated['kamar_id'],
-            'jumlah_pemesanan' => $jumlah,
+    // 2. Looping setiap kamar
+    foreach ($validated['kamar_ids'] as $kamarId) {
+        $kamar = Kamar::find($kamarId);
+        
+        // AMBIL DURASI SPESIFIK UNTUK KAMAR INI
+        // $request->durasi adalah array: [id_kamar => lama_hari]
+        $lamaSewa = (int) $validated['durasi'][$kamarId];
+
+        // Hitung Total Harga Kamar Ini (Harga x Durasi Spesifik)
+        $totalHarga = $kamar->harga * $lamaSewa;
+
+        // Hitung Tanggal Checkout Spesifik
+        $waktuCheckout = (clone $waktuCheckin)->addDays($lamaSewa);
+
+        Pemesanan::create([
+            'id_penyewa'       => Auth::id() ?? null,
+            'id_kamar'         => $kamar->id,
+            'jumlah_pemesanan' => 1,
             'harga'            => $totalHarga,
-            'waktu_pemesanan'  => $waktuPemesanan,
+            'waktu_pemesanan'  => now(),
             'waktu_checkin'    => $waktuCheckin,
-            'waktu_checkout'   => $waktuCheckout,
+            'waktu_checkout'   => $waktuCheckout, // Checkout berbeda tiap kamar
+            'nama_pemesan'     => $validated['nama_lengkap'],
+            'kontak_pemesan'   => $validated['telepon'],
         ]);
+    }
 
-        // Jika ingin juga menyimpan data penyewa (nama, telepon, email) ke tabel penyewa,
-        // lakukan di sini (misalnya Buat Penyewa baru jika id_penyewa null). Saya tidak autosave
-        // karena struktur Penyewa Anda tidak saya tahu — tapi bisa ditambahkan.
+    return redirect()->route('kamar.index')->with('success', 'Pemesanan berhasil! Cek detail tiap kamar.');
+}
 
-        // Redirect atau tampilkan success
-        return redirect()->route('booking.create', [
-            'kamar' => $validated['kamar_id'],
-            'harga' => $hargaPerHari,
-            'nama_kamar' => $request->nama_kamar ?? null
-        ])->with('success', 'Permintaan sewa berhasil disimpan. ID Pemesanan: ' . $pemesanan->getKey());
+    // Detail Kamar (Opsional)
+    public function detail($no_kamar)
+    {
+        $room = Kamar::where('no_kamar', $no_kamar)->firstOrFail();
+        return view('kamar.detail', compact('room'));
     }
 }

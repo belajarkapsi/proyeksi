@@ -22,7 +22,7 @@
             <div class="absolute -top-6 -left-6 w-72 h-72 bg-green-500 rounded-xl -z-10"></div>
 
             <img class="rounded-lg shadow-lg w-full max-h-[420px] object-cover"
-                src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-2.png"
+                src="{{ asset('images/background.jpg') }}"
                 alt="Foto cabang" />
         </div>
 
