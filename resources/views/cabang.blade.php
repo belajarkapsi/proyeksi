@@ -21,9 +21,19 @@
             {{-- Background hijau seperti desain --}}
             <div class="absolute -top-6 -left-6 w-72 h-72 bg-green-500 rounded-xl -z-10"></div>
 
+            @if ($cabang->nama_cabang === 'Pondok Satu')
+            <img class="rounded-lg shadow-lg w-full max-h-[420px] object-cover"
+                src="{{ asset('images/pondok.jpg') }}"
+                alt="Foto cabang" />
+            @elseif ($cabang->nama_cabang === 'Pondok Siti Hajar')
+            <img class="rounded-lg shadow-lg w-full max-h-[420px] object-cover"
+                src="{{ asset('images/background.jpg') }}"
+                alt="Foto cabang" />
+            @else
             <img class="rounded-lg shadow-lg w-full max-h-[420px] object-cover"
                 src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-2.png"
                 alt="Foto cabang" />
+            @endif
         </div>
 
         {{-- BAGIAN DESKRIPSI DAN TEMPAT TERDEKAT --}}
