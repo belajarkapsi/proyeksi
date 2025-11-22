@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container mx-auto px-6 py-8 relative min-h-screen">
-  
+
   {{-- Breadcrumb --}}
   <nav class="text-sm text-gray-600 mb-6">
     <a href="#" class="mr-4 hover:underline">Location</a>
@@ -12,7 +12,7 @@
   </nav>
 
   {{-- TOMBOL BATAL (Floating Top Center - Muncul saat mode seleksi) --}}
-  <button id="top-cancel-btn" type="button" onclick="exitSelectionMode()" 
+  <button id="top-cancel-btn" type="button" onclick="exitSelectionMode()"
     class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 hidden bg-white text-gray-800 border border-gray-200 shadow-xl px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-50 transition-all items-center gap-2 ring-2 ring-white/50 animate-bounce-once">
     <span class="text-red-500 bg-red-100 p-1 rounded-full">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,45 +25,57 @@
   {{-- FORM WRAPPER (PENTING: Action mengarah ke booking.checkout) --}}
   <form id="bookingForm" action="{{ route('booking.checkout') }}" method="POST">
     @csrf
-    
-    {{-- GRID CARD KAMAR --}}
+
+{{-- GRID CARD KAMAR --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 select-none">
       @foreach($rooms as $room)
+
         @php
-            // Logic ketersediaan (sesuaikan dengan kolom DB Anda)
-            $isAvailable = $room->available ?? true;
+            // Normalisasi status (hapus spasi, huruf kecil)
+            $statusRaw = strtolower(trim($room->status));
+
+            // Cek logika ketersediaan
+            $isAvailable = ($statusRaw === 'tersedia');
+
             $roomId = $room->no_kamar;
 
-            // PENTING: URL untuk Single Click (Langsung ke Checkout)
-            // Ini akan menghasilkan link seperti: /booking/checkout?kamar=101
+            // URL hanya di-generate jika tersedia (opsional)
             $bookingUrl = route('booking.checkout', ['kamar' => $roomId]);
-
-            // URL untuk Tombol Detail (Ke Halaman Detail)
-            $detailUrl = route('kamar.detail', ['no_kamar' => $roomId]); 
+            $detailUrl = route('kamar.detail', ['no_kamar' => $roomId]);
         @endphp
 
-        <article 
+        <article
           id="card-{{ $roomId }}"
-          class="room-card relative bg-white rounded-xl shadow-lg p-4 overflow-hidden transition-all duration-300 border-2 border-transparent cursor-pointer group"
-          
-          {{-- DATA ATTRIBUTES (Digunakan oleh JavaScript) --}}
-          data-id="{{ $roomId }}"
-          data-available="{{ $isAvailable }}"
-          data-booking-url="{{ $bookingUrl }}" 
-          
-          {{-- EVENT HANDLERS (Untuk Long Press & Click) --}}
-          onmousedown="startPress('{{ $roomId }}')" 
-          onmouseup="cancelPress('{{ $roomId }}')" 
-          mouseleave="cancelPress('{{ $roomId }}')"
-          ontouchstart="startPress('{{ $roomId }}')" 
-          ontouchend="cancelPress('{{ $roomId }}')"
-          ontouchmove="cancelPress('{{ $roomId }}')"
-          onclick="handleCardClick('{{ $roomId }}', event)"
-        >
-          {{-- Input Checkbox Hidden (Untuk Form Multi Select) --}}
-          <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden">
 
-          {{-- Overlay Hijau (Muncul saat Terpilih) --}}
+          {{-- LOGIC CLASS: --}}
+          {{-- Jika Dihuni: Tambah opacity, grayscale background, cursor not allowed --}}
+          class="room-card relative bg-white rounded-xl shadow-lg p-4 overflow-hidden transition-all duration-300 border-2 border-transparent group
+          {{ $isAvailable
+             ? 'cursor-pointer hover:shadow-xl hover:border-green-100'
+             : 'opacity-80 cursor-not-allowed bg-gray-50' }}"
+
+          {{-- DATA ATTRIBUTES --}}
+          data-id="{{ $roomId }}"
+          data-available="{{ $isAvailable ? '1' : '0' }}"
+          data-booking-url="{{ $bookingUrl }}"
+
+          {{-- EVENT HANDLERS (PENTING: Hanya render jika Available) --}}
+          @if($isAvailable)
+            onmousedown="startPress('{{ $roomId }}')"
+            onmouseup="cancelPress('{{ $roomId }}')"
+            mouseleave="cancelPress('{{ $roomId }}')"
+            ontouchstart="startPress('{{ $roomId }}')"
+            ontouchend="cancelPress('{{ $roomId }}')"
+            ontouchmove="cancelPress('{{ $roomId }}')"
+            onclick="handleCardClick('{{ $roomId }}', event)"
+          @endif
+        >
+          {{-- Checkbox (Hanya render jika Available) --}}
+          @if($isAvailable)
+            <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden">
+          @endif
+
+          {{-- Overlay Hijau (Hanya bekerja jika ada checkbox) --}}
           <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-10 hidden border-2 border-green-600 rounded-xl flex items-center justify-center pointer-events-none">
              <div class="absolute top-3 right-3 bg-green-600 text-white rounded-full p-1.5 shadow-md transform scale-110">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
@@ -74,20 +86,24 @@
           <div class="rounded-lg overflow-hidden relative">
             <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}"
                  alt="Kamar {{ $room->no_kamar }}"
-                 ondragstart="return false;" 
-                 class="w-full h-44 object-cover rounded-md transition-transform duration-500 group-hover:scale-105">
-            
-            {{-- Loader Progress Bar (Indikator Tekan Lama) --}}
-            <div id="loader-{{ $roomId }}" class="absolute bottom-0 left-0 h-1.5 bg-green-500 w-0 transition-all ease-linear z-20"></div>
+                 ondragstart="return false;"
+                 {{-- Tambahkan class grayscale jika tidak tersedia --}}
+                 class="w-full h-44 object-cover rounded-md transition-transform duration-500 {{ $isAvailable ? 'group-hover:scale-105' : 'grayscale filter' }}">
+
+            {{-- Loader hanya muncul jika tersedia --}}
+            @if($isAvailable)
+                <div id="loader-{{ $roomId }}" class="absolute bottom-0 left-0 h-1.5 bg-green-500 w-0 transition-all ease-linear z-20"></div>
+            @endif
           </div>
 
           {{-- Badge Nomor & Lantai --}}
           <div class="absolute left-6 top-36 transform -translate-y-1/2 z-20 pointer-events-none">
             <div class="flex items-center space-x-2">
-              <div class="bg-green-600 text-white font-extrabold px-3 py-1 rounded-md text-lg shadow-sm">
+              {{-- Warna Badge berubah jadi abu-abu jika dihuni --}}
+              <div class="{{ $isAvailable ? 'bg-green-600' : 'bg-gray-500' }} text-white font-extrabold px-3 py-1 rounded-md text-lg shadow-sm">
                 {{ $room->no_kamar }}
               </div>
-              <div class="bg-white/90 text-green-700 text-xs px-2 py-0.5 rounded-full border border-green-100 shadow-sm">
+              <div class="bg-white/90 text-xs px-2 py-0.5 rounded-full border shadow-sm {{ $isAvailable ? 'text-green-700 border-green-100' : 'text-gray-500 border-gray-200' }}">
                 Lantai {{ $room->floor ?? '1' }}
               </div>
             </div>
@@ -98,14 +114,21 @@
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-xs text-gray-500">Harga :</p>
-                {{-- Pastikan kolom harga ada di DB --}}
-                <p class="text-sm font-bold text-green-700">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
+                <p class="text-sm font-bold {{ $isAvailable ? 'text-green-700' : 'text-gray-600' }}">
+                    Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}
+                </p>
               </div>
+
+              {{-- LABEL STATUS (Hijau vs Merah) --}}
               <div class="text-right">
                 @if( $isAvailable )
-                  <span class="inline-block text-xs bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-100">Tersedia</span>
+                  <span class="inline-block text-xs bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full border border-green-200">
+                    Tersedia
+                  </span>
                 @else
-                  <span class="inline-block text-xs bg-red-50 text-red-600 px-3 py-1 rounded-full border border-red-100">Terisi</span>
+                  <span class="inline-block text-xs bg-red-100 text-red-600 font-semibold px-3 py-1 rounded-full border border-red-200">
+                    Dihuni
+                  </span>
                 @endif
               </div>
             </div>
@@ -115,16 +138,16 @@
               <p>Kapasitas : Max. {{ $room->capacity ?? 2 }} Orang</p>
             </div>
 
-            {{-- TOMBOL DETAIL (Pojok Kanan Bawah) --}}
+            {{-- TOMBOL DETAIL --}}
             <div class="mt-4 text-right relative z-30">
               @if( $isAvailable )
-                  {{-- onclick="event.stopPropagation()" mencegah trigger ke kartu --}}
                   <a href="{{ $detailUrl }}"
                      onclick="event.stopPropagation()"
                      class="detail-btn inline-block bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-md shadow transition-colors">
                      Detail
                   </a>
               @else
+                 {{-- Tombol Mati untuk Dihuni --}}
                  <button disabled class="inline-block bg-gray-100 text-gray-400 text-sm font-semibold px-4 py-2 rounded-md border border-gray-200 cursor-not-allowed">
                    Detail
                  </button>
@@ -149,7 +172,7 @@
     {{-- FLOATING BAR (Muncul saat Mode Seleksi) --}}
     <div id="floating-bar" class="fixed bottom-6 inset-x-0 flex justify-center items-end transform translate-y-32 transition-transform duration-300 z-40 pointer-events-none">
       <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl px-2 py-2 pointer-events-auto flex items-center gap-2">
-        
+
         {{-- Tombol Batal --}}
         <button type="button" onclick="exitSelectionMode()" class="px-4 py-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl text-sm font-semibold transition-colors">
           Batal
@@ -163,6 +186,11 @@
           </span>
         </button>
       </div>
+    </div>
+
+    {{-- PAGINATION LINKS --}}
+    <div class="mt-10 mb-20"> {{-- mb-20 agar tidak tertutup floating bar --}}
+        {{ $rooms->links() }}
     </div>
 
   </form>
@@ -179,14 +207,14 @@
     const card = document.getElementById('card-' + id);
     const loader = document.getElementById('loader-' + id);
     const isAvailable = card.getAttribute('data-available');
-    
+
     // Jangan jalankan jika kamar penuh atau sudah mode seleksi
     if (isAvailable != "1" || isSelectionMode) return;
 
     // Animasi Loader
     if(loader) {
         loader.style.width = '100%';
-        loader.style.transitionDuration = '0.5s'; 
+        loader.style.transitionDuration = '0.5s';
     }
 
     pressTimer = setTimeout(() => {
@@ -219,10 +247,10 @@
     if (isSelectionMode) {
       event.preventDefault();
       toggleSelection(id);
-    } 
+    }
     // KONDISI B: Mode Normal -> Langsung Pindah ke Halaman Checkout (1 Kamar)
     else {
-      window.location.href = bookingUrl; 
+      window.location.href = bookingUrl;
     }
   }
 
@@ -231,7 +259,7 @@
     isSelectionMode = true;
     // Haptic feedback (getar) di Android
     if (navigator.vibrate) navigator.vibrate(50);
-    
+
     toggleSelection(initialId);
     showUI();
   }
@@ -259,7 +287,7 @@
     const checkedCount = document.querySelectorAll('input[name="selected_rooms[]"]:checked').length;
     document.getElementById('selected-count').innerText = checkedCount;
     document.getElementById('text-count-btn').innerText = checkedCount;
-    
+
     // Jika tidak ada yang dipilih, keluar mode seleksi
     if (checkedCount === 0) {
        exitSelectionMode();
@@ -270,13 +298,13 @@
   function exitSelectionMode() {
     isSelectionMode = false;
     document.querySelectorAll('input[name="selected_rooms[]"]').forEach(el => el.checked = false);
-    
+
     // Reset Tampilan
     document.querySelectorAll('.room-card').forEach(el => {
         el.classList.remove('ring-2', 'ring-green-600', 'scale-[0.98]');
     });
     document.querySelectorAll('[id^="overlay-"]').forEach(el => el.classList.add('hidden'));
-    
+
     hideUI();
   }
 

@@ -23,12 +23,12 @@ class BookingController extends Controller
         // KONDISI 1: Datang dari Form Multi-Select (Method POST)
         if ($request->isMethod('post') && $request->has('selected_rooms')) {
             $ids = $request->input('selected_rooms');
-            
+
             // Ambil semua kamar yang dipilih dari Database
             // Sesuaikan 'no_kamar' dengan primary key atau kolom unik di tabel Anda
             $rooms = Kamar::whereIn('no_kamar', $ids)->get();
-        } 
-        
+        }
+
         // KONDISI 2: Datang dari Klik Cepat Single (Method GET)
         else if ($request->has('kamar')) {
             $noKamar = $request->query('kamar');
@@ -40,8 +40,8 @@ class BookingController extends Controller
 
             // Bungkus kamar single menjadi Collection agar formatnya sama dengan multi
             $rooms = collect([$room]);
-        } 
-        
+        }
+
         // Jika diakses tanpa data
         else {
             return redirect()->route('kamar.index');
@@ -66,11 +66,11 @@ public function store(Request $request)
         'telepon'      => 'required|numeric',
         'email'        => 'required|email',
         'tanggal'      => 'required|date',
-        
+
         // Validasi Durasi menjadi Array
-        'durasi'       => 'required|array', 
+        'durasi'       => 'required|array',
         'durasi.*'     => 'integer|min:1', // Tiap durasi minimal 1 hari
-        
+
         'kamar_ids'    => 'required|array',
         'kamar_ids.*'  => 'exists:kamars,id',
     ]);
@@ -80,7 +80,7 @@ public function store(Request $request)
     // 2. Looping setiap kamar
     foreach ($validated['kamar_ids'] as $kamarId) {
         $kamar = Kamar::find($kamarId);
-        
+
         // AMBIL DURASI SPESIFIK UNTUK KAMAR INI
         // $request->durasi adalah array: [id_kamar => lama_hari]
         $lamaSewa = (int) $validated['durasi'][$kamarId];
@@ -111,6 +111,6 @@ public function store(Request $request)
     public function detail($no_kamar)
     {
         $room = Kamar::where('no_kamar', $no_kamar)->firstOrFail();
-        return view('kamar.detail', compact('room'));
+        return view('kamar.detail-kamar', compact('room'));
     }
 }

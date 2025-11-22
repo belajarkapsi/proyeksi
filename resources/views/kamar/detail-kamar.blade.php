@@ -27,10 +27,10 @@
         {{-- Two small images stacked --}}
         <div class="flex flex-col gap-4">
           <div class="rounded-lg overflow-hidden border border-gray-100 shadow-sm">
-            <img src="{{ asset($room->image2 ?? 'images/kamar-2.jpg') }}" alt="Kamar 2" class="w-full h-36 object-cover rounded-lg">
+            <img src="{{ asset('images/kamar.jpg') }}" alt="Kamar 2" class="w-full h-36 object-cover rounded-lg">
           </div>
           <div class="rounded-lg overflow-hidden border border-gray-100 shadow-sm">
-            <img src="{{ asset($room->image3 ?? 'images/kamar-3.jpg') }}" alt="Kamar 3" class="w-full h-36 object-cover rounded-lg">
+            <img src="{{ asset('images/kamar.jpg') }}" alt="Kamar 3" class="w-full h-36 object-cover rounded-lg">
           </div>
         </div>
       </div>
