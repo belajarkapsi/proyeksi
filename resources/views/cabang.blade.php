@@ -31,7 +31,7 @@
                 alt="Foto cabang" />
             @else
             <img class="rounded-lg shadow-lg w-full max-h-[420px] object-cover"
-                src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-2.png"
+                src="{{ asset('images/background.jpg') }}"
                 alt="Foto cabang" />
             @endif
         </div>
