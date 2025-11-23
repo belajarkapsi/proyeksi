@@ -23,7 +23,7 @@ Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
 
 
 // Route Cabang Kamar Berdasarkan Tipe
-Route::get('/cabang/{lokasi}/{kategori}/{slug?}', [CabangController::class, 'type'])
+Route::get('/cabang/{lokasi}/{kategori}/kamar/{slug?}', [CabangController::class, 'type'])
     ->middleware('validasi.cabang')
     ->name('cabang.type');
 
@@ -32,7 +32,7 @@ Route::get('/cabang/{lokasi}/{kategori}/{slug?}', [CabangController::class, 'typ
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'authenticate']);
-    
+
     Route::get('register', [RegisterController::class, 'register'])->name('register');
     Route::post('register', [RegisterController::class, 'store']);
 });
