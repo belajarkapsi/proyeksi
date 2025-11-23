@@ -2,162 +2,226 @@
 @section('title', 'Daftar Kamar')
 
 @section('content')
-<div class="container mx-auto px-6 py-8 relative min-h-screen">
 
-  {{-- Breadcrumb --}}
-  <nav class="text-sm text-gray-600 mb-6">
-    <a href="#" class="mr-4 hover:underline">Location</a>
-    <span class="mr-4">Pondok Siti Hajar</span>
-    <span class="text-gray-400">Ekonomis</span>
-  </nav>
+{{-- 1. LOGIKA FILTER DATA (PHP) --}}
+@php
+    $allData = $rooms instanceof \Illuminate\Pagination\LengthAwarePaginator ? $rooms->items() : $rooms;
+    $allRooms = collect($allData);
 
-  {{-- TOMBOL BATAL (Floating Top Center - Muncul saat mode seleksi) --}}
-  <button id="top-cancel-btn" type="button" onclick="exitSelectionMode()"
-    class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 hidden bg-white text-gray-800 border border-gray-200 shadow-xl px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-50 transition-all items-center gap-2 ring-2 ring-white/50 animate-bounce-once">
-    <span class="text-red-500 bg-red-100 p-1 rounded-full">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </span>
-    <span>Batalkan Pilihan</span>
-  </button>
+    // Filter Kategori
+    $ekonomis = $allRooms->filter(fn($r) => strtolower(trim($r->status)) === 'tersedia' && stripos(strtolower($r->tipe_kamar), 'ekonomis') !== false);
+    $standard = $allRooms->filter(fn($r) => strtolower(trim($r->status)) === 'tersedia' && stripos(strtolower($r->tipe_kamar), 'ekonomis') === false);
+    $occupied = $allRooms->filter(fn($r) => strtolower(trim($r->status)) !== 'tersedia');
+@endphp
 
-  {{-- FORM WRAPPER (PENTING: Action mengarah ke booking.checkout) --}}
-  <form id="bookingForm" action="{{ route('booking.checkout') }}" method="POST">
-    @csrf
+    {{-- 2. STICKY CATEGORY NAVIGATION --}}
+    {{-- top-20 disesuaikan dengan tinggi navbar layout.master (biasanya h-16 atau h-20) --}}
+    <div class="sticky top-16 lg:top-20 z-30 bg-gray-50/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                
+                {{-- Tombol Kembali --}}
+                <a href="{{ url('/dashboard') }}" class="inline-flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-green-700 transition-colors group w-fit">
+                     <div class="p-1.5 bg-white rounded-full border border-gray-200 shadow-sm group-hover:border-green-500 transition-colors">
+                        <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                     </div>
+                     <span>Kembali</span>
+                </a>
 
-{{-- GRID CARD KAMAR --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 select-none">
-      @foreach($rooms as $room)
-
-        @php
-            // Normalisasi status (hapus spasi, huruf kecil)
-            $statusRaw = strtolower(trim($room->status));
-
-            // Cek logika ketersediaan
-            $isAvailable = ($statusRaw === 'tersedia');
-
-            $roomId = $room->no_kamar;
-
-            // URL hanya di-generate jika tersedia (opsional)
-            $bookingUrl = route('booking.checkout', ['kamar' => $roomId]);
-            $detailUrl = route('kamar.detail', ['no_kamar' => $roomId]);
-        @endphp
-
-        <article
-          id="card-{{ $roomId }}"
-
-          {{-- LOGIC CLASS: --}}
-          {{-- Jika Dihuni: Tambah opacity, grayscale background, cursor not allowed --}}
-          class="room-card relative bg-white rounded-xl shadow-lg p-4 overflow-hidden transition-all duration-300 border-2 border-transparent group
-          {{ $isAvailable
-             ? 'cursor-pointer hover:shadow-xl hover:border-green-100'
-             : 'opacity-80 cursor-not-allowed bg-gray-50' }}"
-
-          {{-- DATA ATTRIBUTES --}}
-          data-id="{{ $roomId }}"
-          data-available="{{ $isAvailable ? '1' : '0' }}"
-          data-booking-url="{{ $bookingUrl }}"
-
-          {{-- EVENT HANDLERS (PENTING: Hanya render jika Available) --}}
-          @if($isAvailable)
-            onmousedown="startPress('{{ $roomId }}')"
-            onmouseup="cancelPress('{{ $roomId }}')"
-            mouseleave="cancelPress('{{ $roomId }}')"
-            ontouchstart="startPress('{{ $roomId }}')"
-            ontouchend="cancelPress('{{ $roomId }}')"
-            ontouchmove="cancelPress('{{ $roomId }}')"
-            onclick="handleCardClick('{{ $roomId }}', event)"
-          @endif
-        >
-          {{-- Checkbox (Hanya render jika Available) --}}
-          @if($isAvailable)
-            <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden">
-          @endif
-
-          {{-- Overlay Hijau (Hanya bekerja jika ada checkbox) --}}
-          <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-10 hidden border-2 border-green-600 rounded-xl flex items-center justify-center pointer-events-none">
-             <div class="absolute top-3 right-3 bg-green-600 text-white rounded-full p-1.5 shadow-md transform scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-             </div>
-          </div>
-
-          {{-- Gambar Kamar --}}
-          <div class="rounded-lg overflow-hidden relative">
-            <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}"
-                 alt="Kamar {{ $room->no_kamar }}"
-                 ondragstart="return false;"
-                 {{-- Tambahkan class grayscale jika tidak tersedia --}}
-                 class="w-full h-44 object-cover rounded-md transition-transform duration-500 {{ $isAvailable ? 'group-hover:scale-105' : 'grayscale filter' }}">
-
-            {{-- Loader hanya muncul jika tersedia --}}
-            @if($isAvailable)
-                <div id="loader-{{ $roomId }}" class="absolute bottom-0 left-0 h-1.5 bg-green-500 w-0 transition-all ease-linear z-20"></div>
-            @endif
-          </div>
-
-          {{-- Badge Nomor & Lantai --}}
-          <div class="absolute left-6 top-36 transform -translate-y-1/2 z-20 pointer-events-none">
-            <div class="flex items-center space-x-2">
-              {{-- Warna Badge berubah jadi abu-abu jika dihuni --}}
-              <div class="{{ $isAvailable ? 'bg-green-600' : 'bg-gray-500' }} text-white font-extrabold px-3 py-1 rounded-md text-lg shadow-sm">
-                {{ $room->no_kamar }}
-              </div>
-              <div class="bg-white/90 text-xs px-2 py-0.5 rounded-full border shadow-sm {{ $isAvailable ? 'text-green-700 border-green-100' : 'text-gray-500 border-gray-200' }}">
-                Lantai {{ $room->floor ?? '1' }}
-              </div>
+                {{-- Filter Tabs --}}
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
+                    <a href="#ekonomis" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-green-700 border border-green-200 hover:bg-green-50 shadow-sm transition-all focus:ring-2 focus:ring-green-500 whitespace-nowrap">
+                        Ekonomis <span class="ml-1 bg-green-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $ekonomis->count() }}</span>
+                    </a>
+                    <a href="#standard" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-blue-700 border border-blue-200 hover:bg-blue-50 shadow-sm transition-all focus:ring-2 focus:ring-blue-500 whitespace-nowrap">
+                        Standard <span class="ml-1 bg-blue-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $standard->count() }}</span>
+                    </a>
+                    <a href="#occupied" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-gray-500 border border-gray-200 hover:bg-gray-100 shadow-sm transition-all focus:ring-2 focus:ring-gray-400 whitespace-nowrap">
+                        Terisi <span class="ml-1 bg-gray-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $occupied->count() }}</span>
+                    </a>
+                </div>
             </div>
-          </div>
+        </div>
+    </div>
 
-          {{-- Detail Teks --}}
-          <div class="mt-4 text-sm text-gray-700 relative z-0">
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="text-xs text-gray-500">Harga :</p>
-                <p class="text-sm font-bold {{ $isAvailable ? 'text-green-700' : 'text-gray-600' }}">
-                    Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}
-                </p>
-              </div>
+    {{-- 3. TOMBOL BATAL PILIHAN (Floating Top) --}}
+    <button id="top-cancel-btn" onclick="exitSelectionMode()" class="fixed top-36 lg:top-40 left-1/2 transform -translate-x-1/2 z-50 hidden items-center gap-2 bg-red-500 text-white px-6 py-2.5 rounded-full shadow-xl animate-bounce-once ring-4 ring-white/50 hover:bg-red-600 transition-transform active:scale-95 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <span class="text-xs md:text-sm font-bold whitespace-nowrap">Batalkan Pilihan</span>
+    </button>
 
-              {{-- LABEL STATUS (Hijau vs Merah) --}}
-              <div class="text-right">
-                @if( $isAvailable )
-                  <span class="inline-block text-xs bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full border border-green-200">
-                    Tersedia
-                  </span>
+    {{-- 4. FORM BOOKING UTAMA --}}
+    <form id="bookingForm" action="{{ route('booking.checkout') }}" method="POST">
+        @csrf
+        <div class="container mx-auto px-4 py-8 space-y-16">
+            
+            {{-- === SECTION A: EKONOMIS === --}}
+            {{-- scroll-mt-48 agar judul tidak ketutup navbar saat discroll --}}
+            <section id="ekonomis" class="scroll-mt-48">
+                <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-green-500">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Ekonomis</h2>
+                </div>
+
+                @if($ekonomis->isEmpty())
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-10 text-center text-gray-400">
+                        <p class="font-medium">Tidak ada kamar ekonomis tersedia.</p>
+                    </div>
                 @else
-                  <span class="inline-block text-xs bg-red-100 text-red-600 font-semibold px-3 py-1 rounded-full border border-red-200">
-                    Dihuni
-                  </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($ekonomis as $room)
+                            {{-- START CARD EKONOMIS --}}
+                            <div id="card-{{ $room->no_kamar }}" 
+                                class="room-card group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+                                data-id="{{ $room->no_kamar }}" 
+                                data-available="1"
+                                data-booking-url="{{ route('booking.checkout', ['kamar' => $room->no_kamar]) }}"
+                                onmousedown="startPress('{{ $room->no_kamar }}')" onmouseup="cancelPress('{{ $room->no_kamar }}')" onmouseleave="cancelPress('{{ $room->no_kamar }}')"
+                                ontouchstart="startPress('{{ $room->no_kamar }}')" ontouchend="cancelPress('{{ $room->no_kamar }}')" ontouchmove="cancelPress('{{ $room->no_kamar }}')"
+                                onclick="handleCardClick('{{ $room->no_kamar }}', event)">
+                                
+                                {{-- Checkbox Hidden --}}
+                                <input type="checkbox" name="selected_rooms[]" value="{{ $room->no_kamar }}" id="check-{{ $room->no_kamar }}" class="hidden">
+                                
+                                {{-- Overlay Hijau --}}
+                                <div id="overlay-{{ $room->no_kamar }}" class="absolute inset-0 bg-green-600/20 z-30 hidden border-[3px] border-green-600 rounded-2xl flex items-center justify-center pointer-events-none">
+                                    <div class="bg-green-600 text-white rounded-full p-2 shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                                </div>
+
+                                {{-- Gambar --}}
+                                <div class="relative h-48 bg-gray-200 overflow-hidden">
+                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" ondragstart="return false;">
+                                    {{-- Loader Bar --}}
+                                    <div id="loader-{{ $room->no_kamar }}" class="absolute bottom-0 left-0 h-1.5 bg-green-500 w-0 z-20"></div>
+                                    {{-- Badge Nomor --}}
+                                    <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-gray-800 shadow-sm z-10">
+                                        No. {{ $room->no_kamar }}
+                                    </div>
+                                </div>
+
+                                {{-- Info --}}
+                                <div class="p-4">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ekonomis</p>
+                                            <p class="text-lg font-bold text-green-700">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Tersedia</span>
+                                    </div>
+                                    
+                                    {{-- Tombol Detail (Link A) --}}
+                                    <a href="{{ route('kamar.detail', ['no_kamar' => $room->no_kamar]) }}" class="detail-btn mt-4 block w-full text-center py-2.5 rounded-lg bg-gray-50 text-green-700 font-bold text-sm hover:bg-green-600 hover:text-white transition-colors border border-gray-100">
+                                        Lihat Detail
+                                    </a>
+                                </div>
+                            </div>
+                            {{-- END CARD EKONOMIS --}}
+                        @endforeach
+                    </div>
                 @endif
-              </div>
-            </div>
+            </section>
 
-            <div class="mt-3 text-xs text-gray-600 space-y-1">
-              <p>Tempat Tidur : {{ $room->bed_type ?? 'Bed 160' }}</p>
-              <p>Kapasitas : Max. {{ $room->capacity ?? 2 }} Orang</p>
-            </div>
+            {{-- === SECTION B: STANDARD === --}}
+            <section id="standard" class="scroll-mt-48">
+                <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-blue-500">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Standard</h2>
+                </div>
 
-            {{-- TOMBOL DETAIL --}}
-            <div class="mt-4 text-right relative z-30">
-              @if( $isAvailable )
-                  <a href="{{ $detailUrl }}"
-                     onclick="event.stopPropagation()"
-                     class="detail-btn inline-block bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-md shadow transition-colors">
-                     Detail
-                  </a>
-              @else
-                 {{-- Tombol Mati untuk Dihuni --}}
-                 <button disabled class="inline-block bg-gray-100 text-gray-400 text-sm font-semibold px-4 py-2 rounded-md border border-gray-200 cursor-not-allowed">
-                   Detail
-                 </button>
-              @endif
-            </div>
-          </div>
-        </article>
-      @endforeach
+                @if($standard->isEmpty())
+                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-10 text-center text-gray-400">
+                        <p class="font-medium">Tidak ada kamar standard tersedia.</p>
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($standard as $room)
+                            {{-- START CARD STANDARD --}}
+                            <div id="card-{{ $room->no_kamar }}" 
+                                class="room-card group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer hover:border-blue-200"
+                                data-id="{{ $room->no_kamar }}" 
+                                data-available="1"
+                                data-booking-url="{{ route('booking.checkout', ['kamar' => $room->no_kamar]) }}"
+                                onmousedown="startPress('{{ $room->no_kamar }}')" onmouseup="cancelPress('{{ $room->no_kamar }}')" onmouseleave="cancelPress('{{ $room->no_kamar }}')"
+                                ontouchstart="startPress('{{ $room->no_kamar }}')" ontouchend="cancelPress('{{ $room->no_kamar }}')" ontouchmove="cancelPress('{{ $room->no_kamar }}')"
+                                onclick="handleCardClick('{{ $room->no_kamar }}', event)">
+                                
+                                <input type="checkbox" name="selected_rooms[]" value="{{ $room->no_kamar }}" id="check-{{ $room->no_kamar }}" class="hidden">
+                                
+                                <div id="overlay-{{ $room->no_kamar }}" class="absolute inset-0 bg-green-600/20 z-30 hidden border-[3px] border-green-600 rounded-2xl flex items-center justify-center pointer-events-none">
+                                    <div class="bg-green-600 text-white rounded-full p-2 shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                                </div>
 
-      {{-- SKELETON LOADER (Jika data kosong) --}}
+                                <div class="relative h-48 bg-gray-200 overflow-hidden">
+                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" ondragstart="return false;">
+                                    <div id="loader-{{ $room->no_kamar }}" class="absolute bottom-0 left-0 h-1.5 bg-blue-500 w-0 z-20"></div>
+                                    <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-gray-800 shadow-sm z-10">
+                                        No. {{ $room->no_kamar }}
+                                    </div>
+                                </div>
+
+                                <div class="p-4">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Standard</p>
+                                            <p class="text-lg font-bold text-blue-700">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
+                                        </div>
+                                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Tersedia</span>
+                                    </div>
+                                    
+                                    <a href="{{ route('kamar.detail', ['no_kamar' => $room->no_kamar]) }}" class="detail-btn mt-4 block w-full text-center py-2.5 rounded-lg bg-gray-50 text-blue-600 font-bold text-sm hover:bg-blue-600 hover:text-white transition-colors border border-gray-100">
+                                        Lihat Detail
+                                    </a>
+                                </div>
+                            </div>
+                            {{-- END CARD STANDARD --}}
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+
+            {{-- === SECTION C: TERISI / MAINTENANCE === --}}
+            <section id="occupied" class="scroll-mt-48 bg-gray-100/80 rounded-3xl p-6 border border-gray-200">
+                <div class="flex items-center gap-3 mb-6 opacity-60">
+                    <div class="w-1.5 h-8 bg-gray-500 rounded-full"></div>
+                    <h2 class="text-xl font-bold text-gray-700">Terisi / Maintenance</h2>
+                </div>
+
+                @if($occupied->isEmpty())
+                    <div class="text-center text-gray-400 py-4">Semua kamar tersedia (Kosong).</div>
+                @else
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-90">
+                        @foreach($occupied as $room)
+                            {{-- START CARD OCCUPIED --}}
+                            <div class="relative bg-white rounded-2xl shadow-none border border-gray-200 overflow-hidden opacity-70 grayscale filter cursor-not-allowed hover:opacity-100 transition-opacity">
+                                <div class="relative h-48 bg-gray-300">
+                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover opacity-50" ondragstart="return false;">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span class="bg-black/60 text-white px-4 py-1.5 rounded-lg font-bold text-sm tracking-wide border border-white/20">DIHUNI</span>
+                                    </div>
+                                    <div class="absolute bottom-3 left-3 bg-white/80 px-3 py-1 rounded-lg text-sm font-bold text-gray-600">
+                                        No. {{ $room->no_kamar }}
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p class="text-xs font-bold text-gray-400 uppercase">{{ $room->tipe_kamar }}</p>
+                                            <p class="text-lg font-bold text-gray-500">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
+                                        </div>
+                                        <span class="bg-gray-200 text-gray-500 text-[10px] font-bold px-2 py-1 rounded uppercase">Terisi</span>
+                                    </div>
+                                    <button type="button" disabled class="mt-4 w-full block text-center py-2.5 rounded-lg bg-gray-100 text-gray-400 font-semibold text-sm cursor-not-allowed">
+                                        Detail
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- END CARD OCCUPIED --}}
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+
+        </div>
+
+              {{-- SKELETON LOADER (Jika data kosong) --}}
       @if($rooms->isEmpty())
         @for($i=0;$i<6;$i++)
           <div class="bg-white rounded-xl shadow-lg p-4 animate-pulse">
@@ -188,13 +252,11 @@
       </div>
     </div>
 
-    {{-- PAGINATION LINKS --}}
-    <div class="mt-10 mb-20"> {{-- mb-20 agar tidak tertutup floating bar --}}
-        {{ $rooms->links() }}
-    </div>
 
-  </form>
+    </form>
 </div>
+
+@endsection
 
 {{-- JAVASCRIPT VANILLA --}}
 <script>
@@ -321,4 +383,4 @@
     document.getElementById('top-cancel-btn').classList.remove('flex');
   }
 </script>
-@endsection
+
