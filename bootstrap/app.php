@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PastikanKepemilikanUser;
 use App\Http\Middleware\GuestOnly;
 use App\Http\Middleware\HarusLoginUntukPesan;
 use App\Http\Middleware\LengkapiProfil;
@@ -22,7 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest.only' => GuestOnly::class,
             'booking.only' => HarusLoginUntukPesan::class,
             'validasi.cabang' => ValidasiCabang::class,
-            'lengkapi.profil' => LengkapiProfil::class
+            'lengkapi.profil' => LengkapiProfil::class,
+            'user.sebenarnya' => PastikanKepemilikanUser::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
