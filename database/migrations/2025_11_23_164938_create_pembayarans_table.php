@@ -17,15 +17,16 @@ return new class extends Migration
                 table:'penyewa',
                 column: 'id_penyewa'
             )->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('id_pemesanan')->constrained(
-                table:'pemesanan',
-                column: 'id_pemesanan'
-            )->onUpdate('cascade')->onDelete('cascade');
+            $table->string('id_pemesanan', 20);
             $table->integer('total_pembayaran');
             $table->string('kode_transaksi', 100);
             $table->date('waktu_pembayaran');
             $table->string('bukti_pembayaran', 255);
             $table->timestamps();
+
+            $table->foreign('id_pemesanan')
+                ->references('id_pemesanan')->on('pemesanan')
+                ->onDelete('cascade');
         });
     }
 

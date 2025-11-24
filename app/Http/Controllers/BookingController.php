@@ -13,14 +13,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class BookingController extends Controller
 {
-    // 1. Halaman daftar kamar
-    public function index()
-    {
-        $rooms = Kamar::all();
-        return view('kamar.daftar-kamar', compact('rooms'));
-    }
-
-    // 2. Jembatan ke halaman checkout (single / multi)
+    // Jembatan ke halaman checkout (form booking)
     public function checkout(Request $request)
     {
         // Dari form multi-select (POST)
@@ -34,24 +27,33 @@ class BookingController extends Controller
             $room = Kamar::where('no_kamar', $noKamar)->first();
 
             if (!$room) {
-                return redirect()->route('kamar.index')
-                    ->with('error', 'Kamar tidak ditemukan');
+                Alert::error('Gagal', 'Kamar tidak ditemukan!');
+                return redirect()->route('dashboard');
             }
-
             $rooms = collect([$room]);
         }
         // Akses tanpa data
         else {
-            return redirect()->route('kamar.index');
+            Alert::error('Gagal', 'Silakan pilih kamar terlebih dahulu sebelum memesan.');
+            return redirect()->route('dashboard');
         }
+
+        $firstRoom = $rooms->first();
+
+        // Eager load cabang biar efisien
+        if ($firstRoom && !$firstRoom->relationLoaded('cabang')) {
+            $firstRoom->load('cabang');
+        }
+
+        $cabang = $firstRoom ? $firstRoom->cabang : null;
 
         // Hitung total harga dasar (per malam) untuk informasi saja
         $totalBasePrice = $rooms->sum('harga_kamar');
 
-        return view('kamar.booking', compact('rooms', 'totalBasePrice'));
+        return view('kamar.booking', compact('rooms', 'totalBasePrice', 'cabang'));
     }
 
-    // 3. Simpan pemesanan (header + detail) + lock + cek overlap
+    // Simpan pemesanan (header + detail) + lock + cek overlap
     public function store(Request $request)
     {
         // Pastikan user login (karena tabel pemesanan butuh id_penyewa)
@@ -176,16 +178,41 @@ class BookingController extends Controller
                 ->withErrors(['booking' => $e->getMessage()]);
         }
 
+        $pemesanan->load(['items.kamar', 'penyewa']);
+
+    dd([
+        'STATUS' => '✅ SUKSES! Data berhasil masuk ke Database',
+
+        '1. INFO HEADER PESANAN (Tabel Pemesanan)' => [
+            'ID Pemesanan' => $pemesanan->id_pemesanan,
+            'Tanggal Pesan' => $pemesanan->waktu_pemesanan,
+            'Total Harga' => 'Rp ' . number_format($pemesanan->total_harga, 0, ',', '.'),
+            'Status' => $pemesanan->status,
+        ],
+
+        '2. SIAPA YANG PESAN? (Cek Relasi ke User)' => [
+            'ID Penyewa (Foreign Key)' => $pemesanan->id_penyewa,
+            'Nama di Tabel User' => $pemesanan->penyewa->nama_lengkap,
+            'Email' => $pemesanan->penyewa->email,
+            'Note' => 'Jika nama ini muncul, berarti relasi ke tabel user AMAN (Tidak Duplikat).'
+        ],
+
+        '3. DETAIL KAMAR (Tabel Pemesanan Item)' => $pemesanan->items->map(function($item) {
+            return [
+                'Nomor Kamar' => $item->kamar->no_kamar,
+                'Tipe Kamar' => $item->kamar->tipe_kamar,
+                'Check In' => $item->waktu_checkin->format('Y-m-d'),
+                'Check Out' => $item->waktu_checkout->format('Y-m-d'),
+                'Harga Subtotal' => $item->harga
+            ];
+        })->toArray(),
+    ]);
+
+        $cabang = $pemesanan->cabang;
+
         Alert::success('Berhasil', "Pemesanan {$pemesanan->id_pemesanan} berhasil dibuat.");
 
-        return redirect()->route('kamar.index');
-    }
-
-    // 4. Detail Kamar
-    public function detail($no_kamar)
-    {
-        $room = Kamar::where('no_kamar', $no_kamar)->firstOrFail();
-        return view('kamar.detail-kamar', compact('room'));
+        return redirect()->route('cabang.kamar.index', $cabang->route_params);
     }
 
     // Generate kode pemesanan: PS00001, PS00002, ...
@@ -193,9 +220,7 @@ class BookingController extends Controller
     {
         $last = Pemesanan::orderBy('id_pemesanan', 'desc')->first();
 
-        if (!$last) {
-            return 'PS00001';
-        }
+        if (!$last) return 'PS00001';
 
         $num = (int) substr($last->id_pemesanan, 2); // buang "PS"
         $num++;

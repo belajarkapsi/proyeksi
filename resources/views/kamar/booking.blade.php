@@ -3,6 +3,21 @@
 
 @section('content')
 
+{{-- TOMBOL KEMBALI (Dibuat Sticky agar mudah diakses saat scroll) --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-30 pointer-events-none">
+        @if(isset($cabang))
+        <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}" class="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 text-green-700 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:bg-green-600 hover:text-white transition-all duration-300 group transform hover:-translate-y-0.5">
+            <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Kembali
+        </a>
+        @else
+        <a href="{{ route('dashboard') }}" class="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 text-green-700 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:bg-green-600 hover:text-white transition-all duration-300 group transform hover:-translate-y-0.5">
+            <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Kembali ke Dashboard
+        </a>
+        @endif
+    </div>
+
 <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
 
@@ -39,7 +54,7 @@
                         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 
                             {{-- Nama --}}
-                            <div class="sm:col-span-6">
+                            <div class="sm:col-span-3">
                                 <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
                                 <input type="text" name="nama_lengkap" required value="{{ old('nama_lengkap', Auth::user()->nama_lengkap) }}" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:ring-green-500 focus:border-green-500 bg-gray-100 text-gray-500 cursor-not-allowed" readonly />
                             </div>
@@ -49,7 +64,7 @@
                                 <input type="number" name="telepon" required value="{{ old('no_telp', Auth::user()->no_telp) }}" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:ring-green-500 focus:border-green-500 bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
                             </div>
                             {{-- Email --}}
-                            <div class="sm:col-span-3">
+                            <div class="sm:col-span-6">
                                 <label class="block text-sm font-medium text-gray-700">Email</label>
                                 <input type="email" name="email" required value="{{ old('email', Auth::user()->email) }}" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm border p-2 focus:ring-green-500 focus:border-green-500 bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
                             </div>
@@ -131,13 +146,13 @@
 
                                 {{-- INPUT HIDDEN YANG DIKIRIM KE BACKEND (Total Hari) --}}
                                 {{-- Logic JS akan mengisi value ini: (Satuan * Jumlah) --}}
-                                <input type="hidden" name="durasi[{{ $room->id }}]" form="bookingForm" class="final-days-input" value="1">
+                                <input type="hidden" name="durasi[{{ $room->id_kamar }}]" form="bookingForm" class="final-days-input" value="1">
                             </div>
 
                             {{-- Subtotal Per Kamar --}}
                             <div class="flex justify-between items-center text-xs pt-1">
                                 <span class="text-gray-500 detail-text">1 Hari</span>
-                                <span class="font-bold text-gray-800 subtotal-display">Rp{{ number_format($room->harga, 0, ',', '.') }}</span>
+                                <span class="font-bold text-gray-800 subtotal-display">Rp{{ number_format($room->harga_kamar, 0, ',', '.') }}</span>
                             </div>
                         </div>
                         @endforeach

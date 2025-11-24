@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Cabang extends Model
 {
@@ -13,7 +14,7 @@ class Cabang extends Model
     protected $table = 'cabang';
     protected $primaryKey = 'id_cabang';
     public $timestamps = true;
-    
+
     protected $fillable = [
         'nama_cabang',
         'deskripsi',
@@ -27,4 +28,12 @@ class Cabang extends Model
     {
         return $this->hasMany(Kamar::class, 'id_cabang', 'id_cabang');
     }
+
+    public function getRouteParamsAttribute()
+{
+    return [
+        'lokasi'   => Str::slug($this->lokasi),
+        'kategori' => Str::slug($this->kategori_cabang)
+    ];
+}
 }
