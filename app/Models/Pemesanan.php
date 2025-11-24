@@ -8,18 +8,20 @@ class Pemesanan extends Model
 {
     protected $table = 'pemesanan';
     protected $primaryKey = 'id_pemesanan';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
+        'id_pemesanan',
         'id_penyewa',
         'id_cabang',
-        'id_kamar',
-        'jumlah_pemesanan',
-        'harga',
         'waktu_pemesanan',
-        'waktu_checkin',
-        'waktu_checkout',
+        'total_harga',
+        'status',
+    ];
+
+    protected $casts = [
+        'waktu_pemesanan' => 'datetime',
     ];
 
     // relasi
@@ -33,8 +35,8 @@ class Pemesanan extends Model
         return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
     }
 
-    public function kamar()
+    public function items()
     {
-        return $this->belongsTo(Kamar::class, 'id_kamar', 'id_kamar');
+        return $this->hasMany(PemesananItem::class, 'id_pemesanan', 'id_pemesanan');
     }
 }

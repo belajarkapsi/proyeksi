@@ -2,115 +2,204 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kamar;
+use App\Models\Pemesanan;
+use App\Models\PemesananItem;
 use Illuminate\Http\Request;
-use App\Models\Kamar; // Pastikan ini sesuai nama Model Anda
-use App\Models\Pemesanan; // Model untuk simpan
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class BookingController extends Controller
 {
-    // Menampilkan Daftar Kamar
+    // 1. Halaman daftar kamar
     public function index()
     {
-        $rooms = Kamar::all(); // Atau logic lain sesuai kebutuhan
-        return view('kamar.index', compact('rooms'));
+        $rooms = Kamar::all();
+        return view('kamar.daftar-kamar', compact('rooms'));
     }
 
-    // === JEMBATAN PENGHUBUNG (LOGIC UTAMA) ===
+    // 2. Jembatan ke halaman checkout (single / multi)
     public function checkout(Request $request)
     {
-        // KONDISI 1: Datang dari Form Multi-Select (Method POST)
+        // Dari form multi-select (POST)
         if ($request->isMethod('post') && $request->has('selected_rooms')) {
-            $ids = $request->input('selected_rooms');
-
-            // Ambil semua kamar yang dipilih dari Database
-            // Sesuaikan 'no_kamar' dengan primary key atau kolom unik di tabel Anda
-            $rooms = Kamar::whereIn('no_kamar', $ids)->get();
+            $nos = $request->input('selected_rooms'); // diasumsikan berisi no_kamar
+            $rooms = Kamar::whereIn('no_kamar', $nos)->get();
         }
-
-        // KONDISI 2: Datang dari Klik Cepat Single (Method GET)
+        // Dari klik cepat single (GET ?kamar=xxx)
         else if ($request->has('kamar')) {
             $noKamar = $request->query('kamar');
             $room = Kamar::where('no_kamar', $noKamar)->first();
 
             if (!$room) {
-                return redirect()->route('kamar.index')->with('error', 'Kamar tidak ditemukan');
+                return redirect()->route('kamar.index')
+                    ->with('error', 'Kamar tidak ditemukan');
             }
 
-            // Bungkus kamar single menjadi Collection agar formatnya sama dengan multi
             $rooms = collect([$room]);
         }
-
-        // Jika diakses tanpa data
+        // Akses tanpa data
         else {
             return redirect()->route('kamar.index');
         }
 
-        // Hitung Total Harga Dasar (Harga per malam total semua kamar)
-        // Pastikan kolom harga di database bertipe angka (integer/double)
-        $totalBasePrice = $rooms->sum('harga');
+        // Hitung total harga dasar (per malam) untuk informasi saja
+        $totalBasePrice = $rooms->sum('harga_kamar');
 
-        // Lempar data ke View Checkout yang baru
-        return view('kamar/booking', compact('rooms', 'totalBasePrice'));
+        return view('kamar.booking', compact('rooms', 'totalBasePrice'));
     }
 
-    // Proses Simpan Akhir
-    // BookingController.php
+    // 3. Simpan pemesanan (header + detail) + lock + cek overlap
+    public function store(Request $request)
+    {
+        // Pastikan user login (karena tabel pemesanan butuh id_penyewa)
+        if (!Auth::check()) {
+            Alert::error('Eitss', 'Silakan login terlebih dahulu untuk melakukan pemesanan.');
 
-public function store(Request $request)
-{
-    // 1. Validasi
-    $validated = $request->validate([
-        'nama_lengkap' => 'required|string|max:255',
-        'telepon'      => 'required|numeric',
-        'email'        => 'required|email',
-        'tanggal'      => 'required|date',
+            return redirect()->route('login');
+        }
 
-        // Validasi Durasi menjadi Array
-        'durasi'       => 'required|array',
-        'durasi.*'     => 'integer|min:1', // Tiap durasi minimal 1 hari
+        // 1. Validasi input
+        $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'telepon'      => 'required|numeric',
+            'email'        => 'required|email',
+            'tanggal'      => 'required|date',
 
-        'kamar_ids'    => 'required|array',
-        'kamar_ids.*'  => 'exists:kamars,id',
-    ]);
+            'kamar_ids'    => 'required|array|min:1',
+            'kamar_ids.*'  => 'exists:kamar,id_kamar',
 
-    $waktuCheckin = Carbon::parse($validated['tanggal']);
-
-    // 2. Looping setiap kamar
-    foreach ($validated['kamar_ids'] as $kamarId) {
-        $kamar = Kamar::find($kamarId);
-
-        // AMBIL DURASI SPESIFIK UNTUK KAMAR INI
-        // $request->durasi adalah array: [id_kamar => lama_hari]
-        $lamaSewa = (int) $validated['durasi'][$kamarId];
-
-        // Hitung Total Harga Kamar Ini (Harga x Durasi Spesifik)
-        $totalHarga = $kamar->harga * $lamaSewa;
-
-        // Hitung Tanggal Checkout Spesifik
-        $waktuCheckout = (clone $waktuCheckin)->addDays($lamaSewa);
-
-        Pemesanan::create([
-            'id_penyewa'       => Auth::id() ?? null,
-            'id_kamar'         => $kamar->id,
-            'jumlah_pemesanan' => 1,
-            'harga'            => $totalHarga,
-            'waktu_pemesanan'  => now(),
-            'waktu_checkin'    => $waktuCheckin,
-            'waktu_checkout'   => $waktuCheckout, // Checkout berbeda tiap kamar
-            'nama_pemesan'     => $validated['nama_lengkap'],
-            'kontak_pemesan'   => $validated['telepon'],
+            'durasi'       => 'required|array',
+            'durasi.*'     => 'integer|min:1',
         ]);
+
+        // 2. Ambil data kamar yang dipesan
+        $kamarIds = $validated['kamar_ids'];
+        $kamars   = Kamar::whereIn('id_kamar', $kamarIds)->get();
+
+        if ($kamars->count() !== count($kamarIds)) {
+            return back()->withErrors(['booking' => 'Sebagian kamar tidak ditemukan.']);
+        }
+
+        $tanggalCheckin = Carbon::parse($validated['tanggal'])->startOfDay();
+        $idPenyewa      = Auth::user()->id_penyewa ?? Auth::id(); // sesuaikan dengan modelmu
+        $idCabang       = $kamars->first()->id_cabang ?? null;
+
+        try {
+            $pemesanan = DB::transaction(function () use (
+                $kamarIds,
+                $kamars,
+                $validated,
+                $tanggalCheckin,
+                $idPenyewa,
+                $idCabang
+            ) {
+                // 2.a. Lock semua baris kamar yang akan dipesan
+                DB::table('kamar')
+                    ->whereIn('id_kamar', $kamarIds)
+                    ->lockForUpdate()
+                    ->get();
+
+                $totalHargaHeader = 0;
+                $itemsData = [];
+
+                foreach ($kamarIds as $idKamar) {
+                    $kamar = $kamars->firstWhere('id_kamar', $idKamar);
+
+                    if (!$kamar) {
+                        throw new \Exception("Kamar dengan ID $idKamar tidak ditemukan.");
+                    }
+
+                    // Durasi untuk kamar ini (dalam hari)
+                    if (!isset($validated['durasi'][$idKamar])) {
+                        throw new \Exception("Durasi sewa untuk kamar {$kamar->no_kamar} belum diisi.");
+                    }
+
+                    $lamaSewa = (int) $validated['durasi'][$idKamar];
+                    $checkin  = clone $tanggalCheckin;
+                    $checkout = (clone $tanggalCheckin)->addDays($lamaSewa);
+
+                    // 2.b. Cek overlapped date di pemesanan_item
+                    $adaOverlap = PemesananItem::where('id_kamar', $idKamar)
+                        ->where(function ($q) use ($checkin, $checkout) {
+                            // NOT (checkout_lama <= checkin_baru OR checkin_lama >= checkout_baru)
+                            $q->whereNot(function ($q2) use ($checkin, $checkout) {
+                                $q2->where('waktu_checkout', '<=', $checkin->toDateString())
+                                    ->orWhere('waktu_checkin', '>=', $checkout->toDateString());
+                            });
+                        })
+                        ->exists();
+
+                    if ($adaOverlap) {
+                        throw new \Exception("Kamar {$kamar->no_kamar} sudah dibooking di rentang tanggal tersebut.");
+                    }
+
+                    // 2.c. Hitung subtotal kamar ini
+                    $subtotal = $kamar->harga_kamar * $lamaSewa;
+                    $totalHargaHeader += $subtotal;
+
+                    $itemsData[] = [
+                        'id_kamar'       => $idKamar,
+                        'jumlah_pesan'   => 1,
+                        'harga'          => $subtotal,     // total harga untuk kamar ini
+                        'waktu_checkin'  => $checkin->toDateString(),
+                        'waktu_checkout' => $checkout->toDateString(),
+                    ];
+                }
+
+                // 2.d. Buat header pemesanan (1x saja)
+                $idPemesanan = $this->generateKodePemesanan();
+
+                $pemesanan = Pemesanan::create([
+                    'id_pemesanan'   => $idPemesanan,
+                    'id_penyewa'     => $idPenyewa,
+                    'id_cabang'      => $idCabang,
+                    'waktu_pemesanan'=> now(),
+                    'total_harga'    => $totalHargaHeader,
+                    'status'         => 'Belum Dibayar',
+                ]);
+
+                // 2.e. Simpan detail pemesanan_item
+                foreach ($itemsData as $item) {
+                    $item['id_pemesanan'] = $pemesanan->id_pemesanan;
+                    PemesananItem::create($item);
+                }
+
+                return $pemesanan;
+            });
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->withErrors(['booking' => $e->getMessage()]);
+        }
+
+        Alert::success('Berhasil', "Pemesanan {$pemesanan->id_pemesanan} berhasil dibuat.");
+
+        return redirect()->route('kamar.index');
     }
 
-    return redirect()->route('kamar.index')->with('success', 'Pemesanan berhasil! Cek detail tiap kamar.');
-}
-
-    // Detail Kamar (Opsional)
+    // 4. Detail Kamar
     public function detail($no_kamar)
     {
         $room = Kamar::where('no_kamar', $no_kamar)->firstOrFail();
         return view('kamar.detail-kamar', compact('room'));
+    }
+
+    // Generate kode pemesanan: PS00001, PS00002, ...
+    private function generateKodePemesanan(): string
+    {
+        $last = Pemesanan::orderBy('id_pemesanan', 'desc')->first();
+
+        if (!$last) {
+            return 'PS00001';
+        }
+
+        $num = (int) substr($last->id_pemesanan, 2); // buang "PS"
+        $num++;
+
+        return 'PS' . str_pad($num, 5, '0', STR_PAD_LEFT);
     }
 }

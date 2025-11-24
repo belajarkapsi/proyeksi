@@ -49,12 +49,6 @@
                             <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-4">Login</h2>
 
                             {{-- Session / Validation --}}
-                            @if (session('status'))
-                            <div id="alert-success" class="mb-4 px-4 py-3 rounded bg-white/20 text-white text-sm">
-                                {{ session('status') }}
-                            </div>
-                            @endif
-
                             @if ($errors->any())
                             <div id="alert-error" class="mb-4 px-4 py-3 rounded bg-red-600/20 text-red-100 text-sm">
                                 <ul class="list-disc list-inside space-y-1">
@@ -190,5 +184,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 1. Cek Session Error (Pesan "Eitss.. login dulu" dari Middleware)
+    @if(session('error'))
+        Swal.fire({
+            icon: 'warning', // Ganti warning biar lebih cocok sama konteks "Eitss"
+            title: 'Akses Ditolak',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#16a34a',
+            confirmButtonText: 'Siap, Login Dulu'
+        });
+    @endif
+
+    // 2. Cek Session Status (Info sistem, misal logout sukses)
+    @if(session('status'))
+        Swal.fire({
+            icon: 'info',
+            title: 'Informasi',
+            text: '{{ session('status') }}',
+            confirmButtonColor: '#16a34a',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    @endif
+</script>
+
+@include('sweetalert::alert')
 </body>
 </html>
