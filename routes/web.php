@@ -65,4 +65,16 @@ Route::middleware(['auth', 'lengkapi.profil'])->group(function() {
 
     // Proses Simpan ke Database (Action dari form checkout)
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+
+    Route::get('/pesanan/riwayat-pesanan', [BookingController::class, 'history'])->name('booking.riwayat');
+
+    Route::get('/pesanan/riwayat-pesanan/detail-pesanan/{id_pemesanan}', [BookingController::class, 'payment'])->name('booking.pembayaran');
+
+    // Route Batal Pesanan
+    Route::post('/booking/cancel/{id_pemesanan}', [BookingController::class, 'cancel'])
+        ->name('booking.batal');
 });
+
+// Route khusus AJAX Cek Status
+Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'checkStatus'])
+    ->name('booking.check_status');

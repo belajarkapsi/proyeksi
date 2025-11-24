@@ -161,6 +161,7 @@ class BookingController extends Controller
                     'waktu_pemesanan'=> now(),
                     'total_harga'    => $totalHargaHeader,
                     'status'         => 'Belum Dibayar',
+                    'expired_at'     => now()->addMinutes(30),
                 ]);
 
                 // 2.e. Simpan detail pemesanan_item
@@ -180,39 +181,10 @@ class BookingController extends Controller
 
         $pemesanan->load(['items.kamar', 'penyewa']);
 
-    dd([
-        'STATUS' => '✅ SUKSES! Data berhasil masuk ke Database',
-
-        '1. INFO HEADER PESANAN (Tabel Pemesanan)' => [
-            'ID Pemesanan' => $pemesanan->id_pemesanan,
-            'Tanggal Pesan' => $pemesanan->waktu_pemesanan,
-            'Total Harga' => 'Rp ' . number_format($pemesanan->total_harga, 0, ',', '.'),
-            'Status' => $pemesanan->status,
-        ],
-
-        '2. SIAPA YANG PESAN? (Cek Relasi ke User)' => [
-            'ID Penyewa (Foreign Key)' => $pemesanan->id_penyewa,
-            'Nama di Tabel User' => $pemesanan->penyewa->nama_lengkap,
-            'Email' => $pemesanan->penyewa->email,
-            'Note' => 'Jika nama ini muncul, berarti relasi ke tabel user AMAN (Tidak Duplikat).'
-        ],
-
-        '3. DETAIL KAMAR (Tabel Pemesanan Item)' => $pemesanan->items->map(function($item) {
-            return [
-                'Nomor Kamar' => $item->kamar->no_kamar,
-                'Tipe Kamar' => $item->kamar->tipe_kamar,
-                'Check In' => $item->waktu_checkin->format('Y-m-d'),
-                'Check Out' => $item->waktu_checkout->format('Y-m-d'),
-                'Harga Subtotal' => $item->harga
-            ];
-        })->toArray(),
-    ]);
-
         $cabang = $pemesanan->cabang;
+        Alert::success('Pemesanan Berhasil Dilakukan!', "Lakukan pembayaran untuk pesanan {$pemesanan->id_pemesanan} segera.");
 
-        Alert::success('Berhasil', "Pemesanan {$pemesanan->id_pemesanan} berhasil dibuat.");
-
-        return redirect()->route('cabang.kamar.index', $cabang->route_params);
+        return redirect()->route('booking.pembayaran', $pemesanan->id_pemesanan);
     }
 
     // Generate kode pemesanan: PS00001, PS00002, ...
@@ -226,5 +198,74 @@ class BookingController extends Controller
         $num++;
 
         return 'PS' . str_pad($num, 5, '0', STR_PAD_LEFT);
+    }
+
+    public function payment($id_pemesanan)
+    {
+        $pemesanan = Pemesanan::with(['items.kamar', 'cabang'])->where('id_pemesanan', $id_pemesanan)->firstOrFail();
+
+        // Cek apakah sudah expired?
+        if (now() > $pemesanan->expired_at && $pemesanan->status == 'Belum Dibayar') {
+            $pemesanan->update(['status' => 'Dibatalkan']);
+            $pemesanan->refresh();
+        }
+
+        $cabang = $pemesanan->cabang;
+
+        return view('kamar.detail-pesanan', compact('pemesanan', 'cabang'));
+    }
+
+    public function checkStatus($id_pemesanan)
+    {
+        $pemesanan = Pemesanan::find($id_pemesanan);
+
+        if (!$pemesanan) {
+            return response()->json(['status' => '404']);
+        }
+
+        // Cek Expired di sisi Server (PENTING!)
+        if ($pemesanan->status == 'Belum Dibayar' && now() > $pemesanan->expired_at) {
+            $pemesanan->update(['status' => 'Dibatalkan']);
+            $pemesanan->refresh(); // Refresh data model
+        }
+
+        return response()->json([
+            'status' => $pemesanan->status,
+            // Kirim sisa waktu dalam detik untuk sinkronisasi timer (opsional)
+        ]);
+    }
+
+    // Riwayat Pesanan
+    public function history()
+    {
+        // Ambil ID Penyewa yang sedang login
+        $idPenyewa = Auth::user()->id_penyewa;
+
+        // Ambil data pemesanan, urutkan dari yang terbaru
+        $orders = Pemesanan::where('id_penyewa', $idPenyewa)
+                    ->with(['cabang']) // Eager load cabang biar bisa tampilkan nama cabang (opsional)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        return view('kamar.riwayat-pesanan', compact('orders'));
+    }
+
+    // Membatalkan pesanan
+    public function cancel($id_pemesanan)
+    {
+        $pemesanan = Pemesanan::where('id_pemesanan', $id_pemesanan)
+                    ->where('id_penyewa', Auth::user()->id_penyewa) // Pastikan milik sendiri
+                    ->firstOrFail();
+
+        // Hanya bisa batal kalau statusnya 'Belum Dibayar'
+        if ($pemesanan->status == 'Belum Dibayar') {
+            $pemesanan->update(['status' => 'Dibatalkan']);
+
+            Alert::success('Dibatalkan', 'Pesanan berhasil dibatalkan.');
+        } else {
+            Alert::error('Gagal', 'Pesanan tidak dapat dibatalkan.');
+        }
+
+        return redirect()->back();
     }
 }

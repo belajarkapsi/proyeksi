@@ -16,6 +16,7 @@ class Pemesanan extends Model
         'id_penyewa',
         'id_cabang',
         'waktu_pemesanan',
+        'expired_at',
         'total_harga',
         'status',
     ];

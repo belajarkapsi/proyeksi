@@ -36,7 +36,7 @@
                     @endif
 
                     {{-- Overlay Gradient agar tulisan terbaca jika ada --}}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
 
                     {{-- Badge Kategori --}}
                     <div class="absolute top-6 left-6 z-10">
@@ -131,7 +131,7 @@
                             </div>
                         </div>
 
-                        <a href="/cabang/parepare/kost/kamar"
+                        <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}"
                             class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-600/20 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 group">
                             Pilih Kamar Sekarang
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>

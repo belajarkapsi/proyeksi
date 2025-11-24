@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -28,9 +29,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->respond(function (Response $response) {
             // Kalau error-nya 419 (Page Expired / CSRF mismatch)
             if ($response->getStatusCode() === 419) {
-                return redirect()
-                    ->route('dashboard')
-                    ->with('error', 'Sesi Anda sudah berakhir, silakan ulangi pemesanan.');
+                Alert::error('Error', 'Sesi Anda sudah berakhir, silakan ulangi pemesanan.');
+
+                return redirect()->route('dashboard');
             }
 
             return $response;
