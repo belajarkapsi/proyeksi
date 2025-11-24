@@ -129,6 +129,7 @@
     </div>
 </div>
 
+@push('scripts')
 {{-- SCRIPT JANTUNG (AJAX + TIMESTAMP) --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -209,4 +210,6 @@
         setInterval(checkStatus, 5000);
     @endif
 </script>
+
+@endpush
 @endsection

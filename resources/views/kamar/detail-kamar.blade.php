@@ -111,7 +111,7 @@
                         @endphp
                         @foreach($fasilitas as $f)
                             <li class="flex items-start gap-3 text-gray-700">
-                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span>{{ $f }}</span>
                             </li>
                         @endforeach
@@ -150,7 +150,7 @@
                             @endphp
                             @foreach($rules as $r)
                                 <li class="flex items-start gap-2 text-red-700 text-sm">
-                                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                     {{ $r }}
                                 </li>
                             @endforeach
@@ -235,7 +235,7 @@
     </div>
 
     {{-- LIGHTBOX MODAL (Pop up gambar) --}}
-    <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+    <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center opacity-0 transition-opacity duration-300">
         <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white hover:text-gray-300 p-2">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -244,6 +244,7 @@
 
 </div>
 
+@push('scripts')
 {{-- JAVASCRIPT (Vanilla JS) --}}
 <script>
     // Fungsi Lightbox
@@ -287,5 +288,6 @@
         }
     });
 </script>
+@endpush
 
 @endsection

@@ -153,16 +153,16 @@
             <div class="relative h-[50vh] min-h-[400px] w-full group">
                 @if($cabang->gambar_cabang)
                     <img src="{{ asset('storage/cabang/' . $cabang->gambar_cabang) }}"
-                         alt="{{ $cabang->nama_cabang }}"
-                         class="w-full h-full object-cover object-center transition-transform duration-[2000ms] group-hover:scale-110">
+                            alt="{{ $cabang->nama_cabang }}"
+                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
                 @else
-                     <img src="{{ asset('images/background.jpg') }}"
-                         alt="Default Villa"
-                         class="w-full h-full object-cover object-center transition-transform duration-[2000ms] group-hover:scale-110">
+                    <img src="{{ asset('images/background.jpg') }}"
+                            alt="Default Villa"
+                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
                 @endif
 
                 {{-- Gradient Overlay --}}
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent"></div>
 
                 {{-- Konten Hero --}}
                 <div class="absolute bottom-0 left-0 w-full p-8 lg:p-12">
@@ -190,7 +190,7 @@
                 {{-- Kolom Utama --}}
                 <div class="lg:col-span-2 p-8 lg:p-12">
                     <h3 class="text-2xl font-bold text-gray-800 mb-4 font-serif flex items-center gap-3">
-                        <span class="w-8 h-[2px] bg-gray-800"></span>
+                        <span class="w-8 h-0.5 bg-gray-800"></span>
                         Experience Comfort
                     </h3>
                     <p class="text-gray-600 text-lg leading-relaxed mb-8 text-justify">
