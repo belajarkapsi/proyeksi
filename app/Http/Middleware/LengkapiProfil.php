@@ -25,12 +25,30 @@ class LengkapiProfil
 
         $user = Auth::user();
 
+        // Kumpulkan field yang kosong
+        $missing = [];
+
+        if (is_null($user->alamat) || $user->alamat === '') {
+            $missing[] = 'alamat';
+        }
+
+        if (is_null($user->asal) || $user->asal === '') {
+            $missing[] = 'asal';
+        }
+
+        if (is_null($user->jenis_kelamin) || $user->jenis_kelamin === '') {
+            $missing[] = 'jenis_kelamin';
+        }
+
+        if (is_null($user->tanggal_lahir) || $user->tanggal_lahir === '') {
+            $missing[] = 'tanggal_lahir';
+        }
+
         // Cek jika diantara data ini belum ada
-        if(is_null($user->alamat) || is_null($user->asal) || is_null($user->tanggal_lahir)) {
+        if(!empty($missing)) {
+            Alert::warning('Data Belum Lengkap', 'Mohon lengkapi dahulu data diri anda sebelum memesan!');
 
-            Alert::alert('Data Belum Lengkap', 'Mohon lengkapi dahulu data diri anda sebelum memesan!');
-
-            return redirect()->route('profile.edit');
+            return redirect()->route('profile.edit')->with('missing_profile_fields', $missing);
         }
 
         return $next($request);

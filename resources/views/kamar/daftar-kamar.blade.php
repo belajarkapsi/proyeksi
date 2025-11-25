@@ -1,271 +1,177 @@
 @extends('layout.master')
-@section('title', 'Daftar Kamar')
+@section('title', isset($cabang) ? 'Daftar Kamar - ' . $cabang->nama_cabang : 'Semua Daftar Kamar')
 
 @section('content')
 
-{{-- 1. LOGIKA FILTER DATA (PHP) --}}
+{{-- 1. LOGIKA PEMISAHAN DATA (PHP DI VIEW) --}}
 @php
-    $allData = $rooms instanceof \Illuminate\Pagination\LengthAwarePaginator ? $rooms->items() : $rooms;
-    $allRooms = collect($allData);
+    // Jika data dipaginate, ambil items-nya saja untuk difilter manual di view
+    // (Note: Ini idealnya untuk data < 100 items. Jika ribuan, filter harus di controller/query)
+    $allRooms = $rooms instanceof \Illuminate\Pagination\LengthAwarePaginator ? $rooms->items() : $rooms;
+    $allRooms = collect($allRooms);
 
-    // Filter Kategori
-    $ekonomis = $allRooms->filter(fn($r) => strtolower(trim($r->status)) === 'tersedia' && stripos(strtolower($r->tipe_kamar), 'ekonomis') !== false);
-    $standard = $allRooms->filter(fn($r) => strtolower(trim($r->status)) === 'tersedia' && stripos(strtolower($r->tipe_kamar), 'ekonomis') === false);
-    $occupied = $allRooms->filter(fn($r) => strtolower(trim($r->status)) !== 'tersedia');
+    // Filter Kategori Berdasarkan String Tipe Kamar
+    // Tersedia & Ekonomis
+    $ekonomis = $allRooms->filter(function($r) {
+        $status = strtolower(trim($r->status_kamar ?? $r->status));
+        return (stripos($status, 'sedia') !== false) && (stripos($r->tipe_kamar, 'Ekonomis') !== false);
+    });
+
+    // Tersedia & Standard
+    $standard = $allRooms->filter(function($r) {
+        $status = strtolower(trim($r->status_kamar ?? $r->status));
+        return (stripos($status, 'sedia') !== false) && (stripos($r->tipe_kamar, 'Standar') !== false);
+    });
+
+    // Terisi / Maintenance (Apapun tipenya)
+    $occupied = $allRooms->filter(function($r) {
+        $status = strtolower(trim($r->status_kamar ?? $r->status));
+        return stripos($status, 'sedia') === false;
+    });
 @endphp
 
-    {{-- 2. STICKY CATEGORY NAVIGATION --}}
-    {{-- top-20 disesuaikan dengan tinggi navbar layout.master (biasanya h-16 atau h-20) --}}
-    <div class="sticky top-16 lg:top-20 z-30 bg-gray-50/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                
-                {{-- Tombol Kembali --}}
-                <a href="{{ url('/dashboard') }}" class="inline-flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-green-700 transition-colors group w-fit">
-                     <div class="p-1.5 bg-white rounded-full border border-gray-200 shadow-sm group-hover:border-green-500 transition-colors">
-                        <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                     </div>
-                     <span>Kembali</span>
-                </a>
+<div class="container mx-auto px-6 py-8 relative min-h-screen">
 
-                {{-- Filter Tabs --}}
-                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
-                    <a href="#ekonomis" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-green-700 border border-green-200 hover:bg-green-50 shadow-sm transition-all focus:ring-2 focus:ring-green-500 whitespace-nowrap">
-                        Ekonomis <span class="ml-1 bg-green-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $ekonomis->count() }}</span>
-                    </a>
-                    <a href="#standard" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-blue-700 border border-blue-200 hover:bg-blue-50 shadow-sm transition-all focus:ring-2 focus:ring-blue-500 whitespace-nowrap">
-                        Standard <span class="ml-1 bg-blue-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $standard->count() }}</span>
-                    </a>
-                    <a href="#occupied" class="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-white text-gray-500 border border-gray-200 hover:bg-gray-100 shadow-sm transition-all focus:ring-2 focus:ring-gray-400 whitespace-nowrap">
-                        Terisi <span class="ml-1 bg-gray-100 px-1.5 py-0.5 rounded-md text-[10px]">{{ $occupied->count() }}</span>
-                    </a>
-                </div>
-            </div>
+    {{-- 2. BREADCRUMB & NAVIGATION --}}
+    <nav class="text-sm text-gray-600 mb-6 flex items-center gap-2">
+        <a href="{{ route('dashboard') }}" class="hover:underline hover:text-green-600">Home</a>
+        <span class="text-gray-400">/</span>
+
+        @if(isset($cabang))
+            <a href="{{ route('cabang.show', $cabang->route_params) }}" class="hover:underline hover:text-green-600">
+                {{ $cabang->nama_cabang }}
+            </a>
+        @else
+            <span>Semua Lokasi</span>
+        @endif
+        <span class="text-gray-400">/</span>
+        <span class="text-green-600 font-semibold">Daftar Kamar</span>
+    </nav>
+
+    {{-- STICKY FILTER NAV --}}
+    <div class="sticky top-20 z-30 bg-white/95 backdrop-blur border-b border-gray-100 py-3 mb-8 -mx-6 px-6 md:mx-0 md:px-0 md:rounded-xl shadow-sm">
+        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar">
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-wide mr-2">Lompat ke:</span>
+
+            @if($ekonomis->count() > 0)
+                <a href="#ekonomis" class="px-4 py-2 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition">
+                    Ekonomis ({{ $ekonomis->count() }})
+                </a>
+            @endif
+
+            @if($standard->count() > 0)
+                <a href="#standard" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition">
+                    Standard ({{ $standard->count() }})
+                </a>
+            @endif
+
+            @if($occupied->count() > 0)
+                <a href="#occupied" class="px-4 py-2 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 transition">
+                    Terisi ({{ $occupied->count() }})
+                </a>
+            @endif
         </div>
     </div>
 
-    {{-- 3. TOMBOL BATAL PILIHAN (Floating Top) --}}
-    <button id="top-cancel-btn" onclick="exitSelectionMode()" class="fixed top-36 lg:top-40 left-1/2 transform -translate-x-1/2 z-50 hidden items-center gap-2 bg-red-500 text-white px-6 py-2.5 rounded-full shadow-xl animate-bounce-once ring-4 ring-white/50 hover:bg-red-600 transition-transform active:scale-95 cursor-pointer">
+    {{-- 3. TOMBOL BATAL (Floating) --}}
+    <button id="top-cancel-btn" onclick="exitSelectionMode()" class="fixed top-36 left-1/2 transform -translate-x-1/2 z-50 hidden items-center gap-2 bg-red-500 text-white px-6 py-2.5 rounded-full shadow-xl animate-bounce-once ring-4 ring-white/50 hover:bg-red-600 transition-transform active:scale-95 cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         <span class="text-xs md:text-sm font-bold whitespace-nowrap">Batalkan Pilihan</span>
     </button>
 
-    {{-- 4. FORM BOOKING UTAMA --}}
+    {{-- 4. FORM BOOKING (Grid Kamar) --}}
     <form id="bookingForm" action="{{ route('booking.checkout') }}" method="POST">
-        @csrf
-        <div class="container mx-auto px-4 py-8 space-y-16">
-            
-            {{-- === SECTION A: EKONOMIS === --}}
-            {{-- scroll-mt-48 agar judul tidak ketutup navbar saat discroll --}}
-            <section id="ekonomis" class="scroll-mt-48">
-                <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-green-500">
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Ekonomis</h2>
-                </div>
+    @csrf
 
-                @if($ekonomis->isEmpty())
-                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-10 text-center text-gray-400">
-                        <p class="font-medium">Tidak ada kamar ekonomis tersedia.</p>
+        <div class="space-y-16">
+            {{-- SECTION A: EKONOMIS --}}
+            @if($ekonomis->isNotEmpty())
+                <section id="ekonomis" class="scroll-mt-40">
+                    <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-green-500">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Ekonomis</h2>
                     </div>
-                @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
                         @foreach($ekonomis as $room)
-                            {{-- START CARD EKONOMIS --}}
-                            <div id="card-{{ $room->no_kamar }}" 
-                                class="room-card group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
-                                data-id="{{ $room->no_kamar }}" 
-                                data-available="1"
-                                data-booking-url="{{ route('booking.checkout', ['kamar' => $room->no_kamar]) }}"
-                                onmousedown="startPress('{{ $room->no_kamar }}')" onmouseup="cancelPress('{{ $room->no_kamar }}')" onmouseleave="cancelPress('{{ $room->no_kamar }}')"
-                                ontouchstart="startPress('{{ $room->no_kamar }}')" ontouchend="cancelPress('{{ $room->no_kamar }}')" ontouchmove="cancelPress('{{ $room->no_kamar }}')"
-                                onclick="handleCardClick('{{ $room->no_kamar }}', event)">
-                                
-                                {{-- Checkbox Hidden --}}
-                                <input type="checkbox" name="selected_rooms[]" value="{{ $room->no_kamar }}" id="check-{{ $room->no_kamar }}" class="hidden">
-                                
-                                {{-- Overlay Hijau --}}
-                                <div id="overlay-{{ $room->no_kamar }}" class="absolute inset-0 bg-green-600/20 z-30 hidden border-[3px] border-green-600 rounded-2xl flex items-center justify-center pointer-events-none">
-                                    <div class="bg-green-600 text-white rounded-full p-2 shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-                                </div>
-
-                                {{-- Gambar --}}
-                                <div class="relative h-48 bg-gray-200 overflow-hidden">
-                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" ondragstart="return false;">
-                                    {{-- Loader Bar --}}
-                                    <div id="loader-{{ $room->no_kamar }}" class="absolute bottom-0 left-0 h-1.5 bg-green-500 w-0 z-20"></div>
-                                    {{-- Badge Nomor --}}
-                                    <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-gray-800 shadow-sm z-10">
-                                        No. {{ $room->no_kamar }}
-                                    </div>
-                                </div>
-
-                                {{-- Info --}}
-                                <div class="p-4">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ekonomis</p>
-                                            <p class="text-lg font-bold text-green-700">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
-                                        </div>
-                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Tersedia</span>
-                                    </div>
-                                    
-                                    {{-- Tombol Detail (Link A) --}}
-                                    <a href="{{ route('kamar.detail', ['no_kamar' => $room->no_kamar]) }}" class="detail-btn mt-4 block w-full text-center py-2.5 rounded-lg bg-gray-50 text-green-700 font-bold text-sm hover:bg-green-600 hover:text-white transition-colors border border-gray-100">
-                                        Lihat Detail
-                                    </a>
-                                </div>
-                            </div>
-                            {{-- END CARD EKONOMIS --}}
+                            @include('components.room-card-item', ['room' => $room, 'isAvailable' => true])
                         @endforeach
                     </div>
-                @endif
-            </section>
+                </section>
+            @endif
 
-            {{-- === SECTION B: STANDARD === --}}
-            <section id="standard" class="scroll-mt-48">
-                <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-blue-500">
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Standard</h2>
-                </div>
-
-                @if($standard->isEmpty())
-                    <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-10 text-center text-gray-400">
-                        <p class="font-medium">Tidak ada kamar standard tersedia.</p>
+            {{-- SECTION B: STANDARD --}}
+            @if($standard->isNotEmpty())
+                <section id="standard" class="scroll-mt-40">
+                    <div class="flex items-center gap-3 mb-6 pl-2 border-l-4 border-blue-500">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-800">Tipe Standard</h2>
                     </div>
-                @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
                         @foreach($standard as $room)
-                            {{-- START CARD STANDARD --}}
-                            <div id="card-{{ $room->no_kamar }}" 
-                                class="room-card group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer hover:border-blue-200"
-                                data-id="{{ $room->no_kamar }}" 
-                                data-available="1"
-                                data-booking-url="{{ route('booking.checkout', ['kamar' => $room->no_kamar]) }}"
-                                onmousedown="startPress('{{ $room->no_kamar }}')" onmouseup="cancelPress('{{ $room->no_kamar }}')" onmouseleave="cancelPress('{{ $room->no_kamar }}')"
-                                ontouchstart="startPress('{{ $room->no_kamar }}')" ontouchend="cancelPress('{{ $room->no_kamar }}')" ontouchmove="cancelPress('{{ $room->no_kamar }}')"
-                                onclick="handleCardClick('{{ $room->no_kamar }}', event)">
-                                
-                                <input type="checkbox" name="selected_rooms[]" value="{{ $room->no_kamar }}" id="check-{{ $room->no_kamar }}" class="hidden">
-                                
-                                <div id="overlay-{{ $room->no_kamar }}" class="absolute inset-0 bg-green-600/20 z-30 hidden border-[3px] border-green-600 rounded-2xl flex items-center justify-center pointer-events-none">
-                                    <div class="bg-green-600 text-white rounded-full p-2 shadow-lg"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-                                </div>
-
-                                <div class="relative h-48 bg-gray-200 overflow-hidden">
-                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" ondragstart="return false;">
-                                    <div id="loader-{{ $room->no_kamar }}" class="absolute bottom-0 left-0 h-1.5 bg-blue-500 w-0 z-20"></div>
-                                    <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-sm font-bold text-gray-800 shadow-sm z-10">
-                                        No. {{ $room->no_kamar }}
-                                    </div>
-                                </div>
-
-                                <div class="p-4">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Standard</p>
-                                            <p class="text-lg font-bold text-blue-700">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
-                                        </div>
-                                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Tersedia</span>
-                                    </div>
-                                    
-                                    <a href="{{ route('kamar.detail', ['no_kamar' => $room->no_kamar]) }}" class="detail-btn mt-4 block w-full text-center py-2.5 rounded-lg bg-gray-50 text-blue-600 font-bold text-sm hover:bg-blue-600 hover:text-white transition-colors border border-gray-100">
-                                        Lihat Detail
-                                    </a>
-                                </div>
-                            </div>
-                            {{-- END CARD STANDARD --}}
+                            @include('components.room-card-item', ['room' => $room, 'isAvailable' => true])
                         @endforeach
                     </div>
-                @endif
-            </section>
+                </section>
+            @endif
 
-            {{-- === SECTION C: TERISI / MAINTENANCE === --}}
-            <section id="occupied" class="scroll-mt-48 bg-gray-100/80 rounded-3xl p-6 border border-gray-200">
-                <div class="flex items-center gap-3 mb-6 opacity-60">
-                    <div class="w-1.5 h-8 bg-gray-500 rounded-full"></div>
-                    <h2 class="text-xl font-bold text-gray-700">Terisi / Maintenance</h2>
-                </div>
-
-                @if($occupied->isEmpty())
-                    <div class="text-center text-gray-400 py-4">Semua kamar tersedia (Kosong).</div>
-                @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-90">
+            {{-- SECTION C: TERISI --}}
+            @if($occupied->isNotEmpty())
+                <section id="occupied" class="scroll-mt-40 bg-gray-50 rounded-3xl p-6 border border-gray-200">
+                    <div class="flex items-center gap-3 mb-6 opacity-60">
+                        <div class="w-1.5 h-8 bg-gray-500 rounded-full"></div>
+                        <h2 class="text-xl font-bold text-gray-700">Terisi / Maintenance</h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
                         @foreach($occupied as $room)
-                            {{-- START CARD OCCUPIED --}}
-                            <div class="relative bg-white rounded-2xl shadow-none border border-gray-200 overflow-hidden opacity-70 grayscale filter cursor-not-allowed hover:opacity-100 transition-opacity">
-                                <div class="relative h-48 bg-gray-300">
-                                    <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover opacity-50" ondragstart="return false;">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="bg-black/60 text-white px-4 py-1.5 rounded-lg font-bold text-sm tracking-wide border border-white/20">DIHUNI</span>
-                                    </div>
-                                    <div class="absolute bottom-3 left-3 bg-white/80 px-3 py-1 rounded-lg text-sm font-bold text-gray-600">
-                                        No. {{ $room->no_kamar }}
-                                    </div>
-                                </div>
-                                <div class="p-4">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div>
-                                            <p class="text-xs font-bold text-gray-400 uppercase">{{ $room->tipe_kamar }}</p>
-                                            <p class="text-lg font-bold text-gray-500">Rp {{ number_format($room->harga ?? 0, 0, ',', '.') }}</p>
-                                        </div>
-                                        <span class="bg-gray-200 text-gray-500 text-[10px] font-bold px-2 py-1 rounded uppercase">Terisi</span>
-                                    </div>
-                                    <button type="button" disabled class="mt-4 w-full block text-center py-2.5 rounded-lg bg-gray-100 text-gray-400 font-semibold text-sm cursor-not-allowed">
-                                        Detail
-                                    </button>
-                                </div>
-                            </div>
-                            {{-- END CARD OCCUPIED --}}
+                            @include('components.room-card-item', ['room' => $room, 'isAvailable' => false])
                         @endforeach
                     </div>
-                @endif
-            </section>
+                </section>
+            @endif
 
+            {{-- JIKA KOSONG SEMUA --}}
+            @if($ekonomis->isEmpty() && $standard->isEmpty() && $occupied->isEmpty())
+                <div class="text-center py-20">
+                    <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">Belum Ada Data Kamar</h3>
+                    <p class="text-gray-500">Silakan hubungi admin cabang ini.</p>
+                </div>
+            @endif
         </div>
 
-              {{-- SKELETON LOADER (Jika data kosong) --}}
-      @if($rooms->isEmpty())
-        @for($i=0;$i<6;$i++)
-          <div class="bg-white rounded-xl shadow-lg p-4 animate-pulse">
-            <div class="rounded-lg overflow-hidden bg-gray-200 h-44 mb-4"></div>
-            <div class="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
-            <div class="h-4 bg-gray-200 rounded w-1/2 mb-1"></div>
-          </div>
-        @endfor
-      @endif
-    </div>
+        {{-- FLOATING ACTION BAR --}}
+        <div id="floating-bar" class="fixed bottom-6 inset-x-0 flex justify-center items-end transform translate-y-32 transition-transform duration-300 z-40 pointer-events-none">
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl px-2 py-2 pointer-events-auto flex items-center gap-2">
 
-    {{-- FLOATING BAR (Muncul saat Mode Seleksi) --}}
-    <div id="floating-bar" class="fixed bottom-6 inset-x-0 flex justify-center items-end transform translate-y-32 transition-transform duration-300 z-40 pointer-events-none">
-      <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl px-2 py-2 pointer-events-auto flex items-center gap-2">
+                {{-- Tombol Batal --}}
+                <button type="button" onclick="exitSelectionMode()" class="px-4 py-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl text-sm font-semibold transition-colors">
+                    Batal
+                </button>
 
-        {{-- Tombol Batal --}}
-        <button type="button" onclick="exitSelectionMode()" class="px-4 py-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl text-sm font-semibold transition-colors">
-          Batal
-        </button>
-
-        {{-- Tombol Submit Multi Select --}}
-        <button type="submit" class="relative bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-base flex items-center transition-colors">
-          <span>Pesan (<span id="text-count-btn">0</span>)</span>
-          <span id="selected-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow border-2 border-white min-w-[24px] text-center">
-            0
-          </span>
-        </button>
-      </div>
-    </div>
-
+                {{-- Tombol Submit Multi Select --}}
+                <button type="submit" class="relative bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-base flex items-center transition-colors">
+                    <span>Pesan (<span id="text-count-btn">0</span>)</span>
+                    <span id="selected-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow border-2 border-white min-w-6 text-center">
+                        0
+                    </span>
+                </button>
+            </div>
+        </div>
 
     </form>
 </div>
 
-@endsection
+@push('scripts')
 
 {{-- JAVASCRIPT VANILLA --}}
 <script>
-  let pressTimer;
-  let isSelectionMode = false;
-  const longPressDuration = 500; // 0.5 Detik
+let pressTimer;
+let isSelectionMode = false;
+const longPressDuration = 500; // 0.5 Detik
 
-  // 1. START TIMER (Saat ditekan)
-  function startPress(id) {
+// 1. START TIMER (Saat ditekan)
+function startPress(id) {
     const card = document.getElementById('card-' + id);
     const loader = document.getElementById('loader-' + id);
     const isAvailable = card.getAttribute('data-available');
@@ -280,22 +186,22 @@
     }
 
     pressTimer = setTimeout(() => {
-      enterSelectionMode(id);
+        enterSelectionMode(id);
     }, longPressDuration);
-  }
+}
 
-  // 2. CANCEL TIMER (Saat dilepas/digeser)
-  function cancelPress(id) {
+// 2. CANCEL TIMER (Saat dilepas/digeser)
+function cancelPress(id) {
     const loader = document.getElementById('loader-' + id);
     if(loader) {
         loader.style.width = '0';
         loader.style.transitionDuration = '0.2s';
     }
     clearTimeout(pressTimer);
-  }
+}
 
-  // 3. HANDLE CARD CLICK (Logika Utama)
-  function handleCardClick(id, event) {
+// 3. HANDLE CARD CLICK (Logika Utama)
+function handleCardClick(id, event) {
     const card = document.getElementById('card-' + id);
     const isAvailable = card.getAttribute('data-available');
     const bookingUrl = card.getAttribute('data-booking-url');
@@ -307,27 +213,27 @@
 
     // KONDISI A: Mode Seleksi AKTIF -> Lakukan Toggle (Pilih/Hapus)
     if (isSelectionMode) {
-      event.preventDefault();
-      toggleSelection(id);
+        event.preventDefault();
+        toggleSelection(id);
     }
     // KONDISI B: Mode Normal -> Langsung Pindah ke Halaman Checkout (1 Kamar)
     else {
-      window.location.href = bookingUrl;
+        window.location.href = bookingUrl;
     }
-  }
+}
 
   // 4. Masuk Mode Seleksi
-  function enterSelectionMode(initialId) {
+function enterSelectionMode(initialId) {
     isSelectionMode = true;
     // Haptic feedback (getar) di Android
     if (navigator.vibrate) navigator.vibrate(50);
 
     toggleSelection(initialId);
     showUI();
-  }
+}
 
   // 5. Toggle Visual & Checkbox
-  function toggleSelection(id) {
+function toggleSelection(id) {
     const checkbox = document.getElementById('check-' + id);
     const overlay = document.getElementById('overlay-' + id);
     const card = document.getElementById('card-' + id);
@@ -335,29 +241,29 @@
     checkbox.checked = !checkbox.checked;
 
     if (checkbox.checked) {
-      overlay.classList.remove('hidden');
-      card.classList.add('ring-2', 'ring-green-600', 'scale-[0.98]');
+        overlay.classList.remove('hidden');
+        card.classList.add('ring-2', 'ring-green-600', 'scale-[0.98]');
     } else {
-      overlay.classList.add('hidden');
-      card.classList.remove('ring-2', 'ring-green-600', 'scale-[0.98]');
+        overlay.classList.add('hidden');
+        card.classList.remove('ring-2', 'ring-green-600', 'scale-[0.98]');
     }
     updateCounter();
-  }
+}
 
   // 6. Update Angka Pesanan
-  function updateCounter() {
+function updateCounter() {
     const checkedCount = document.querySelectorAll('input[name="selected_rooms[]"]:checked').length;
     document.getElementById('selected-count').innerText = checkedCount;
     document.getElementById('text-count-btn').innerText = checkedCount;
 
     // Jika tidak ada yang dipilih, keluar mode seleksi
     if (checkedCount === 0) {
-       exitSelectionMode();
+        exitSelectionMode();
     }
-  }
+}
 
   // 7. Keluar Mode Seleksi
-  function exitSelectionMode() {
+function exitSelectionMode() {
     isSelectionMode = false;
     document.querySelectorAll('input[name="selected_rooms[]"]').forEach(el => el.checked = false);
 
@@ -368,19 +274,21 @@
     document.querySelectorAll('[id^="overlay-"]').forEach(el => el.classList.add('hidden'));
 
     hideUI();
-  }
+}
 
   // 8. UI Helpers (Tampilkan/Sembunyikan Bar)
-  function showUI() {
+function showUI() {
     document.getElementById('floating-bar').classList.remove('translate-y-32');
     document.getElementById('top-cancel-btn').classList.remove('hidden');
     document.getElementById('top-cancel-btn').classList.add('flex');
-  }
+}
 
-  function hideUI() {
+function hideUI() {
     document.getElementById('floating-bar').classList.add('translate-y-32');
     document.getElementById('top-cancel-btn').classList.add('hidden');
     document.getElementById('top-cancel-btn').classList.remove('flex');
-  }
+}
 </script>
+@endpush
 
+@endsection

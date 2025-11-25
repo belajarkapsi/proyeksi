@@ -1,26 +1,29 @@
 {{-- resources/views/detail-kamar.blade.php --}}
 @extends('layout.master')
+@section('title', isset($cabang) ? 'Detail Kamar No ' . $cabang->nama_cabang : 'Semua Daftar Kamar')
 
 @section('content')
     <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {{-- Breadcrumb Modern --}}
         <nav class="flex items-center text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap pb-2">
-            <a href="/dashboard" class="hover:text-green-600 transition-colors flex items-center gap-1">
+            <a href="{{ route('dashboard') }}" class="hover:text-green-600 transition-colors flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 Home
             </a>
             <span class="mx-2 text-gray-300">/</span>
-            <a href="#" class="hover:text-green-600 transition-colors">Pondok Siti Hajar</a>
+            <a href="{{ route('cabang.show', $cabang->route_params) }}" class="hover:text-green-600 transition-colors">{{ $cabang->nama_cabang }}</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}" class="hover:text-green-600 transition-colors">Daftar Kamar</a>
             <span class="mx-2 text-gray-300">/</span>
             <span class="text-green-700 font-medium bg-green-50 px-2 py-0.5 rounded-full">Kamar {{ $room->number ?? '101' }}</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {{-- KOLOM KIRI: Konten Utama --}}
             <div class="lg:col-span-2 space-y-8">
-                
+
                 {{-- 1. Gallery Section (Mosaic Layout) --}}
                 <div class="bg-white rounded-2xl shadow-sm p-2 border border-gray-100">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[400px] md:h-[450px]">
@@ -108,7 +111,7 @@
                         @endphp
                         @foreach($fasilitas as $f)
                             <li class="flex items-start gap-3 text-gray-700">
-                                <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span>{{ $f }}</span>
                             </li>
                         @endforeach
@@ -147,7 +150,7 @@
                             @endphp
                             @foreach($rules as $r)
                                 <li class="flex items-start gap-2 text-red-700 text-sm">
-                                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                     {{ $r }}
                                 </li>
                             @endforeach
@@ -160,7 +163,7 @@
             {{-- KOLOM KANAN: Sidebar Harga (Sticky) --}}
             <aside class="lg:col-span-1">
                 <div class="sticky top-24 space-y-6">
-                    
+
                     {{-- Card Harga Desktop --}}
                     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hidden lg:block">
                         <div class="bg-green-600 px-6 py-4">
@@ -197,7 +200,7 @@
                             </a>
                         </div>
                     </div>
-                
+
                     {{-- Bantuan --}}
                     <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 hidden lg:block">
                         <div class="flex gap-3">
@@ -214,7 +217,7 @@
             </aside>
 
         </div>
-        
+
         <div id="booking-form"></div>
     </div>
 
@@ -232,7 +235,7 @@
     </div>
 
     {{-- LIGHTBOX MODAL (Pop up gambar) --}}
-    <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+    <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center opacity-0 transition-opacity duration-300">
         <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white hover:text-gray-300 p-2">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -241,16 +244,17 @@
 
 </div>
 
+@push('scripts')
 {{-- JAVASCRIPT (Vanilla JS) --}}
 <script>
     // Fungsi Lightbox
     function openLightbox(imageSrc) {
         const lightbox = document.getElementById('lightbox');
         const img = document.getElementById('lightbox-img');
-        
+
         img.src = imageSrc;
         lightbox.classList.remove('hidden');
-        
+
         // Sedikit delay agar animasi opacity berjalan
         setTimeout(() => {
             lightbox.classList.remove('opacity-0');
@@ -284,5 +288,6 @@
         }
     });
 </script>
+@endpush
 
 @endsection

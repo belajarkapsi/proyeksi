@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\PastikanKepemilikanUser;
 use App\Http\Middleware\GuestOnly;
-use App\Http\Middleware\HandleAuthRedirect;
 use App\Http\Middleware\HarusLoginUntukPesan;
 use App\Http\Middleware\LengkapiProfil;
 use App\Http\Middleware\ValidasiCabang;
-use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,14 +23,19 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest.only' => GuestOnly::class,
             'booking.only' => HarusLoginUntukPesan::class,
             'validasi.cabang' => ValidasiCabang::class,
-            'lengkapi.profil' => LengkapiProfil::class
+            'lengkapi.profil' => LengkapiProfil::class,
+            'user.sebenarnya' => PastikanKepemilikanUser::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
+        $exceptions->respond(function (Response $response) {
+            // Kalau error-nya 419 (Page Expired / CSRF mismatch)
+            if ($response->getStatusCode() === 419) {
+                Alert::error('Error', 'Sesi Anda sudah berakhir, silakan ulangi pemesanan.');
 
-            // Lempar ke halaman login dengan pesan Error Session
-            return redirect()->guest(route('login'))
-                ->with('error', 'Eitss, kamu harus login dulu untuk melanjutkan!');
+                return redirect()->route('dashboard');
+            }
+
+            return $response;
         });
     })->create();

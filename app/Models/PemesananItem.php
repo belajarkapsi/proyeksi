@@ -19,7 +19,7 @@ class PemesananItem extends Model
 
     protected $casts = [
         'waktu_checkin' => 'date',
-        'waktu_checout' => 'date',
+        'waktu_checkout' => 'date',
     ];
 
     public function pemesanan()

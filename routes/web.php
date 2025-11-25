@@ -17,15 +17,19 @@ Route::redirect('/dashboard', '/');
 
 
 // Route Cabang
-Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
-    ->middleware('validasi.cabang')
-    ->name('cabang.show');
+Route::middleware('validasi.cabang')->group(function() {
+    // Dashboard Cabang
+    Route::get('/cabang/{lokasi}/{kategori}', [CabangController::class, 'show'])
+        ->name('cabang.show');
 
+    // Daftar Kamar di Cabang Tertentu
+    Route::get('/cabang/{lokasi}/{kategori}/kamar', [KamarController::class, 'index'])
+        ->name('cabang.kamar.index');
 
-// Route Cabang Kamar Berdasarkan Tipe
-Route::get('/cabang/{lokasi}/{kategori}/kamar/{slug?}', [CabangController::class, 'type'])
-    ->middleware('validasi.cabang')
-    ->name('cabang.type');
+    // Route detail kamar
+    Route::get('/cabang/{lokasi}/{kategori}/kamar/{no_kamar}', [kamarController::class, 'show'])
+        ->name('cabang.kamar.show');
+});
 
 
 // Route untuk user belum login
@@ -37,10 +41,6 @@ Route::middleware('guest.only')->group(function() {
     Route::post('register', [RegisterController::class, 'store']);
 });
 
-// Route untuk Detail Kamar
-Route::get('/kamar/detail-kamar/{no_kamar}', [KamarController::class, 'show'])
-    ->name('kamar.show');
-
 
 // Route untuk Profil
 Route::middleware('auth')->group(function(){
@@ -48,20 +48,16 @@ Route::middleware('auth')->group(function(){
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
-    ->middleware('auth')
+->middleware('auth')
     ->name('logout');
-// Antisipasi ketika langsung cari /logout:
+    // Antisipasi ketika langsung cari /logout:
 Route::get('logout', function() {
     return redirect()->route('dashboard');
 });
 
-// 1. Halaman Daftar Kamar (Halaman Awal)
-Route::get('/kamar', [BookingController::class, 'index'])->name('kamar.index');
-
-// 4. Detail Kamar (Untuk tombol Detail)
-Route::get('/kamar/detail-kamar/{no_kamar}', [BookingController::class, 'detail'])->name('kamar.detail');
 
 // //Route Booking
 Route::middleware(['auth', 'lengkapi.profil'])->group(function() {
@@ -69,6 +65,18 @@ Route::middleware(['auth', 'lengkapi.profil'])->group(function() {
 
     // Proses Simpan ke Database (Action dari form checkout)
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+
+    Route::get('/pesanan/riwayat-pesanan', [BookingController::class, 'history'])->name('booking.riwayat');
+
+    Route::middleware(['user.sebenarnya'])->group(function () {
+        Route::get('/pesanan/riwayat-pesanan/detail-pesanan/{id_pemesanan}', [BookingController::class, 'payment'])->name('booking.pembayaran');
+
+        // Route Batal Pesanan
+        Route::post('/booking/cancel/{id_pemesanan}', [BookingController::class, 'cancel'])
+            ->name('booking.batal');
+    });
 });
 
-
+// Route khusus AJAX Cek Status
+Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'checkStatus'])
+    ->name('booking.check_status');

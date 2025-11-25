@@ -12,14 +12,14 @@
 
     {{-- ====================== LOGIKA TAMPILAN KOST ====================== --}}
     @if(strtolower($cabang->kategori_cabang) === 'kost')
-    
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up">
         <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            
+
             <div class="flex flex-col lg:flex-row">
-                
-                {{-- 
-                    FIX GAMBAR HILANG: 
+
+                {{--
+                    FIX GAMBAR HILANG:
                     Menggunakan flexbox (lg:w-5/12) alih-alih grid col-span yang kaku.
                     Menambahkan 'min-h' agar gambar tetap punya tinggi walau di desktop.
                 --}}
@@ -34,9 +34,9 @@
                         <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                             src="{{ asset('images/background.jpg') }}" alt="Foto cabang" />
                     @endif
-                    
+
                     {{-- Overlay Gradient agar tulisan terbaca jika ada --}}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
 
                     {{-- Badge Kategori --}}
                     <div class="absolute top-6 left-6 z-10">
@@ -49,7 +49,7 @@
 
                 {{-- KOLOM KANAN: KONTEN --}}
                 <div class="w-full lg:w-7/12 p-6 sm:p-8 lg:p-12 flex flex-col bg-white relative">
-                    
+
                     {{-- Dekorasi Background Abstrak --}}
                     <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-green-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
@@ -73,7 +73,7 @@
                     <div class="mb-10 relative z-10">
                         <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-4">Landmark Sekitar</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            
+
                             {{-- List Item Landmark --}}
                             <div class="flex items-center p-3 rounded-xl bg-slate-50 hover:bg-green-50 hover:shadow-sm border border-transparent hover:border-green-100 transition-all duration-300 group cursor-default">
                                 <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm text-green-600 group-hover:scale-110 transition-transform">
@@ -131,8 +131,8 @@
                             </div>
                         </div>
 
-                        <a href="/cabang/parepare/kost/kamar"
-                           class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-600/20 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 group">
+                        <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}"
+                            class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-600/20 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 group">
                             Pilih Kamar Sekarang
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
@@ -145,25 +145,25 @@
 
     {{-- ====================== LOGIKA TAMPILAN VILLA ====================== --}}
     @elseif(strtolower($cabang->kategori_cabang) === 'villa')
-    
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up">
         <div class="bg-white rounded-3xl shadow-2xl overflow-hidden relative">
-            
+
             {{-- Hero Image Villa --}}
             <div class="relative h-[50vh] min-h-[400px] w-full group">
                 @if($cabang->gambar_cabang)
-                    <img src="{{ asset('storage/cabang/' . $cabang->gambar_cabang) }}" 
-                         alt="{{ $cabang->nama_cabang }}" 
-                         class="w-full h-full object-cover object-center transition-transform duration-[2000ms] group-hover:scale-110">
+                    <img src="{{ asset('storage/cabang/' . $cabang->gambar_cabang) }}"
+                            alt="{{ $cabang->nama_cabang }}"
+                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
                 @else
-                     <img src="{{ asset('images/background.jpg') }}" 
-                         alt="Default Villa" 
-                         class="w-full h-full object-cover object-center transition-transform duration-[2000ms] group-hover:scale-110">
+                    <img src="{{ asset('images/background.jpg') }}"
+                            alt="Default Villa"
+                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
                 @endif
-                
+
                 {{-- Gradient Overlay --}}
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                
+                <div class="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent"></div>
+
                 {{-- Konten Hero --}}
                 <div class="absolute bottom-0 left-0 w-full p-8 lg:p-12">
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -174,7 +174,7 @@
                             </div>
                             <h1 class="text-4xl md:text-6xl font-bold text-white font-serif mb-2 leading-tight">{{ $cabang->nama_cabang }}</h1>
                         </div>
-                        
+
                         <div class="hidden md:block">
                             <div class="text-white text-right">
                                 <p class="text-sm opacity-80">Mulai Dari</p>
@@ -190,13 +190,13 @@
                 {{-- Kolom Utama --}}
                 <div class="lg:col-span-2 p-8 lg:p-12">
                     <h3 class="text-2xl font-bold text-gray-800 mb-4 font-serif flex items-center gap-3">
-                        <span class="w-8 h-[2px] bg-gray-800"></span>
+                        <span class="w-8 h-0.5 bg-gray-800"></span>
                         Experience Comfort
                     </h3>
                     <p class="text-gray-600 text-lg leading-relaxed mb-8 text-justify">
                         {{ $cabang->deskripsi }}
                     </p>
-                    
+
                     <div class="flex flex-wrap gap-4">
                         <button class="flex-1 sm:flex-none px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-1">
                             Reservasi Sekarang
@@ -206,7 +206,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 {{-- Sidebar Info --}}
                 <div class="bg-gray-50 border-l border-gray-100 p-8 lg:p-12 flex flex-col justify-center">
                     <h4 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Fasilitas & Info</h4>
@@ -224,7 +224,7 @@
                             <span class="font-semibold text-gray-800">14:00 / 12:00</span>
                         </li>
                     </ul>
-                    
+
                     <div class="mt-8 p-4 bg-green-100 rounded-xl flex gap-3 items-start">
                         <svg class="w-6 h-6 text-green-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <p class="text-sm text-green-800 leading-snug">
@@ -243,7 +243,7 @@
 {{-- VANILLA JS --}}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // 1. FADE IN ANIMATION
     // Membuat elemen muncul perlahan saat di-scroll
     const observer = new IntersectionObserver((entries) => {
@@ -263,16 +263,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const counters = document.querySelectorAll('.js-counter');
     counters.forEach(counter => {
         const target = +counter.getAttribute('data-value');
-        const duration = 1500; 
+        const duration = 1500;
         const start = performance.now();
 
         const animate = (currentTime) => {
             const elapsed = currentTime - start;
             const progress = Math.min(elapsed / duration, 1);
-            
+
             // Easing function (easeOutQuart) agar melambat di akhir
             const ease = 1 - Math.pow(1 - progress, 4);
-            
+
             counter.innerText = Math.floor(ease * target);
 
             if (progress < 1) {

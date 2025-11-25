@@ -73,6 +73,9 @@
             </div>
         </div>
 
+        @php
+        $missingFields = session('missing_profile_fields', []);
+        @endphp
         <!-- Form Edit (Kanan) -->
         <div class="lg:col-span-2 bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -124,6 +127,10 @@
                             </select>
                         </div>
                         @error('asal') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+
+                        @if(in_array('asal', $missingFields) && empty(old('asal', $penyewa->asal)))
+                        <span class="text-red-500 text-xs">Data belum diisi!</span>
+                        @endif
                     </div>
 
                     <div name="alamat">
@@ -131,6 +138,10 @@
                         <textarea name="alamat" id="alamat" rows="2"
                             class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all" required>{{ old('alamat', $penyewa->alamat) }}</textarea>
                         @error('alamat') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+
+                        @if(in_array('alamat', $missingFields) && empty(old('alamat', $penyewa->alamat)))
+                        <span class="text-red-500 text-xs">Data belum diisi!</span>
+                        @endif
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -152,6 +163,10 @@
                                 </div>
                             </div>
                             @error('jenis_kelamin') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+
+                            @if(in_array('jenis_kelamin', $missingFields) && empty(old('jenis_kelamin', $penyewa->jenis_kelamin)))
+                                <span class="text-red-500 text-xs mt-1 block">Data belum diisi!</span>
+                            @endif
                         </div>
 
                         <!-- Tanggal Lahir -->
@@ -162,6 +177,10 @@
                                     class="py-3 px-4 block w-full bg-gray-100 border-green-500 rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white" required>
                                 <p class="text-xs text-gray-500 mt-1">Usia akan dihitung otomatis.</p>
                                 @error('tanggal_lahir') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+
+                                @if(in_array('tanggal_lahir', $missingFields) && empty(old('tanggal_lahir', $penyewa->tanggal_lahir)))
+                                <span class="text-red-500 text-xs mt-1 block">Data belum diisi!</span>
+                                @endif
                             </div>
                         </div>
                     </div>

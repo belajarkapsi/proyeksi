@@ -22,6 +22,7 @@ return new class extends Migration
                 column: 'id_cabang'
             )->onUpdate('cascade')->onDelete('cascade');
             $table->dateTime('waktu_pemesanan');
+            $table->timestamp('expired_at')->nullable();
             $table->integer('total_harga')->default('0');
             $table->enum('status', ['Belum Dibayar', 'Lunas', 'Dibatalkan'])->default('Belum Dibayar');
             $table->timestamps();
