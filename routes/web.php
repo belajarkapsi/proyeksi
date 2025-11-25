@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
@@ -85,6 +86,14 @@ Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'c
 
 // Route Admin
 Route::middleware(['auth:pemilik'])->group(function() {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])
-            ->name('admin.dashboard');
+    Route::prefix('admin')->group(function() {
+        // Route Dashboard Admin
+        Route::get('/dashboard', [AdminController::class, 'index'])
+                ->name('admin.dashboard');
+
+        // Route Profil Admin
+        Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
+        Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+    });
+
 });
