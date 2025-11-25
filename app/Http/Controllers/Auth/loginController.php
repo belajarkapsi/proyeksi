@@ -21,10 +21,26 @@ class LoginController extends Controller
     {
         $credentials = $request->validate([
             'username' => ['required', 'string'],
-            'password' => ['required'],
+            'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // // 1. Cek apakah Credentials benar tertangkap
+        // dd($credentials);
+
+        // // 2. Cek apakah Guard Pemilik berhasil login?
+        // if (Auth::guard('pemilik')->attempt($credentials)) {
+        //     dd("LOGIN ADMIN BERHASIL! User: " . Auth::guard('pemilik')->user()->nama_lengkap);
+        // } else {
+        //     dd("LOGIN ADMIN GAGAL. Cek username/password atau config auth.");
+        // }
+
+        if (Auth::guard('pemilik')->attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        if (Auth::guard('web')->attempt($credentials)) {
             $request->session()->regenerate();
 
             return redirect()->intended(route('dashboard'));
@@ -45,7 +61,7 @@ class LoginController extends Controller
         // invalidate session dan regenerate token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect()->route('dashboard');
     }
 }

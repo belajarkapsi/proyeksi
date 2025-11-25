@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CabangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
@@ -60,7 +61,7 @@ Route::get('logout', function() {
 
 
 // //Route Booking
-Route::middleware(['auth', 'lengkapi.profil'])->group(function() {
+Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
     Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])->name('booking.checkout');
 
     // Proses Simpan ke Database (Action dari form checkout)
@@ -80,3 +81,10 @@ Route::middleware(['auth', 'lengkapi.profil'])->group(function() {
 // Route khusus AJAX Cek Status
 Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'checkStatus'])
     ->name('booking.check_status');
+
+
+// Route Admin
+Route::middleware(['auth:pemilik'])->group(function() {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])
+            ->name('admin.dashboard');
+});
