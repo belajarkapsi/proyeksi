@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pemesanan', function (Blueprint $table) {
-            $table->id('id_pemesanan');
+            $table->string('id_pemesanan', 20)->primary();
             $table->foreignId('id_penyewa')->constrained(
                 table:'penyewa',
                 column: 'id_penyewa'
@@ -21,15 +21,10 @@ return new class extends Migration
                 table:'cabang',
                 column: 'id_cabang'
             )->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('id_kamar')->constrained(
-                table:'kamar',
-                column: 'id_kamar'
-            )->onUpdate('cascade')->onDelete('cascade');
-            $table->integer('jumlah_pemesanan');
-            $table->integer('harga');
-            $table->date('waktu_pemesanan');
-            $table->date('waktu_checkin');
-            $table->date('waktu_checkout');
+            $table->dateTime('waktu_pemesanan');
+            $table->timestamp('expired_at')->nullable();
+            $table->integer('total_harga')->default('0');
+            $table->enum('status', ['Belum Dibayar', 'Lunas', 'Dibatalkan'])->default('Belum Dibayar');
             $table->timestamps();
         });
     }
