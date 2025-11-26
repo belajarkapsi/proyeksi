@@ -1,15 +1,17 @@
-<nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+<nav class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
     <div class="max-w-full mx-auto px-4 lg:px-6">
-        <div class="flex items-center justify-between h-16">
+        <div id="navbar-content-wrapper" class="flex items-center justify-between h-14 transition-all duration-300 ease-in-out">
 
             {{-- LEFT: hamburger --}}
-            <div class="flex items-center gap-4">
-                <button id="admin-hamburger" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-300">
+            <div class="flex items-center">
+                <button id="admin-hamburger" type="button" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-300">
                     <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
             </div>
+
+            <div class="hidden md:block"></div>
 
             {{-- RIGHT: icons + user dropdown --}}
             <div class="flex items-center gap-4">
