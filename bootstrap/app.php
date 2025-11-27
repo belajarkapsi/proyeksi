@@ -4,6 +4,7 @@ use App\Http\Controllers\PastikanKepemilikanUser;
 use App\Http\Middleware\GuestOnly;
 use App\Http\Middleware\HarusLoginUntukPesan;
 use App\Http\Middleware\LengkapiProfil;
+use App\Http\Middleware\NoCacheMiddleware;
 use App\Http\Middleware\ValidasiCabang;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Application;
@@ -24,7 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'booking.only' => HarusLoginUntukPesan::class,
             'validasi.cabang' => ValidasiCabang::class,
             'lengkapi.profil' => LengkapiProfil::class,
-            'user.sebenarnya' => PastikanKepemilikanUser::class
+            'user.sebenarnya' => PastikanKepemilikanUser::class,
+            'no.cache' => NoCacheMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

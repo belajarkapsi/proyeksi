@@ -2,7 +2,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="px-4 sm:px-6 lg:px-8 py-2">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -16,7 +16,7 @@
     </nav>
 </div>
 
-<div class="container px-6 mx-auto grid">
+<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
 
     {{-- Header Dashboard --}}
     <h2 class="py-4 text-2xl font-semibold text-gray-700">
@@ -24,10 +24,10 @@
     </h2>
 
     {{-- KARTU STATISTIK (GRID 4 KOLOM) --}}
-    <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+    <div class="grid gap-6 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 
         {{-- Kartu 1: Primary --}}
-        <div class="flex items-center p-4 bg-gray-100 rounded-lg shadow-xs border-l-4 border-blue-500">
+        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-blue-500">
             <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
@@ -44,7 +44,7 @@
         </div>
 
         {{-- Kartu 2: Warning --}}
-        <div class="flex items-center p-4 bg-gray-100 rounded-lg shadow-xs border-l-4 border-yellow-500">
+        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-yellow-500">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
@@ -61,7 +61,7 @@
         </div>
 
         {{-- Kartu 3: Success --}}
-        <div class="flex items-center p-4 bg-gray-100 rounded-lg shadow-xs border-l-4 border-green-500">
+        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-green-500">
             <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
@@ -78,7 +78,7 @@
         </div>
 
         {{-- Kartu 4: Danger --}}
-        <div class="flex items-center p-4 bg-gray-100 rounded-lg shadow-xs border-l-4 border-red-500">
+        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-red-500">
             <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -96,9 +96,9 @@
     </div>
 
     {{-- GRAFIK (GRID 2 KOLOM) --}}
-    <div class="grid gap-6 mb-8 md:grid-cols-2">
+    <div class="grid gap-6 mb-8 grid-cols-1 lg:grid-cols-3">
         {{-- Area Chart --}}
-        <div class="min-w-0 p-4 bg-gray-100 rounded-lg shadow-xs">
+        <div class="lg:col-span-2 min-w-0 p-4 bg-gray-200 rounded-lg shadow-xs">
             <h4 class="mb-4 font-semibold text-gray-800">
                 Area Chart Example
             </h4>
@@ -106,7 +106,7 @@
         </div>
 
         {{-- Bar Chart --}}
-        <div class="min-w-0 p-4 bg-gray-100 rounded-lg shadow-xs">
+        <div class="min-w-0 p-4 bg-gray-200 rounded-lg shadow-xs">
             <h4 class="mb-4 font-semibold text-gray-800">
                 Bar Chart Example
             </h4>

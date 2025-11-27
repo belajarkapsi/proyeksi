@@ -56,6 +56,15 @@ class LoginController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Logout dari semua guard yang mungkin terpakai
+        if (Auth::guard('pemilik')->check()) {
+            Auth::guard('pemilik')->logout();
+        }
+
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+        }
+
         Auth::logout();
 
         // invalidate session dan regenerate token

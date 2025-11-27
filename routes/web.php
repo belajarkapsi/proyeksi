@@ -9,11 +9,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
     return view('dashboard');
-})->name('dashboard');
+})->name('dashboard')->middleware('no.cache');
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -52,11 +54,17 @@ Route::middleware('auth')->group(function(){
 
 
 // Route Logout
-Route::post('logout', [LoginController::class, 'destroy'])
-->middleware('auth')
-    ->name('logout');
-    // Antisipasi ketika langsung cari /logout:
-Route::get('logout', function() {
+Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+// Antisipasi ketika langsung cari /logout:
+Route::get('logout', function(Request $request) {
+    if (Auth::guard('pemilik')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if (Auth::guard('web')->check()) {
+        return redirect()->route('dashboard');
+    }
+
     return redirect()->route('dashboard');
 });
 
@@ -85,7 +93,7 @@ Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'c
 
 
 // Route Admin
-Route::middleware(['auth:pemilik'])->group(function() {
+Route::middleware(['auth:pemilik', 'no.cache'])->group(function() {
     Route::prefix('admin')->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
