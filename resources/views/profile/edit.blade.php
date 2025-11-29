@@ -52,23 +52,23 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs text-gray-500 ">Email:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $penyewa->email }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $penyewa->email }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">No Telepon:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $penyewa->no_telp ?? '-' }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $penyewa->no_telp ?? '-' }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">Asal:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $penyewa->asal ?? '-' }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $penyewa->asal ?? '-' }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">Jenis Kelamin:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $penyewa->jenis_kelamin ?? '-' }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $penyewa->jenis_kelamin ?? '-' }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">Usia:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $penyewa->usia ? $penyewa->usia . ' Tahun' : '-' }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $penyewa->usia ? $penyewa->usia . ' Tahun' : '-' }}</div>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@
 
                     <!-- Tombol Simpan -->
                     <div class="mt-8 flex justify-end">
-                        <button type="submit" id="form-submit-btn" class="py-4 px-85 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none shadow-md transition-all hover:shadow-lg hover:cursor-pointer">
+                        <button type="submit" id="form-submit-btn" class="py-4 px-45 md:px-85 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none shadow-md transition-all hover:shadow-lg hover:cursor-pointer">
                             Simpan
                         </button>
                     </div>

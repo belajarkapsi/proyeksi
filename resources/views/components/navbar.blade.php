@@ -44,10 +44,21 @@
 
         <div class="flex items-center lg:order-2 space-x-2 shrink-0 justify-end lg:w-56">
 
-            @guest
-                {{-- TAMPILAN JIKA BELUM LOGIN --}}
-                <a href="{{ route('login') }}" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 transition">Login</a>
-            @else
+            @if (Auth::guard('pemilik')->check())
+                <div class="flex items-center gap-3">
+                    <span class="text-red-600 font-bold">
+                        Hi, Bos {{ Auth::guard('pemilik')->user()->nama_lengkap }}
+                    </span>
+                    <a href="{{ route('admin.dashboard') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                    Ke Panel Admin
+                    </a>
+                    {{-- Form Logout Admin --}}
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+            @elseif (Auth::guard('web')->check())
                 {{-- TAMPILAN JIKA SUDAH LOGIN (USER DROPDOWN) --}}
                 <div class="hs-dropdown relative inline-flex">
                     <button id="hs-dropdown-user" type="button" class="hs-dropdown-toggle py-1.5 px-3 pe-4 inline-flex items-center gap-x-3 text-sm font-medium rounded-full bg-green-600 text-white shadow-md hover:bg-green-700 focus:outline-none transition-all" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
@@ -86,7 +97,10 @@
                         </div>
                     </div>
                 </div>
-            @endguest
+            @else
+            {{-- TAMPILAN JIKA BELUM LOGIN --}}
+                <a href="{{ route('login') }}" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 transition">Login</a>
+            @endif
 
             {{-- Tombol Hamburger (Mobile) --}}
             <button data-mobile-menu-toggle="navbar-mobile-menu" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile-menu" aria-expanded="false">

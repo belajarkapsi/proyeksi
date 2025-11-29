@@ -1,9 +1,9 @@
 <footer class="relative bg-green-600 text-white pt-10 pb-6 border-t border-green-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <!-- Grid Layout: 1 Kolom di Mobile, 12 Kolom di Desktop -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8 items-start">
-            
+
             <!-- BAGIAN KIRI: Logo & Branding (Mengambil 6 kolom / 50% lebar) -->
             <div class="md:col-span-6 space-y-4">
                 <a href="/" class="flex items-center gap-3">
@@ -16,20 +16,20 @@
                 <p class="text-white/90 text-sm leading-relaxed max-w-md">
                     Platform pengelolaan hunian terpercaya di Sulawesi Selatan. Kenyamanan Anda adalah prioritas kami.
                 </p>
-                
+
                 <!-- Social Media Kecil -->
                 <div class="flex gap-3 pt-1">
                     <a href="#" class="p-2 bg-green-700 rounded-full hover:bg-white hover:text-green-600 transition-all duration-300" aria-label="Facebook">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z" clip-rule="evenodd"/></svg>
                     </a>
                     <a href="#" class="p-2 bg-green-700 rounded-full hover:bg-white hover:text-green-600 transition-all duration-300" aria-label="Instagram">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465 1.067-.047 1.409-.06 3.809-.06z"/></svg>
+                        <svg class="size-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z" clip-rule="evenodd"/></svg>
                     </a>
                 </div>
             </div>
 
             <!-- BAGIAN KANAN: Kontak & Lokasi (Sejajar) -->
-            
+
             <!-- Kontak (Mengambil 3 kolom) -->
             <div class="md:col-span-3 space-y-4">
                 <h3 class="text-lg font-bold border-b-2 border-green-400 pb-1 inline-block">Hubungi Kami</h3>
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Logika Back to Top
     const backToTopBtn = document.getElementById('back-to-top');
-    
+
     window.addEventListener('scroll', () => {
         if (window.scrollY > 200) {
             backToTopBtn.classList.remove('translate-y-20', 'opacity-0');

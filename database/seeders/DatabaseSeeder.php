@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PenyewaSeeder::class,
-            CabangDanKamarSeeder::class
+            CabangDanKamarSeeder::class,
+            PemilikSeeder::class
         ]);
     }
 }

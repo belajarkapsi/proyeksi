@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('pemilik', function (Blueprint $table) {
             $table->id('id_pemilik');
-            $table->string('email', 255);
-            $table->string('username', 255);
-            $table->string('password', 255);
             $table->string('nama_lengkap', 255);
+            $table->string('email', 255)->unique();
+            $table->string('username', 255)->unique();
+            $table->string('password', 255);
             $table->string('no_telp', 25);
-            $table->string('foto_profil', 255);
-            $table->char('role', 7);
+            $table->string('foto_profil', 255)->nullable();
+            $table->string('role', 20)->default('admin');
 
+            $table->rememberToken();
             $table->timestamps();
         });
     }

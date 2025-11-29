@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'pemilik' => [
+            'driver' => 'session',
+            'provider' => 'pemiliks',
+        ],
     ],
 
     /*
@@ -63,6 +68,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        'pemiliks' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\Pemilik::class,
         ],
 
         // 'users' => [
