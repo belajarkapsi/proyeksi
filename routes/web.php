@@ -70,19 +70,26 @@ Route::get('logout', function(Request $request) {
 });
 
 
-// //Route Booking
+// Route Booking
 Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
-    Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])->name('booking.checkout');
+    // Halaman pilih kamar + checkout (GET dari card / POST dari form)
+    Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])
+        ->name('booking.checkout');
 
     // Proses Simpan ke Database (Action dari form checkout)
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::post('/booking/store', [BookingController::class, 'store'])
+        ->name('booking.store');
 
-    Route::get('/pesanan/riwayat-pesanan', [BookingController::class, 'history'])->name('booking.riwayat');
+    // Riwayat pesanan user
+    Route::get('/pesanan/riwayat-pesanan', [BookingController::class, 'history'])
+        ->name('booking.riwayat');
 
     Route::middleware(['user.sebenarnya'])->group(function () {
-        Route::get('/pesanan/riwayat-pesanan/detail-pesanan/{id_pemesanan}', [BookingController::class, 'payment'])->name('booking.pembayaran');
+        // Halaman detail pesanan + countdown + tombol batalkan
+        Route::get('/pesanan/riwayat-pesanan/detail-pesanan/{id_pemesanan}', [BookingController::class, 'payment'])
+            ->name('booking.pembayaran');
 
-        // Route Batal Pesanan
+        // Route Batal Pesanan (dipanggil dari tombol "Batalkan Pesanan")
         Route::post('/booking/cancel/{id_pemesanan}', [BookingController::class, 'cancel'])
             ->name('booking.batal');
     });
