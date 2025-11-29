@@ -6,31 +6,33 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 
 <body class="bg-gray-100 overflow-x-hidden">
 
     <x-navbar-admin></x-navbar-admin>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="bg-green-700 w-64 fixed top-0 left-0 bottom-0 z-60 transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="flex flex-col h-full overflow-y-auto">
+    <aside id="sidebar" class="bg-green-700 w-64 fixed top-0 left-0 bottom-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col h-full shadow-xl">
+
+        <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-green-800 [&::-webkit-scrollbar-thumb]:bg-green-500 hover:[&::-webkit-scrollbar-thumb]:bg-green-400">
             <div class="py-6 px-4">
-                {{-- ... CORE ... --}}
-                <div class="tracking-wider mb-10 flex items-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="size-12 mx-auto my-auto">
-                    <span class="text-2xl font-bold text-white uppercase mx-auto my-auto">ADMIN PAGE</span>
+
+                {{-- LOGO --}}
+                <div class="tracking-wider mb-10 flex items-center gap-3 justify-center">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="size-12 object-contain">
+                    <span class="text-xl font-bold text-white uppercase whitespace-nowrap">ADMIN PAGE</span>
                 </div>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-3 transition-all duration-200 text-white hover:text-gray-800 hover:bg-white hover:rounded-lg">
+
+                {{-- Dashboard --}}
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 transition-all duration-200 text-white hover:text-gray-800 hover:bg-white hover:rounded-lg">
                     <i class="fas fa-tachometer-alt w-6 mt-1 text-center"></i>
                     <span class="font-bold text-xl">Dashboard</span>
                 </a>
 
-                {{-- Pemisah --}}
-                <div class="block border-b border-white"></div>
+                <div class="block border-b border-white"></div> {{-- Pemisah --}}
 
-                {{-- ... MANAJEMEN ... --}}
+                {{-- ... DATA PENGGUNA ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Data Pengguna</div>
                 <a href="{{ url('/admin/penyewa') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
                 <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Pemilik</span></a>
@@ -38,11 +40,13 @@
                 {{-- Pemisah --}}
                 <div class="block border-b border-white"></div>
 
+                {{-- ... ITEM MENU LAINNYA (Silakan copas menu Anda di sini) ... --}}
+                {{-- Contoh Dropdown Parepare dengan Background Gelap --}}
                 {{-- ... MANAJEMEN ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Manajemen Cabang</div>
 
                 {{-- Parepare --}}
-                <div class="sidebar-dropdown w-full">
+                <div class="sidebar-dropdown w-full mb-1">
                     <button type="button"
                             class="dropdown-toggle flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg bg-transparent focus:outline-none text-white hover:text-gray-800 hover:bg-white transition-all duration-200"
                             aria-expanded="false" aria-controls="menu-parepare">
@@ -57,19 +61,20 @@
                                 <svg class="hidden size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/></svg>
                             </div>
                         </button>
-                    {{-- DROP-DOWN: flat, no border/shadow/rounded, slightly separated --}}
-                    <div id="menu-parepare" class="dropdown-menu w-full overflow-hidden max-h-0 opacity-0 transition-[max-height,opacity] duration-300 ease-in-out" aria-hidden="true">
-                        <div class="py-1">
-                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed w-6 text-center"></i><span class="font-medium">Data Kamar</span></a>
-                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-bell-concierge w-6 text-center"></i><span class="font-medium">Layanan Villa</span></a>
+                    {{-- Background Dropdown Gelap --}}
+                    <div id="menu-parepare" class="dropdown-menu overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-green-800 rounded-lg mt-1 mx-1">
+                        <div class="py-2 space-y-1">
+                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
+                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-bell-concierge text-sm text-center"></i><span class="font-medium">Layanan Villa</span></a>
                         </div>
                     </div>
                 </div>
+
                 {{-- Pangkep --}}
-                <div class="sidebar-dropdown w-full mt-1">
+                <div class="sidebar-dropdown w-full mb-1">
                     <button type="button"
                             class="dropdown-toggle flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg bg-transparent focus:outline-none text-white hover:text-gray-800 hover:bg-white transition-all duration-200"
-                            aria-expanded="false" aria-controls="menu-pangkep">
+                            aria-expanded="false" aria-controls="menu-parepare">
                             <div class="flex items-center gap-3">
                                 <i class="fa-solid fa-map-location w-6 text-center"></i>
                                 <span class="font-medium">Pangkep</span>
@@ -81,10 +86,10 @@
                                 <svg class="hidden size-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/></svg>
                             </div>
                         </button>
-                    {{-- DROP-DOWN: flat, no border/shadow/rounded, slightly separated --}}
-                    <div id="menu-pangkep" class="dropdown-menu w-full overflow-hidden max-h-0 opacity-0 transition-[max-height,opacity] duration-300 ease-in-out" aria-hidden="true">
-                        <div class="py-1">
-                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed w-6 text-center"></i><span class="font-medium">Data Kamar</span></a>
+                    {{-- Background Dropdown Gelap --}}
+                    <div id="menu-parepare" class="dropdown-menu overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-green-800 rounded-lg mt-1 mx-1">
+                        <div class="py-2 space-y-1">
+                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
                         </div>
                     </div>
                 </div>
@@ -105,217 +110,155 @@
                 <div class="block border-b border-white"></div> {{-- Pemisah --}}
 
                 {{-- Setting --}}
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 mt-2 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fa-solid fa-gear w-6 text-center text-2xl"></i><span class="font-medium text-lg">Pengaturan</span></a>
-            </div>
+                <a href="#" class="flex items-center gap-3 px-3 py-2.5 mt-2 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1">
+                    <i class="fa-solid fa-gear w-6 text-center"></i><span class="font-medium">Pengaturan</span>
+                </a>
 
-            <!-- Profil Pengguna -->
-            <div class="mt-auto bg-green-800 py-6 px-3 border-t border-gray-600">
-                <div class="flex items-center gap-3">
-                    <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) . '?t=' . time() : 'https://ui-avatars.com/api/?name=' . (Auth::user()->nama_lengkap ?? 'A') . '&background=10b981&color=fff' }}" class="w-8 h-8 rounded-full">
-                    <div class="overflow-hidden">
-                        <p class="text-xs text-gray-400">Anda login sebagai:</p>
-                        <p class="text-md font-bold text-white truncate">{{ Auth::user()->nama_lengkap ?? 'Admin' }}</p>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit">
-                            <i class="fa-solid fa-arrow-right-from-bracket text-white hover:text-red-600 text-2xl px-2"></i>
-                        </button>
-                    </form>
+            </div>
+        </div>
+
+        <div class="bg-green-800 py-5 px-4 border-t border-green-600 shrink-0">
+            <div class="flex items-center gap-3 w-full">
+                <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) . '?t=' . time() : 'https://ui-avatars.com/api/?name=' . (Auth::user()->nama_lengkap ?? 'A') . '&background=10b981&color=fff' }}"
+                    class="size-10 rounded-full border-2 border-green-400 shrink-0 object-cover">
+
+                <div class="overflow-hidden flex-1 min-w-0">
+                    <p class="text-xs text-gray-400">Anda login sebagai:</p>
+                    <p class="text-sm font-bold text-white truncate" title="{{ Auth::user()->nama_lengkap }}">
+                        {{ Auth::user()->nama_lengkap ?? 'Admin' }}
+                    </p>
                 </div>
+
+                <form method="POST" action="{{ route('logout') }}" class="shrink-0">
+                    @csrf
+                    <button type="submit" class="text-white hover:text-red-600 transition-colors p-1" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket text-2xl"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
 
-    <!-- Mobile -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-30 hidden"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity md:hidden"></div>
 
-    <!-- Konten Utama -->
     <main id="admin-main" class="pt-14 transition-all duration-300 ease-in-out">
         <div class="p-6 md:p-8 lg:p-12">
             <div class="content w-full max-w-none mx-auto">
                 @yield('content')
             </div>
         </div>
+        <x-footer></x-footer>
     </main>
 
     @stack('scripts')
 
-    {{-- Sidebar --}}
+    {{-- SCRIPT PENGATUR LAYOUT & DROPDOWN --}}
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // --- 1. INISIALISASI VARIABEL ---
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('admin-main');
-        const navbarContent = document.getElementById('navbar-content-wrapper');
         const navbarLeft = document.getElementById('navbar-left');
-        const navbarRight = document.getElementById('navbar-right');
         const overlay = document.getElementById('sidebar-overlay');
         const hamburgerBtn = document.getElementById('admin-hamburger');
 
-        if (!sidebar || !mainContent || !navbarContent || !hamburgerBtn) return;
+        if (!sidebar || !mainContent || !hamburgerBtn) return;
 
-        // HELPER: atur layout & transform ketika sidebar open/close
-        const setLayoutWhenOpen = (open) => {
-            // Untuk desktop/tablet (>=768) kita gunakan marginLeft + width untuk mainContent
-            if (window.innerWidth >= 768) {
-                if (open) {
+        // --- 2. FUNGSI LAYOUT (Desktop Push / Mobile Overlay) ---
+        const updateLayout = () => {
+            const isDesktop = window.innerWidth >= 768;
+            const isSidebarOpen = sidebar.classList.contains('translate-x-0');
+
+            if (isDesktop) {
+                // Desktop: Push Layout
+                if (overlay) overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+
+                if (isSidebarOpen) {
                     mainContent.style.marginLeft = '16rem';
                     mainContent.style.width = 'calc(100% - 16rem)';
+                    if(navbarLeft) navbarLeft.style.transform = 'translateX(16rem)';
                 } else {
-                    mainContent.style.marginLeft = '';
-                    mainContent.style.width = '';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                    if(navbarLeft) navbarLeft.style.transform = 'translateX(0)';
                 }
             } else {
-                // mobile: jangan ubah margin mainContent (agar tidak break), biarkan main tetap full width
-                mainContent.style.marginLeft = '';
-                mainContent.style.width = '';
-            }
+                // Mobile: Overlay Layout
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+                if(navbarLeft) navbarLeft.style.transform = 'none'; // Hamburger diam
 
-            // SELALU translate navbar agar terlihat bergeser (desktop & mobile)
-            if (open) {
-                if (navbarLeft) navbarLeft.style.transform = 'translateX(16rem)';
-            } else {
-                if (navbarLeft) navbarLeft.style.transform = '';
+                if (isSidebarOpen) {
+                    if (overlay) overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    if (overlay) overlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
             }
         };
 
         const openSidebar = () => {
             sidebar.classList.remove('-translate-x-full');
             sidebar.classList.add('translate-x-0');
-            setLayoutWhenOpen(true);
-
-            if (window.innerWidth < 768 && overlay) {
-                overlay.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
+            updateLayout();
         };
 
         const closeSidebar = () => {
             sidebar.classList.remove('translate-x-0');
             sidebar.classList.add('-translate-x-full');
-            setLayoutWhenOpen(false);
-
-            if (window.innerWidth < 768 && overlay) {
-                overlay.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
+            updateLayout();
         };
 
-        // state default: desktop terbuka, mobile tertutup
-        if (window.innerWidth >= 768) {
-            openSidebar();
-        } else {
-            closeSidebar();
-        }
+        // --- 3. EVENT LISTENERS SIDEBAR ---
+        // Cek layar saat load
+        if (window.innerWidth >= 768) openSidebar(); else closeSidebar();
 
-        // Toggle via hamburger
+        // Hamburger click
         hamburgerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (sidebar.classList.contains('-translate-x-full')) {
-                openSidebar();
-            } else {
-                closeSidebar();
-            }
+            sidebar.classList.contains('-translate-x-full') ? openSidebar() : closeSidebar();
         });
 
+        // Overlay click
         if (overlay) overlay.addEventListener('click', closeSidebar);
 
-        // resize -> sinkronisasi
-        window.addEventListener('resize', () => {
-            const isOpen = sidebar.classList.contains('translate-x-0') && !sidebar.classList.contains('-translate-x-full');
-            setLayoutWhenOpen(isOpen);
+        // Resize window
+        window.addEventListener('resize', updateLayout);
 
-            if (window.innerWidth >= 768 && overlay) {
-                overlay.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
-        });
 
-        // Optional: klik di luar (mobile) menutup
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth < 768) {
-                const target = e.target;
-                if (!sidebar.contains(target) && !hamburgerBtn.contains(target) && overlay && !overlay.classList.contains('hidden')) {
-                    closeSidebar();
-                }
-            }
-        });
-    });
-    </script>
-
-    {{-- Sidebar Dropdown --}}
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // semua dropdown di sidebar
-        const sidebarDropdowns = document.querySelectorAll('.sidebar-dropdown');
-
-        sidebarDropdowns.forEach(drop => {
-            const btn = drop.querySelector('.dropdown-toggle');
-            const menu = drop.querySelector('.dropdown-menu');
-            const arrowDown = drop.querySelector('.arrow-down');
-            const arrowUp = drop.querySelector('.arrow-up');
+        // --- 4. LOGIKA DROPDOWN & PANAH (PERBAIKAN UTAMA) ---
+        document.querySelectorAll('.sidebar-dropdown').forEach(group => {
+            const btn = group.querySelector('.dropdown-toggle');
+            const menu = group.querySelector('.dropdown-menu');
 
             if (!btn || !menu) return;
 
-            // helper open/close
-            const open = () => {
-                // set maxHeight ke scrollHeight agar animasi slide-down bekerja
-                menu.style.maxHeight = menu.scrollHeight + 'px';
-                menu.style.opacity = '1';
-                menu.setAttribute('aria-hidden', 'false');
-                btn.setAttribute('aria-expanded', 'true');
-
-                if (arrowDown) arrowDown.classList.add('hidden');
-                if (arrowUp) arrowUp.classList.remove('hidden');
-            };
-
-            const close = () => {
-                menu.style.maxHeight = '0px';
-                menu.style.opacity = '0';
-                menu.setAttribute('aria-hidden', 'true');
-                btn.setAttribute('aria-expanded', 'false');
-
-                if (arrowDown) arrowDown.classList.remove('hidden');
-                if (arrowUp) arrowUp.classList.add('hidden');
-            };
-
-            // initial close state (ensure)
-            close();
-
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
 
-                // if menu is closed => open, else close
-                const isOpen = btn.getAttribute('aria-expanded') === 'true';
+                // A. Buka/Tutup Menu (Cek tinggi konten)
+                const isOpen = menu.style.maxHeight && menu.style.maxHeight !== '0px';
+
                 if (isOpen) {
-                    close();
+                    menu.style.maxHeight = '0px'; // Tutup
                 } else {
-                    open();
+                    menu.style.maxHeight = menu.scrollHeight + 'px'; // Buka sesuai tinggi konten
                 }
-            });
 
-            // Optional: close dropdown when clicking elsewhere (desktop/mobile)
-            document.addEventListener('click', (ev) => {
-                if (!drop.contains(ev.target)) {
-                    // if menu is open, close it
-                    if (btn.getAttribute('aria-expanded') === 'true') {
-                        close();
-                    }
-                }
-            });
-
-            // Ensure correct maxHeight on window resize (in case content wraps)
-            window.addEventListener('resize', () => {
-                if (btn.getAttribute('aria-expanded') === 'true') {
-                    // recompute height
-                    menu.style.maxHeight = menu.scrollHeight + 'px';
+                // B. Animasi Panah (Tukar class Hidden pada SVG)
+                // Kita cari div pembungkus icon (elemen terakhir di dalam tombol)
+                const iconContainer = btn.lastElementChild;
+                if (iconContainer) {
+                    const svgs = iconContainer.querySelectorAll('svg');
+                    // Loop semua svg di dalam tombol dan tukar status hidden-nya
+                    svgs.forEach(svg => svg.classList.toggle('hidden'));
                 }
             });
         });
     });
     </script>
-
 
 </body>
 </html>
