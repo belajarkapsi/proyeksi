@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PemesananItem extends Model
 {
     protected $table = 'pemesanan_item';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_pemesanan',

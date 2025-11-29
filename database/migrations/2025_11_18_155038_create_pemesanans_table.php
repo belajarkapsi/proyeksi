@@ -14,18 +14,23 @@ return new class extends Migration
         Schema::create('pemesanan', function (Blueprint $table) {
             $table->string('id_pemesanan', 20)->primary();
             $table->foreignId('id_penyewa')->constrained(
-                table:'penyewa',
+                table: 'penyewa',
                 column: 'id_penyewa'
             )->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('id_cabang')->constrained(
-                table:'cabang',
+                table: 'cabang',
                 column: 'id_cabang'
             )->onUpdate('cascade')->onDelete('cascade');
             $table->dateTime('waktu_pemesanan');
             $table->timestamp('expired_at')->nullable();
-            $table->integer('total_harga')->default('0');
+            $table->integer('total_harga')->default(0);
             $table->enum('status', ['Belum Dibayar', 'Lunas', 'Dibatalkan'])->default('Belum Dibayar');
+            // tambahan kecil: simpan kapan dibatalkan (nullable)
+            $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
+
+            // index tambahan untuk mempercepat pencarian berdasarkan cabang / waktu / status
+            $table->index(['id_cabang', 'waktu_pemesanan', 'status'], 'pemesanan_cabang_waktu_status_idx');
         });
     }
 
