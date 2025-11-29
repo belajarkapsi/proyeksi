@@ -1,6 +1,9 @@
 @extends('layout.master')
 @section('title', $cabang->nama_cabang)
-
+@php
+    $lokasi = str_replace(' ', '-', strtolower($cabang->lokasi));
+    $kategori = str_replace(' ', '-', strtolower($cabang->kategori_cabang));
+@endphp
 @section('content')
     {{-- TOMBOL KEMBALI (Dibuat Sticky agar mudah diakses saat scroll) --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-30 pointer-events-none">
@@ -168,9 +171,6 @@
                         <span class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg">
                             <i class="fas fa-map-marker-alt mr-1"></i> {{ $cabang->lokasi }}
                         </span>
-                        <span class="px-4 py-2 bg-green-500/90 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg">
-                            Available
-                        </span>
                     </div>
                 </div>
 
@@ -211,15 +211,17 @@
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         {{-- Tombol ini nanti akan diarahkan ke route daftar kamar --}}
                         <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}"
-                        <button class="flex-1 px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                        <button class="flex-1 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-900 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex justify-center items-center gap-2">
                             <span>Reservasi Sekarang</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </button>
                         </a>
                         
-                        <button class="flex-1 px-8 py-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-gray-900 hover:text-gray-900 transition bg-transparent">
+                        <a href="{{ route('cabang.villa.detail', ['lokasi' => $lokasi, 'kategori' => $kategori]) }}"
+                        <button class="flex-1 px-8 py-4 border-2 border-gray-200 text-center text-gray-700 font-semibold rounded-xl hover:border-gray-900 hover:text-gray-900 transition bg-transparent">
                             Lihat Detail
                         </button>
+                        </a>
                     </div>
                 </div>
 

@@ -189,9 +189,9 @@
                                 </div>
                             </div>
 
-                            <button class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                            <button class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Ajukan Sewa
+                                Pesan Sekarang
                             </button>
 
                             <a href="https://wa.me/6281234567890" class="w-full bg-green-50 hover:bg-green-100 text-green-700 font-bold py-3 rounded-xl border border-green-200 transition-colors flex items-center justify-center gap-2">

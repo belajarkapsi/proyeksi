@@ -430,74 +430,92 @@
 
     // ========== LOGIKA UTAMA: KALKULASI HARGA (KAMAR + LAYANAN) ==========
 
-    function recalcTotals() {
-        let roomTotal = 0;
-        let serviceTotal = 0;
-        
-        let selectedRoomsCount = 0;
-        let selectedServicesItems = 0;
+function recalcTotals() {
+    let roomTotal = 0;
+    let serviceTotal = 0;
+    
+    let selectedRoomsCount = 0;
+    let selectedServicesItems = 0;
 
-        // A. Hitung Total Kamar
-        const roomCheckboxes = document.querySelectorAll('input[name="selected_rooms[]"]:checked');
-        roomCheckboxes.forEach(cb => {
-            let price = parseFloat(cb.getAttribute('data-price')) || 0;
-            roomTotal += price;
-            selectedRoomsCount++;
-        });
+    // A. Hitung Total Kamar
+    const roomCheckboxes = document.querySelectorAll('input[name="selected_rooms[]"]:checked');
+    roomCheckboxes.forEach(cb => {
+        // 1) coba ambil data-price langsung dari checkbox (jika ada)
+        let priceRaw = cb.getAttribute('data-price');
 
-        // B. Hitung Total Layanan
-        document.querySelectorAll('.service-checkbox').forEach(cb => {
-            const id = cb.value;
-            const price = parseFloat(cb.getAttribute('data-price')) || 0;
-            const qtyInput = document.getElementById('srv-qty-' + id);
-            
-            if (cb.checked) {
-                let qty = qtyInput ? parseInt(qtyInput.value) : 1;
-                if(qty === 0 && cb.checked) qty = 1; 
-                
-                serviceTotal += (price * qty);
-                selectedServicesItems += qty;
+        // 2) fallback: ambil dari parent .room-card (kita tambahkan data-price di artikel)
+        if (!priceRaw || priceRaw === '' || priceRaw === '0') {
+            const card = cb.closest('.room-card');
+            if (card && card.dataset && card.dataset.price) {
+                priceRaw = card.dataset.price;
             }
-        });
-
-        const grandTotal = roomTotal + serviceTotal;
-        const totalItems = selectedRoomsCount + selectedServicesItems;
-
-        // C. Update Panel Rincian (Kanan - Villa)
-        const panelRoom = document.getElementById('panel-room-total');
-        const panelService = document.getElementById('panel-service-total');
-        const panelGrand = document.getElementById('panel-grand-total');
-        const panelRoomCount = document.getElementById('panel-room-count');
-        const panelServiceCount = document.getElementById('panel-service-count');
-
-        if(panelRoom) panelRoom.innerText = formatRupiah(roomTotal);
-        if(panelService) panelService.innerText = formatRupiah(serviceTotal);
-        if(panelGrand) panelGrand.innerText = formatRupiah(grandTotal);
-        if(panelRoomCount) panelRoomCount.innerText = selectedRoomsCount + ' unit';
-        if(panelServiceCount) panelServiceCount.innerText = selectedServicesItems + ' item';
-
-        // D. Update Floating Bar (Bawah - Universal)
-        const floatGrand = document.getElementById('float-grand-total');
-        const countBadge = document.getElementById('selected-count');
-        const floatingBar = document.getElementById('floating-bar');
-        const topCancel = document.getElementById('top-cancel-btn');
-
-        if(floatGrand) floatGrand.innerText = formatRupiah(grandTotal);
-        if(countBadge) countBadge.innerText = totalItems;
-
-        // E. Tampilkan/Sembunyikan UI Floating Bar
-        const hasSelection = totalItems > 0;
-
-        if (hasSelection) {
-            floatingBar.classList.remove('translate-y-48');
-            topCancel.classList.remove('hidden');
-            topCancel.classList.add('flex');
-        } else {
-            floatingBar.classList.add('translate-y-48');
-            topCancel.classList.add('hidden');
-            topCancel.classList.remove('flex');
         }
+
+        // 3) aman parsing: hilangkan semua non-digit (titik/komponen Rp) lalu parse
+        let price = 0;
+        if (priceRaw !== null && priceRaw !== undefined) {
+            const digits = String(priceRaw).replace(/\D/g, '');
+            price = digits ? parseInt(digits, 10) : 0;
+        }
+
+        roomTotal += price;
+        selectedRoomsCount++;
+    });
+
+    // B. Hitung Total Layanan (tidak berubah)
+    document.querySelectorAll('.service-checkbox').forEach(cb => {
+        const id = cb.value;
+        const price = parseFloat(cb.getAttribute('data-price')) || 0;
+        const qtyInput = document.getElementById('srv-qty-' + id);
+        
+        if (cb.checked) {
+            let qty = qtyInput ? parseInt(qtyInput.value) : 1;
+            if(qty === 0 && cb.checked) qty = 1; 
+            
+            serviceTotal += (price * qty);
+            selectedServicesItems += qty;
+        }
+    });
+
+    const grandTotal = roomTotal + serviceTotal;
+    const totalItems = selectedRoomsCount + selectedServicesItems;
+
+    // C. Update Panel Rincian (Kanan - Villa)
+    const panelRoom = document.getElementById('panel-room-total');
+    const panelService = document.getElementById('panel-service-total');
+    const panelGrand = document.getElementById('panel-grand-total');
+    const panelRoomCount = document.getElementById('panel-room-count');
+    const panelServiceCount = document.getElementById('panel-service-count');
+
+    if(panelRoom) panelRoom.innerText = formatRupiah(roomTotal);
+    if(panelService) panelService.innerText = formatRupiah(serviceTotal);
+    if(panelGrand) panelGrand.innerText = formatRupiah(grandTotal);
+    if(panelRoomCount) panelRoomCount.innerText = selectedRoomsCount + ' unit';
+    if(panelServiceCount) panelServiceCount.innerText = selectedServicesItems + ' item';
+
+    // D. Update Floating Bar (Bawah - Universal)
+    const floatGrand = document.getElementById('float-grand-total');
+    const countBadge = document.getElementById('selected-count');
+    const floatingBar = document.getElementById('floating-bar');
+    const topCancel = document.getElementById('top-cancel-btn');
+
+    if(floatGrand) floatGrand.innerText = formatRupiah(grandTotal);
+    if(countBadge) countBadge.innerText = totalItems;
+
+    // E. Tampilkan/Sembunyikan UI Floating Bar
+    const hasSelection = totalItems > 0;
+
+    if (hasSelection) {
+        floatingBar.classList.remove('translate-y-48');
+        topCancel.classList.remove('hidden');
+        topCancel.classList.add('flex');
+    } else {
+        floatingBar.classList.add('translate-y-48');
+        topCancel.classList.add('hidden');
+        topCancel.classList.remove('flex');
     }
+}
+
 
     document.addEventListener("DOMContentLoaded", function() {
         recalcTotals();
