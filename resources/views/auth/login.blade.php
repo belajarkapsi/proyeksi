@@ -63,7 +63,7 @@
 
                                 @csrf
 
-                                {{-- Email --}}
+                                {{-- Username --}}
                                 <div class="mb-4">
                                     <label for="username" class="block font-medium text-sm text-gray-200 mb-1">Username</label>
                                     <div class="relative">
@@ -74,7 +74,7 @@
                                         </span>
 
                                         <!-- Input -->
-                                        <input id="username" name="username" type="text" required autofocus value="{{ old('username') }}" placeholder="Username / Email" class="w-full px-10 py-3 plrounded-md bg-white/90 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                                        <input id="username" name="username" type="text" autofocus value="{{ old('username') }}" placeholder="Username / Email" class="w-full px-10 py-3 plrounded-md bg-white/90 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-green-300 transition">
                                     </div>
                                 </div>
 
@@ -90,7 +90,7 @@
                                         </span>
 
                                         <!-- Input -->
-                                        <input id="password" name="password" type="password" required autofocus placeholder="Password" class="w-full px-10 py-3 plrounded-md bg-white/90 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                                        <input id="password" name="password" type="password" autofocus placeholder="Password" class="w-full px-10 py-3 plrounded-md bg-white/90 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-green-300 transition">
 
                                         <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-500 hover:text-green-700 transition focus:outline-none">
 

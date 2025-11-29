@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -102,6 +103,9 @@ Route::middleware(['auth:pemilik', 'no.cache'])->group(function() {
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+
+        // Route Data Penyewa
+        Route::resource('penyewa', DataPenyewaController::class);
     });
 
 });

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 overflow-x-hidden">
 
     <x-navbar-admin></x-navbar-admin>
 
@@ -32,7 +32,7 @@
 
                 {{-- ... MANAJEMEN ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Data Pengguna</div>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
+                <a href="{{ url('/admin/penyewa') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
                 <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Pemilik</span></a>
 
                 {{-- Pemisah --}}
@@ -137,7 +137,6 @@
                 @yield('content')
             </div>
         </div>
-        <x-footer></x-footer>
     </main>
 
     @stack('scripts')
@@ -148,6 +147,8 @@
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('admin-main');
         const navbarContent = document.getElementById('navbar-content-wrapper');
+        const navbarLeft = document.getElementById('navbar-left');
+        const navbarRight = document.getElementById('navbar-right');
         const overlay = document.getElementById('sidebar-overlay');
         const hamburgerBtn = document.getElementById('admin-hamburger');
 
@@ -172,9 +173,9 @@
 
             // SELALU translate navbar agar terlihat bergeser (desktop & mobile)
             if (open) {
-                navbarContent.style.transform = 'translateX(16rem)';
+                if (navbarLeft) navbarLeft.style.transform = 'translateX(16rem)';
             } else {
-                navbarContent.style.transform = '';
+                if (navbarLeft) navbarLeft.style.transform = '';
             }
         };
 

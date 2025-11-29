@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="mx-auto px-4 sm:px-6 lg:px-8 py-2">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
     <nav class="flex mb-4" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -22,6 +22,9 @@
             </li>
         </ol>
     </nav>
+</div>
+
+<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
 
     {{-- 2. HEADER HALO --}}
     <div class="mb-8">
@@ -30,9 +33,6 @@
             Lihat atau Ubah Informasi Dirimu Pada Halaman Ini
         </p>
     </div>
-</div>
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-20">
 
     {{-- Alert Manual --}}
     @if (session('success'))
@@ -67,15 +67,15 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs text-gray-500 ">Username:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $admin->username }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $admin->username }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">Email:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $admin->email }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $admin->email }}</div>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 ">No Telepon:</label>
-                    <div class="text-sm font-medium text-gray-800 border-b border-gray-300 pb-1">{{ $admin->no_telp ?? '-' }}</div>
+                    <div class="text-sm font-medium text-gray-800 border-b border-gray-400 pb-1">{{ $admin->no_telp ?? '-' }}</div>
                 </div>
             </div>
         </div>
@@ -93,33 +93,33 @@
 
                     {{-- Nama Lengkap --}}
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap<span class="text-red-500">*</span></label>
                         <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $admin->nama_lengkap) }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                            class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-gree\n-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" required>
                         @error('nama_lengkap') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Username --}}
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Username</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Username<span class="text-red-500">*</span></label>
                         <input type="text" name="username" value="{{ old('username', $admin->username) }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                            class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" required>
                         @error('username') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Email (Boleh diedit oleh admin) --}}
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Email<span class="text-red-500">*</span></label>
                         <input type="email" name="email" value="{{ old('email', $admin->email) }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500" required>
+                            class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none" required>
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- No Telepon --}}
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">No. Telepon</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">No. Telepon<span class="text-red-500">*</span></label>
                         <input type="text" name="no_telp" value="{{ old('no_telp', $admin->no_telp) }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                            class="py-3 px-4 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all disabled:opacity-50 disabled:pointer-events-none">
                         @error('no_telp') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
