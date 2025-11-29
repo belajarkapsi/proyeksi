@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -10,13 +9,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
     return view('dashboard');
-})->name('dashboard')->middleware('no.cache');
+})->name('dashboard');
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -34,6 +31,9 @@ Route::middleware('validasi.cabang')->group(function() {
     // Route detail kamar
     Route::get('/cabang/{lokasi}/{kategori}/kamar/{no_kamar}', [kamarController::class, 'show'])
         ->name('cabang.kamar.show');
+    
+    Route::get('/cabang/{lokasi}/{kategori}/villa/detail-villa', [CabangController::class, 'detailVilla'])
+        ->name('cabang.villa.detail');
 });
 
 
@@ -55,17 +55,11 @@ Route::middleware('auth')->group(function(){
 
 
 // Route Logout
-Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
-// Antisipasi ketika langsung cari /logout:
-Route::get('logout', function(Request $request) {
-    if (Auth::guard('pemilik')->check()) {
-        return redirect()->route('admin.dashboard');
-    }
-
-    if (Auth::guard('web')->check()) {
-        return redirect()->route('dashboard');
-    }
-
+Route::post('logout', [LoginController::class, 'destroy'])
+->middleware('auth')
+    ->name('logout');
+    // Antisipasi ketika langsung cari /logout:
+Route::get('logout', function() {
     return redirect()->route('dashboard');
 });
 
@@ -101,7 +95,7 @@ Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'c
 
 
 // Route Admin
-Route::middleware(['auth:pemilik', 'no.cache'])->group(function() {
+Route::middleware(['auth:pemilik'])->group(function() {
     Route::prefix('admin')->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
@@ -110,9 +104,6 @@ Route::middleware(['auth:pemilik', 'no.cache'])->group(function() {
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
-
-        // Route Data Penyewa
-        Route::resource('penyewa', DataPenyewaController::class);
     });
 
 });
