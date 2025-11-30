@@ -26,7 +26,7 @@
                 <div class="relative">
                     {{-- Tombol Profil --}}
                     <button id="user-menu-button" type="button" class="inline-flex items-center gap-3 bg-transparent border-0 px-0 py-0 focus:outline-none hover:bg-gray-100 hover:rounded-full">
-                        <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}?t={{ time() }}" alt="{{ Auth::user()->nama_lengkap ?? 'User' }}" class="size-10 rounded-full object-cover border-2 border-gray-200">
+                        <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->nama_lengkap) . '&background=10b981&color=fff&size=128' }}" alt="{{ Auth::user()->nama_lengkap ?? 'User' }}" class="size-10 rounded-full object-cover border-2 border-gray-200">
 
                         <div class="hidden sm:flex flex-col items-start leading-tight text-left">
                             <span class="text-sm font-medium text-gray-700 truncate">{{ Auth::user()->nama_lengkap ?? 'Nama User' }}</span>

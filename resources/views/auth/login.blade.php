@@ -16,14 +16,14 @@
 
     <style>
         body { font-family: 'Roboto', sans-serif; }
-        
+
         /* Animasi Masuk */
         .fade-in-up {
             animation: fadeInUp 0.8s ease-out forwards;
             opacity: 0;
             transform: translateY(20px);
         }
-        
+
         .delay-100 { animation-delay: 0.1s; }
 
         @keyframes fadeInUp {
@@ -41,9 +41,9 @@
 
         {{-- BACKGROUND UTAMA (Dipudarkan/Blur) --}}
         <div class="absolute inset-0 w-full h-full overflow-hidden">
-            <img src="{{ asset('images/background.jpg') }}" alt="Background" 
+            <img src="{{ asset('images/background.jpg') }}" alt="Background"
                  class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none blur-sm scale-105">
-            
+
             {{-- Overlay Gelap --}}
             <div class="absolute inset-0 bg-black/70"></div>
         </div>
@@ -53,16 +53,16 @@
 
             <!-- BAGIAN KIRI: Branding & Logo -->
             <div class="relative flex flex-col justify-center items-center lg:items-start text-white fade-in-up min-h-[400px]">
-                
+
                 {{-- LOGO BESAR (90% Terang, Tegak Lurus, Di Belakang Teks) --}}
                 <div class="absolute inset-0 flex items-center justify-center lg:justify-start pointer-events-none select-none z-0">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Besar" 
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo Besar"
                          class="w-80 h-80 lg:w-[450px] lg:h-[450px] object-contain opacity-90 drop-shadow-2xl">
                 </div>
 
                 {{-- Konten Teks --}}
                 <div class="relative z-10 text-center lg:text-left w-full">
-                    
+
                     {{-- Badge Kecil --}}
                     <div class="inline-block mb-4 px-4 py-1 bg-black/50 border border-green-400/50 rounded-full text-green-300 text-xs font-bold tracking-widest uppercase backdrop-blur-md shadow-lg">
                         Sistem Informasi Penginapan
@@ -82,16 +82,11 @@
 
             <!-- BAGIAN KANAN: Form Login -->
             <div class="w-full max-w-md mx-auto fade-in-up delay-100">
-                
-                {{-- Card Container: Gradient Hijau --}}
-                <div class="bg-gradient-to-b from-green-800 to-green-900 border border-green-600/30 rounded-2xl shadow-2xl shadow-black/50 p-8 relative overflow-hidden group">
-                    
-                    <div class="relative z-10">
-                        <div class="mb-8">
-                            <h2 class="text-2xl font-bold text-white tracking-wide">Selamat Datang</h2>
-                            <p class="text-green-100 text-sm mt-1 opacity-80">Silakan login untuk melanjutkan.</p>
-                        </div>
 
+                {{-- Card Container: Gradient Hijau --}}
+                <div class="bg-linear-to-b from-green-800 to-green-900 border border-green-600/30 rounded-2xl shadow-2xl shadow-black/50 p-8 relative overflow-hidden group">
+
+                    <div class="relative z-10">
                         {{-- Alert Error --}}
                         @if ($errors->any())
                         <div id="alert-error" class="mb-6 bg-red-500/20 border border-red-500/50 text-red-50 p-4 rounded-xl text-sm backdrop-blur-sm animate-pulse shadow-inner">
@@ -106,6 +101,13 @@
                         </div>
                         @endif
 
+
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold text-white tracking-wide">Selamat Datang</h2>
+                            <p class="text-green-100 text-sm mt-1 opacity-80">Silakan login untuk melanjutkan.</p>
+                        </div>
+
+
                         <form method="POST" action="{{ route('login') }}" class="space-y-6">
                             @csrf
 
@@ -118,7 +120,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                     </div>
-                                    <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus placeholder="Masukkan username" 
+                                    <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus placeholder="Masukkan username"
                                         class="w-full pl-10 pr-4 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
                                 </div>
                             </div>
@@ -132,7 +134,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>
                                     </div>
-                                    <input id="password" name="password" type="password" required placeholder="Masukkan password" 
+                                    <input id="password" name="password" type="password" required placeholder="Masukkan password"
                                         class="w-full pl-10 pr-12 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
 
                                     {{-- Toggle Icon --}}
@@ -165,7 +167,7 @@
                             {{-- Register --}}
                             <div class="text-center border-t border-green-700 pt-4">
                                 <p class="text-sm text-green-100/70">
-                                    Belum punya akun? 
+                                    Belum punya akun?
                                     <a href="{{ route('register') }}" class="text-white hover:text-green-300 font-bold transition-colors ml-1">Daftar Akun</a>
                                 </p>
                             </div>
@@ -186,7 +188,7 @@
 {{-- JAVASCRIPT (Vanilla - Tetap Logika Lama) --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        
+
         // 1. Toggle Password Logic
         const toggleBtn = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -195,8 +197,8 @@
 
         if (toggleBtn && passwordInput) {
             toggleBtn.addEventListener('click', function (e) {
-                e.preventDefault(); 
-                
+                e.preventDefault();
+
                 const isPassword = passwordInput.getAttribute('type') === 'password';
                 passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
 
@@ -209,18 +211,6 @@
                 }
             });
         }
-
-        // 2. Auto-close Alert Error Logic
-        const errorAlert = document.getElementById('alert-error');
-        if (errorAlert) {
-            setTimeout(function() {
-                errorAlert.style.transition = 'opacity 0.5s ease';
-                errorAlert.style.opacity = '0';
-                setTimeout(function() {
-                    errorAlert.remove();
-                }, 500);
-            }, 3000);
-        }
     });
 </script>
 
@@ -232,7 +222,7 @@
             icon: 'warning',
             title: 'Akses Ditolak',
             text: '{{ session('error') }}',
-            confirmButtonColor: '#166534', 
+            confirmButtonColor: '#166534',
             confirmButtonText: 'Siap, Login Dulu'
         });
     @endif
