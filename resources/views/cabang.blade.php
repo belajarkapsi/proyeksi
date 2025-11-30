@@ -218,7 +218,7 @@
                         </a>
                         
                         <a href="{{ route('cabang.villa.detail', ['lokasi' => $lokasi, 'kategori' => $kategori]) }}"
-                        <button class="flex-1 px-8 py-4 border-2 border-gray-200 text-center text-gray-700 font-semibold rounded-xl hover:border-gray-900 hover:text-gray-900 transition bg-transparent">
+                        <button class="flex-1 px-8 py-4 border-2 border-gray-200 text-center text-gray-700 font-semibold rounded-xl hover:border-green-600 hover:text-gray-900 transition bg-transparent">
                             Lihat Detail
                         </button>
                         </a>
