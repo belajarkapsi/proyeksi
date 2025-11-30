@@ -34,7 +34,7 @@
 
                 {{-- ... DATA PENGGUNA ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Data Pengguna</div>
-                <a href="{{ url('/admin/penyewa') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
+                <a href="{{ route('penyewa.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
                 <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Pemilik</span></a>
 
                 {{-- Pemisah --}}
@@ -117,6 +117,7 @@
             </div>
         </div>
 
+        {{-- Footer Sidebar --}}
         <div class="bg-green-800 py-5 px-4 border-t border-green-600 shrink-0">
             <div class="flex items-center gap-3 w-full">
                 <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) . '?t=' . time() : 'https://ui-avatars.com/api/?name=' . (Auth::user()->nama_lengkap ?? 'A') . '&background=10b981&color=fff' }}"
@@ -150,6 +151,7 @@
         <x-footer></x-footer>
     </main>
 
+    @include('sweetalert::alert')
     @stack('scripts')
 
     {{-- SCRIPT PENGATUR LAYOUT & DROPDOWN --}}

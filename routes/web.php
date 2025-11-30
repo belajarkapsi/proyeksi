@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -31,7 +32,7 @@ Route::middleware('validasi.cabang')->group(function() {
     // Route detail kamar
     Route::get('/cabang/{lokasi}/{kategori}/kamar/{no_kamar}', [kamarController::class, 'show'])
         ->name('cabang.kamar.show');
-    
+
     Route::get('/cabang/{lokasi}/{kategori}/villa/detail-villa', [CabangController::class, 'detailVilla'])
         ->name('cabang.villa.detail');
 });
@@ -56,7 +57,7 @@ Route::middleware('auth')->group(function(){
 
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
-->middleware('auth')
+    ->middleware('auth:web,pemilik')
     ->name('logout');
     // Antisipasi ketika langsung cari /logout:
 Route::get('logout', function() {
@@ -100,6 +101,8 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
+
+        Route::resource('penyewa', DataPenyewaController::class);
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
