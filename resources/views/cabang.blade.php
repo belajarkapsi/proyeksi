@@ -1,6 +1,9 @@
 @extends('layout.master')
 @section('title', $cabang->nama_cabang)
-
+@php
+    $lokasi = str_replace(' ', '-', strtolower($cabang->lokasi));
+    $kategori = str_replace(' ', '-', strtolower($cabang->kategori_cabang));
+@endphp
 @section('content')
     {{-- TOMBOL KEMBALI (Dibuat Sticky agar mudah diakses saat scroll) --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-30 pointer-events-none">
@@ -144,98 +147,135 @@
 
 
     {{-- ====================== LOGIKA TAMPILAN VILLA ====================== --}}
-    @elseif(strtolower($cabang->kategori_cabang) === 'villa')
+   @elseif(strtolower($cabang->kategori_cabang) === 'villa')
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up">
-        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fade-in-up">
+        
+        {{-- CONTAINER UTAMA: Desain Card Besar dengan Sudut Melengkung --}}
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 ring-1 ring-black/5">
 
-            {{-- Hero Image Villa --}}
-            <div class="relative h-[50vh] min-h-[400px] w-full group">
-                @if($cabang->gambar_cabang)
-                    <img src="{{ asset('storage/cabang/' . $cabang->gambar_cabang) }}"
-                            alt="{{ $cabang->nama_cabang }}"
-                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
-                @else
-                    <img src="{{ asset('images/background.jpg') }}"
-                            alt="Default Villa"
-                            class="w-full h-full object-cover object-center transition-transform duration-2000 group-hover:scale-110">
-                @endif
+            {{-- 1. HERO SECTION (GAMBAR UTAMA) --}}
+            <div class="relative h-[65vh] min-h-[500px] w-full group overflow-hidden">
+                {{-- Gambar --}}
+              
+                    <img src="{{ asset('images/villa.jpg') }}"
+                         alt="Default Villa"
+                         class="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105">
 
-                {{-- Gradient Overlay --}}
-                <div class="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent"></div>
+                {{-- Overlay Gradient (Agar teks terbaca jelas) --}}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
 
-                {{-- Konten Hero --}}
-                <div class="absolute bottom-0 left-0 w-full p-8 lg:p-12">
-                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div>
-                            <div class="flex items-center gap-2 mb-3">
-                                <span class="px-3 py-1 bg-green-600 text-white text-xs font-bold uppercase rounded-lg shadow-md">{{ $cabang->lokasi }}</span>
-                                <span class="px-3 py-1 bg-white/20 backdrop-blur text-white text-xs font-bold uppercase rounded-lg border border-white/20">Luxury Stay</span>
-                            </div>
-                            <h1 class="text-4xl md:text-6xl font-bold text-white font-serif mb-2 leading-tight">{{ $cabang->nama_cabang }}</h1>
-                        </div>
+                {{-- Badge Lokasi (Pojok Kiri Atas) --}}
+                <div class="absolute top-8 left-8 z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg">
+                            <i class="fas fa-map-marker-alt mr-1"></i> {{ $cabang->lokasi }}
+                        </span>
+                    </div>
+                </div>
 
-                        <div class="hidden md:block">
-                            <div class="text-white text-right">
-                                <p class="text-sm opacity-80">Mulai Dari</p>
-                                <p class="text-3xl font-bold text-green-400">IDR 500k<span class="text-sm text-white font-normal">/malam</span></p>
-                            </div>
-                        </div>
+                {{-- Judul & Tagline (Pojok Kiri Bawah) --}}
+                <div class="absolute bottom-0 left-0 w-full p-8 md:p-12 lg:p-16">
+                    <p class="text-green-400 font-medium tracking-widest uppercase mb-2 text-sm">Exclusive Villa Collection</p>
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white font-serif mb-4 drop-shadow-lg leading-tight">
+                        {{ $cabang->nama_cabang }}
+                    </h1>
+                    <div class="h-1 w-20 bg-green-500 rounded-full mb-6"></div>
+                    
+                    {{-- Harga (Display Visual Saja) --}}
+                    <div class="flex items-end gap-2 text-white/90">
+                        <span class="text-lg">Mulai dari</span>
+                        <span class="text-3xl font-bold text-white">IDR 500k++</span>
+                        <span class="text-sm text-gray-300 mb-1">/ malam</span>
                     </div>
                 </div>
             </div>
 
-            {{-- Konten Detail Villa --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3">
-                {{-- Kolom Utama --}}
-                <div class="lg:col-span-2 p-8 lg:p-12">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4 font-serif flex items-center gap-3">
-                        <span class="w-8 h-0.5 bg-gray-800"></span>
-                        Experience Comfort
-                    </h3>
-                    <p class="text-gray-600 text-lg leading-relaxed mb-8 text-justify">
-                        {{ $cabang->deskripsi }}
-                    </p>
+            {{-- 2. KONTEN DETAIL (GRID SYSTEM) --}}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-0">
+                
+                {{-- KOLOM KIRI: Deskripsi & Preview Kamar (Lebih Lebar) --}}
+                <div class="lg:col-span-2 p-8 md:p-12 lg:p-16 bg-white">
+                    
+                    {{-- Deskripsi Text --}}
+                    <div class="mb-12">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6 font-serif flex items-center gap-3">
+                            Tentang Villa
+                        </h3>
+                        <p class="text-gray-600 text-lg leading-relaxed text-justify font-light">
+                            {{ $cabang->deskripsi }}
+                        </p>
+                    </div>
 
-                    <div class="flex flex-wrap gap-4">
-                        <button class="flex-1 sm:flex-none px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-1">
-                            Reservasi Sekarang
+                    {{-- Tombol Aksi (CTA) --}}
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        {{-- Tombol ini nanti akan diarahkan ke route daftar kamar --}}
+                        <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}"
+                        <button class="flex-1 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-900 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                            <span>Reservasi Sekarang</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </button>
-                        <button class="flex-1 sm:flex-none px-8 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-gray-900 hover:text-gray-900 transition">
-                            Lihat Galeri
+                        </a>
+                        
+                        <a href="{{ route('cabang.villa.detail', ['lokasi' => $lokasi, 'kategori' => $kategori]) }}"
+                        <button class="flex-1 px-8 py-4 border-2 border-gray-200 text-center text-gray-700 font-semibold rounded-xl hover:border-gray-900 hover:text-gray-900 transition bg-transparent">
+                            Lihat Detail
                         </button>
+                        </a>
                     </div>
                 </div>
 
-                {{-- Sidebar Info --}}
-                <div class="bg-gray-50 border-l border-gray-100 p-8 lg:p-12 flex flex-col justify-center">
-                    <h4 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Fasilitas & Info</h4>
-                    <ul class="space-y-4">
-                        <li class="flex items-center justify-between pb-4 border-b border-gray-200">
-                            <span class="text-gray-500 text-sm">Tipe Properti</span>
-                            <span class="font-semibold text-gray-800">{{ ucfirst($cabang->kategori_cabang) }}</span>
+                {{-- KOLOM KANAN: Sidebar Fasilitas (Background Abu-abu halus) --}}
+                <div class="bg-gray-50 border-l border-gray-100 p-8 md:p-12 lg:p-16 flex flex-col h-full">
+                    <h4 class="font-bold text-gray-900 mb-8 uppercase tracking-widest text-xs border-b pb-4 border-gray-200">
+                        Fasilitas & Layanan
+                    </h4>
+                    
+                    {{-- List Fasilitas dengan Icon --}}
+                    <ul class="space-y-6 mb-10">
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-green-600 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                            <div>
+                                <span class="block font-bold text-gray-800 text-sm">Private Property</span>
+                                <span class="text-xs text-gray-500">Privasi terjaga untuk Anda</span>
+                            </div>
                         </li>
-                        <li class="flex items-center justify-between pb-4 border-b border-gray-200">
-                            <span class="text-gray-500 text-sm">Jumlah Unit</span>
-                            <span class="font-semibold text-gray-800">{{ $cabang->jumlah_kamar }} Private Rooms</span>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-green-600 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            </div>
+                            <div>
+                                <span class="block font-bold text-gray-800 text-sm">{{ $cabang->jumlah_kamar }} Unit Kamar</span>
+                                <span class="text-xs text-gray-500">Tersedia untuk disewa</span>
+                            </div>
                         </li>
-                        <li class="flex items-center justify-between pb-4 border-b border-gray-200">
-                            <span class="text-gray-500 text-sm">Check-In / Out</span>
-                            <span class="font-semibold text-gray-800">14:00 / 12:00</span>
+                        <li class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-green-600 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <span class="block font-bold text-gray-800 text-sm">Resepsionis 24 Jam</span>
+                                <span class="text-xs text-gray-500">Siap membantu kapan saja</span>
+                            </div>
                         </li>
                     </ul>
 
-                    <div class="mt-8 p-4 bg-green-100 rounded-xl flex gap-3 items-start">
-                        <svg class="w-6 h-6 text-green-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <p class="text-sm text-green-800 leading-snug">
-                            Resepsionis tersedia 24 jam untuk membantu kebutuhan check-in Anda.
+                    {{-- Info Box --}}
+                    <div class="mt-auto bg-green-50 p-6 rounded-2xl border border-green-100">
+                        <p class="font-serif text-lg font-bold text-green-800 mb-2">Need Help?</p>
+                        <p class="text-sm text-green-700/80 mb-4 leading-relaxed">
+                            Hubungi layanan pelanggan kami jika Anda memiliki pertanyaan spesifik mengenai villa ini.
                         </p>
+                        <button class="w-full py-2 bg-white text-green-700 font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm hover:shadow-md transition">
+                            Chat WhatsApp
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     @endif
 
 </div>

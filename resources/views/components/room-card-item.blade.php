@@ -12,6 +12,9 @@
         'kategori' => str_replace(' ', '-', strtolower($cabang->kategori_cabang)),
         'no_kamar' => $roomId
     ]);
+
+    // Ambil harga mentah sebagai integer (tanpa pemisah) untuk data-price
+    $rawPrice = (int) ($room->harga ?? $room->harga_kamar ?? 0);
 @endphp
 
 <article
@@ -24,6 +27,7 @@
   data-id="{{ $roomId }}"
   data-available="{{ $isAvailable ? '1' : '0' }}"
   data-booking-url="{{ $bookingUrl }}"
+  data-price="{{ $rawPrice }}" {{-- <-- tambahkan data-price di sini --}}
 
   {{-- Event hanya aktif jika tersedia --}}
   @if($isAvailable)
@@ -38,7 +42,8 @@
 >
     {{-- Checkbox (Hanya jika tersedia) --}}
     @if($isAvailable)
-        <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden">
+        {{-- Tambahan: tambahkan kelas room-select agar JS dapat mendeteksi --}}
+        <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden room-select">
 
         {{-- Overlay Hijau --}}
         <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-20 hidden border-2 border-green-500 rounded-xl flex items-center justify-center pointer-events-none">

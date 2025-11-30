@@ -16,9 +16,14 @@ class GuestOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check()) {
-            return redirect()->route('dashboard');
-        }
+            if (Auth::guard('pemilik')->check()) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            // Jika Penyewa sudah login -> Lempar ke Dashboard Utama
+            if (Auth::guard('web')->check()) {
+                return redirect()->route('dashboard');
+            }
 
         return $next($request);
     }

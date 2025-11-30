@@ -8,10 +8,10 @@
     {{-- Background Image dengan Gradient Overlay --}}
     <div class="absolute inset-0 z-0">
         <img src="{{ asset('images/background.jpg') }}"
-             class="w-full h-full object-cover"
-             alt="Hero Background">
+        class="w-full h-full object-cover"
+        alt="Hero Background">
         {{-- Gradient agar teks terbaca jelas --}}
-        <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-white via-white/80 to-transparent"></div>
     </div>
 
     {{-- Main Content --}}
@@ -46,22 +46,22 @@
                 <div id="heroGallery" class="flex gap-6 overflow-x-hidden py-4 px-4">
 
                     {{-- Card 1 --}}
-                    <div class="flex-shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
+                    <div class="shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
                         <img src="{{ asset('images/background.jpg') }}" class="w-full h-full object-cover">
                     </div>
 
                     {{-- Card 2 --}}
-                    <div class="flex-shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
+                    <div class="shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
                         <img src="{{ asset('images/villa.jpg') }}" class="w-full h-full object-cover">
                     </div>
 
                     {{-- Card 3 --}}
-                    <div class="flex-shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
+                    <div class="shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
                         <img src="{{ asset('images/pondok.jpg') }}" class="w-full h-full object-cover">
                     </div>
 
                     {{-- Card 4 (Duplikat untuk efek infinite loop visual) --}}
-                    <div class="flex-shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
+                    <div class="shrink-0 w-[320px] h-[220px] bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform hover:scale-105 border border-gray-100">
                         <img src="{{ asset('images/background.jpg') }}" class="w-full h-full object-cover">
                     </div>
 
@@ -83,7 +83,7 @@
             <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-green-50 rounded-full -z-10"></div>
 
             <img src="{{ asset('images/penginapan.jpg') }}"
-                 class="w-full rounded-2xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-500 object-cover h-[350px] md:h-[400px]">
+            class="w-full rounded-2xl shadow-2xl transform hover:scale-[1.02] transition-transform duration-500 object-cover h-[350px] md:h-[400px]">
         </div>
 
         {{-- Text Side --}}
@@ -152,8 +152,8 @@
                 {{-- Image Wrapper --}}
                 <div class="relative h-56 overflow-hidden">
                     <img src="{{ asset('images/background.jpg') }}"
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                         alt="Pondok Siti Hajar">
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt="Pondok Siti Hajar">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                     <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                         PAREPARE
@@ -186,8 +186,8 @@
             <a href="/cabang/parepare/villa" class="group block bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-green-900/10 transition-all duration-300 transform hover:-translate-y-2 scroll-trigger opacity-0 translate-y-10 delay-100 cursor-pointer">
                 <div class="relative h-56 overflow-hidden">
                     <img src="{{ asset('images/villa.jpg') }}"
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                         alt="The Green Villa">
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt="The Green Villa">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                     <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                         PAREPARE
@@ -219,8 +219,8 @@
             <a href="/cabang/pangkep/kost" class="group block bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-green-900/10 transition-all duration-300 transform hover:-translate-y-2 scroll-trigger opacity-0 translate-y-10 delay-200 cursor-pointer">
                 <div class="relative h-56 overflow-hidden">
                     <img src="{{ asset('images/pondok.jpg') }}"
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                         alt="Pondok Siti Hajar Pangkep">
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt="Pondok Siti Hajar Pangkep">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                     <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                         PANGKEP
@@ -261,7 +261,7 @@
         <div class="flex flex-col md:flex-row gap-10 items-center">
             <div class="md:w-1/2 h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden shadow-lg relative group">
                 <img src="{{ asset('images/background.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-80"></div>
                 <div class="absolute bottom-6 left-6 text-white">
                     <span class="text-sm font-light tracking-widest uppercase mb-1 block text-green-300">Parepare</span>
                     <h3 class="text-2xl font-bold font-serif">Pondok Siti Hajar</h3>
@@ -297,7 +297,7 @@
             </div>
             <div class="md:w-1/2 h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden shadow-lg relative group">
                 <img src="{{ asset('images/pondok.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-80"></div>
                 <div class="absolute bottom-6 left-6 text-white">
                     <span class="text-sm font-light tracking-widest uppercase mb-1 block text-green-300">Pangkep</span>
                     <h3 class="text-2xl font-bold font-serif">Pondok Satu</h3>
@@ -311,7 +311,7 @@
         <div class="flex flex-col md:flex-row-reverse gap-10 items-center">
             <div class="md:w-1/2 h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden shadow-lg relative group">
                 <img src="{{ asset('images/villa.jpg') }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-80"></div>
                 <div class="absolute bottom-6 left-6 text-white">
                     <span class="text-sm font-light tracking-widest uppercase mb-1 block text-green-300">Parepare</span>
                     <h3 class="text-2xl font-bold font-serif">The Green Villa</h3>
