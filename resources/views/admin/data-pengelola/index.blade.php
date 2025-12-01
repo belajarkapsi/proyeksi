@@ -59,9 +59,9 @@
                                     @csrf
                                     @method('DELETE')
 
-                                    <a href="{{ route('pengelola.show', $pengelola->id_pengelola) }}" class="uppercase text-blue-600 hover:text-blue-800">Tampilkan</a>
+                                    <a href="{{ route('pengelola.show', $pengelola->id_pengelola) }}" class="uppercase text-blue-600 hover:text-blue-800">Lihat</a>
                                     <span class="text-gray-500">|</span>
-                                    <a href="{{ route('pengelola.edit', $pengelola->id_pengelola) }}" class="uppercase text-green-600 hover:text-green-800">Edit</a>
+                                    <a href="{{ route('pengelola.edit', $pengelola->id_pengelola) }}" class="uppercase text-amber-600 hover:text-amber-800">Edit</a>
                                     <span class="text-gray-500">|</span>
 
                                     <button type="button" onclick="confirmDelete('{{ $pengelola->id_pengelola }}', '{{ $pengelola->nama_lengkap }}')" class="uppercase text-red-600 hover:text-red-800 font-bold">Hapus</button>
@@ -78,6 +78,8 @@
             </div>
         </div>
     </div>
+
+    <a href="{{ route('pengelola.create') }}" class="uppercase text-green-600 hover:text-green-800">Tambah</a>
 </div>
 @endsection
 

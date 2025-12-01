@@ -19,6 +19,59 @@ class DataPengelolaController extends Controller
         return view('admin.data-pengelola.index', compact('pengelolas'));
     }
 
+    public function create()
+    {
+        return view('admin.data-pengelola.create');
+    }
+
+    public function store(Request $request)
+    {
+        // Validasi
+        $validasiData = $request->validate([
+            'nama_lengkap'  => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]*$/'],
+            'no_telp'       => ['required', 'numeric'],
+            'email'         => ['required', 'email', 'unique:pengelola,email'],
+            'username'      => ['required', 'string', 'min:8', 'max:255', 'unique:pengelola,username'],
+            'password'      => ['required', 'string', 'min:8'],
+            'tanggal_lahir' => ['required', 'date', 'before:-10 years'],
+            'usia'          => ['required', 'integer'],
+            'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
+            'foto_profil'   => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ],
+            [
+                'required'              => 'Data ini wajib diisi, jangan dikosongkan!',
+                'numeric'               => 'Harus Berupa Angka!',
+                'username.unique'       => 'Username sudah digunakan!',
+                'email.unique'          => 'Email sudah digunakan!',
+                'nama_lengkap.regex'    => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+                'username.min'          => 'Username minimal memiliki panjang 8 karakter',
+                'tanggal_lahir.before'  => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.'
+        ]);
+
+        // Siapkan data yang akan disimpan
+        $data =[
+            'nama_lengkap'  => $validasiData['nama_lengkap'],
+            'no_telp'       => $validasiData['no_telp'],
+            'email'         => $validasiData['email'],
+            'username'      => $validasiData['username'],
+            'password'      => Hash::make($validasiData['password']),
+            'tanggal_lahir' => $validasiData['tanggal_lahir'],
+            'usia'          => $validasiData['usia'],
+            'jenis_kelamin' => $validasiData['jenis_kelamin'],
+        ];
+
+        if($request->hasFile('foto_profil')) {
+            $gambar = $request->file('foto_profil')->store('foto_profil', 'public');
+            $data['foto_profil'] = $gambar;
+        }
+
+        // Simpan data
+        Pengelola::create($data);
+
+        Alert::success('Berhasil!', 'Data Pengelola Berhasil Ditambahkan!');
+        return redirect()->route('pengelola.index');
+    }
+
     public function show(string $id)
     {
         $pengelola = Pengelola::findOrFail($id);
@@ -36,7 +89,7 @@ class DataPengelolaController extends Controller
 
     public function update(Request $request, string $id)
     {
-                $pengelola = Pengelola::findOrFail($id);
+        $pengelola = Pengelola::findOrFail($id);
 
         // Validasi
         $validasiData = $request->validate([
