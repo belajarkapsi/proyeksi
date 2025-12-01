@@ -1,5 +1,5 @@
 @extends('layout.admin')
-@section('title', 'Edit Data Penyewa')
+@section('title', 'Edit Data Pengelola')
 
 @section('content')
 {{-- Breadcrumb --}}
@@ -15,7 +15,7 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
+                <a href="{{ route('pengelola.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Pengelola</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
@@ -28,17 +28,17 @@
 <div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
     <div class="bg-green-700 px-6 py-4 flex justify-between items-center">
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square"></i> Edit Data Penyewa
+            <i class="fa-solid fa-pen-to-square"></i> Edit Data Pengelola
         </h3>
-        <a href="{{ route('penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('pengelola.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
 
     {{-- Form Start --}}
     {{-- PENTING: enctype="multipart/form-data" wajib ada untuk upload foto --}}
-    {{-- Route menggunakan parameter $user->id_penyewa karena primary key custom --}}
-    <form action="{{ route('penyewa.update', $user->id_penyewa) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+    {{-- Route menggunakan parameter $pengelola->id_penyewa karena primary key custom --}}
+    <form action="{{ route('pengelola.update', $pengelola->id_pengelola) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
         @csrf
         @method('PUT')
 
@@ -47,28 +47,28 @@
             {{-- Nama Lengkap --}}
             <div class="col-span-1 md:col-span-2">
                 <label for="nama_lengkap" class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap <span class="text-red-500">*</span></label>
-                <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $pengelola->nama_lengkap) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 @error('nama_lengkap') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             {{-- Username --}}
             <div>
                 <label for="username" class="block mb-2 text-sm font-medium text-gray-900">Username <span class="text-red-500">*</span></label>
-                <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                <input type="text" id="username" name="username" value="{{ old('username', $pengelola->username) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 @error('username') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             {{-- Email --}}
             <div>
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email <span class="text-red-500">*</span></label>
-                <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                <input type="email" id="email" name="email" value="{{ old('email', $pengelola->email) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 @error('email') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             {{-- No Telp --}}
             <div>
                 <label for="no_telp" class="block mb-2 text-sm font-medium text-gray-900">Nomor Telepon <span class="text-red-500">*</span></label>
-                <input type="number" id="no_telp" name="no_telp" value="{{ old('no_telp', $user->no_telp) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                <input type="number" id="no_telp" name="no_telp" value="{{ old('no_telp', $pengelola->no_telp) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 @error('no_telp') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
@@ -76,8 +76,8 @@
             <div>
                 <label for="jenis_kelamin" class="block mb-2 text-sm font-medium text-gray-900">Jenis Kelamin <span class="text-red-500">*</span></label>
                 <select id="jenis_kelamin" name="jenis_kelamin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-                    <option value="Laki-laki" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                    <option value="Perempuan" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    <option value="Laki-laki" {{ old('jenis_kelamin', $pengelola->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan" {{ old('jenis_kelamin', $pengelola->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                 </select>
                 @error('jenis_kelamin') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
@@ -85,25 +85,13 @@
             {{-- Tanggal Lahir --}}
             <div>
                 <label for="tanggal_lahir" class="block mb-2 text-sm font-medium text-gray-900">Tanggal Lahir</label>
-                <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pengelola->tanggal_lahir) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
             </div>
 
             {{-- Usia --}}
             <div>
                 <label for="usia" class="block mb-2 text-sm font-medium text-gray-900">Usia</label>
-                <input type="number" id="usia" name="usia" value="{{ old('usia', $user->usia) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-            </div>
-
-            {{-- Asal --}}
-            <div>
-                <label for="asal" class="block mb-2 text-sm font-medium text-gray-900">Asal / Kota</label>
-                <input type="text" id="asal" name="asal" value="{{ old('asal', $user->asal) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-            </div>
-
-            {{-- Alamat --}}
-            <div class="col-span-1 md:col-span-2">
-                <label for="alamat" class="block mb-2 text-sm font-medium text-gray-900">Alamat Lengkap</label>
-                <textarea id="alamat" name="alamat" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">{{ old('alamat', $user->alamat) }}</textarea>
+                <input type="number" id="usia" name="usia" value="{{ old('usia', $pengelola->usia) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
             </div>
 
             <div class="block w-full h-px bg-gray-200 col-span-1 md:col-span-2 my-2"></div>
@@ -112,7 +100,7 @@
             <div class="col-span-1 md:col-span-2">
                 <label class="block mb-2 text-sm font-medium text-gray-900">Foto Profil</label>
                 <div class="flex items-center gap-4">
-                    <img src="{{ $user->foto_profil ? asset('storage/' . $user->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode($user->nama_lengkap) . '&background=10b981&color=fff' }}"
+                    <img src="{{ $pengelola->foto_profil ? asset('storage/' . $pengelola->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode($pengelola->nama_lengkap) . '&background=10b981&color=fff' }}"
                         alt="Preview" class="w-16 h-16 rounded-full object-cover border border-gray-300">
 
                     <div class="w-full">
@@ -132,6 +120,8 @@
             </div>
 
         </div>
+
+        <div class="block w-full h-px bg-gray-200 col-span-1 md:col-span-2 my-2"></div>
 
         {{-- Tombol Aksi --}}
         <div class="flex justify-end gap-3 mt-8">

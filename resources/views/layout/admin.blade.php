@@ -35,7 +35,7 @@
                 {{-- ... DATA PENGGUNA ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Data Pengguna</div>
                 <a href="{{ route('penyewa.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Penyewa</span></a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Pemilik</span></a>
+                <a href="{{ route('pengelola.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-users w-6 text-center"></i><span class="font-medium">Data Pengelola</span></a>
 
                 {{-- Pemisah --}}
                 <div class="block border-b border-white"></div>
@@ -66,6 +66,7 @@
                         <div class="py-2 space-y-1">
                             <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
                             <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-bell-concierge text-sm text-center"></i><span class="font-medium">Layanan Villa</span></a>
+                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
                         </div>
                     </div>
                 </div>
@@ -90,6 +91,7 @@
                     <div id="menu-parepare" class="dropdown-menu overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-green-800 rounded-lg mt-1 mx-1">
                         <div class="py-2 space-y-1">
                             <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
+                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
                         </div>
                     </div>
                 </div>

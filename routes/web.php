@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
@@ -102,7 +103,10 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
 
+        // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
+        // Data Pengelola
+        Route::resource('pengelola', DataPengelolaController::class);
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
