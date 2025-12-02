@@ -345,7 +345,7 @@
         clearTimeout(pressTimer);
     }
 
-    // 4. Masuk Mode Seleksi (Hotel)
+    // 4. Masuk Mode Seleksi (Kost)
     function enterSelectionMode(initialId) {
         isSelectionMode = true;
         if (navigator.vibrate) navigator.vibrate(50);
@@ -430,96 +430,191 @@
 
     // ========== LOGIKA UTAMA: KALKULASI HARGA (KAMAR + LAYANAN) ==========
 
-function recalcTotals() {
-    let roomTotal = 0;
-    let serviceTotal = 0;
-    
-    let selectedRoomsCount = 0;
-    let selectedServicesItems = 0;
-
-    // A. Hitung Total Kamar
-    const roomCheckboxes = document.querySelectorAll('input[name="selected_rooms[]"]:checked');
-    roomCheckboxes.forEach(cb => {
-        // 1) coba ambil data-price langsung dari checkbox (jika ada)
-        let priceRaw = cb.getAttribute('data-price');
-
-        // 2) fallback: ambil dari parent .room-card (kita tambahkan data-price di artikel)
-        if (!priceRaw || priceRaw === '' || priceRaw === '0') {
-            const card = cb.closest('.room-card');
-            if (card && card.dataset && card.dataset.price) {
-                priceRaw = card.dataset.price;
-            }
-        }
-
-        // 3) aman parsing: hilangkan semua non-digit (titik/komponen Rp) lalu parse
-        let price = 0;
-        if (priceRaw !== null && priceRaw !== undefined) {
-            const digits = String(priceRaw).replace(/\D/g, '');
-            price = digits ? parseInt(digits, 10) : 0;
-        }
-
-        roomTotal += price;
-        selectedRoomsCount++;
-    });
-
-    // B. Hitung Total Layanan (tidak berubah)
-    document.querySelectorAll('.service-checkbox').forEach(cb => {
-        const id = cb.value;
-        const price = parseFloat(cb.getAttribute('data-price')) || 0;
-        const qtyInput = document.getElementById('srv-qty-' + id);
+    function recalcTotals() {
+        let roomTotal = 0;
+        let serviceTotal = 0;
         
-        if (cb.checked) {
-            let qty = qtyInput ? parseInt(qtyInput.value) : 1;
-            if(qty === 0 && cb.checked) qty = 1; 
+        let selectedRoomsCount = 0;
+        let selectedServicesItems = 0;
+
+        // A. Hitung Total Kamar
+        const roomCheckboxes = document.querySelectorAll('input[name="selected_rooms[]"]:checked');
+        roomCheckboxes.forEach(cb => {
+            // 1) coba ambil data-price langsung dari checkbox (jika ada)
+            let priceRaw = cb.getAttribute('data-price');
+
+            // 2) fallback: ambil dari parent .room-card (kita tambahkan data-price di artikel)
+            if (!priceRaw || priceRaw === '' || priceRaw === '0') {
+                const card = cb.closest('.room-card');
+                if (card && card.dataset && card.dataset.price) {
+                    priceRaw = card.dataset.price;
+                }
+            }
+
+            // 3) aman parsing: hilangkan semua non-digit (titik/komponen Rp) lalu parse
+            let price = 0;
+            if (priceRaw !== null && priceRaw !== undefined) {
+                const digits = String(priceRaw).replace(/\D/g, '');
+                price = digits ? parseInt(digits, 10) : 0;
+            }
+
+            roomTotal += price;
+            selectedRoomsCount++;
+        });
+
+        // B. Hitung Total Layanan (tidak berubah)
+        document.querySelectorAll('.service-checkbox').forEach(cb => {
+            const id = cb.value;
+            const price = parseFloat(cb.getAttribute('data-price')) || 0;
+            const qtyInput = document.getElementById('srv-qty-' + id);
             
-            serviceTotal += (price * qty);
-            selectedServicesItems += qty;
+            if (cb.checked) {
+                let qty = qtyInput ? parseInt(qtyInput.value) : 1;
+                if(qty === 0 && cb.checked) qty = 1; 
+                
+                serviceTotal += (price * qty);
+                selectedServicesItems += qty;
+            }
+        });
+
+        const grandTotal = roomTotal + serviceTotal;
+        const totalItems = selectedRoomsCount + selectedServicesItems;
+
+        // C. Update Panel Rincian (Kanan - Villa)
+        const panelRoom = document.getElementById('panel-room-total');
+        const panelService = document.getElementById('panel-service-total');
+        const panelGrand = document.getElementById('panel-grand-total');
+        const panelRoomCount = document.getElementById('panel-room-count');
+        const panelServiceCount = document.getElementById('panel-service-count');
+
+        if(panelRoom) panelRoom.innerText = formatRupiah(roomTotal);
+        if(panelService) panelService.innerText = formatRupiah(serviceTotal);
+        if(panelGrand) panelGrand.innerText = formatRupiah(grandTotal);
+        if(panelRoomCount) panelRoomCount.innerText = selectedRoomsCount + ' unit';
+        if(panelServiceCount) panelServiceCount.innerText = selectedServicesItems + ' item';
+
+        // D. Update Floating Bar (Bawah - Universal)
+        const floatGrand = document.getElementById('float-grand-total');
+        const countBadge = document.getElementById('selected-count');
+        const floatingBar = document.getElementById('floating-bar');
+        const topCancel = document.getElementById('top-cancel-btn');
+
+        if(floatGrand) floatGrand.innerText = formatRupiah(grandTotal);
+        if(countBadge) countBadge.innerText = totalItems;
+
+        // E. Tampilkan/Sembunyikan UI Floating Bar
+        const hasSelection = totalItems > 0;
+
+        if (hasSelection) {
+            floatingBar.classList.remove('translate-y-48');
+            topCancel.classList.remove('hidden');
+            topCancel.classList.add('flex');
+        } else {
+            floatingBar.classList.add('translate-y-48');
+            topCancel.classList.add('hidden');
+            topCancel.classList.remove('flex');
         }
-    });
-
-    const grandTotal = roomTotal + serviceTotal;
-    const totalItems = selectedRoomsCount + selectedServicesItems;
-
-    // C. Update Panel Rincian (Kanan - Villa)
-    const panelRoom = document.getElementById('panel-room-total');
-    const panelService = document.getElementById('panel-service-total');
-    const panelGrand = document.getElementById('panel-grand-total');
-    const panelRoomCount = document.getElementById('panel-room-count');
-    const panelServiceCount = document.getElementById('panel-service-count');
-
-    if(panelRoom) panelRoom.innerText = formatRupiah(roomTotal);
-    if(panelService) panelService.innerText = formatRupiah(serviceTotal);
-    if(panelGrand) panelGrand.innerText = formatRupiah(grandTotal);
-    if(panelRoomCount) panelRoomCount.innerText = selectedRoomsCount + ' unit';
-    if(panelServiceCount) panelServiceCount.innerText = selectedServicesItems + ' item';
-
-    // D. Update Floating Bar (Bawah - Universal)
-    const floatGrand = document.getElementById('float-grand-total');
-    const countBadge = document.getElementById('selected-count');
-    const floatingBar = document.getElementById('floating-bar');
-    const topCancel = document.getElementById('top-cancel-btn');
-
-    if(floatGrand) floatGrand.innerText = formatRupiah(grandTotal);
-    if(countBadge) countBadge.innerText = totalItems;
-
-    // E. Tampilkan/Sembunyikan UI Floating Bar
-    const hasSelection = totalItems > 0;
-
-    if (hasSelection) {
-        floatingBar.classList.remove('translate-y-48');
-        topCancel.classList.remove('hidden');
-        topCancel.classList.add('flex');
-    } else {
-        floatingBar.classList.add('translate-y-48');
-        topCancel.classList.add('hidden');
-        topCancel.classList.remove('flex');
     }
-}
 
 
     document.addEventListener("DOMContentLoaded", function() {
         recalcTotals();
     });
+
+(function attachPreSubmitHelper(){
+    const bookingForm = document.getElementById('bookingForm');
+    if (!bookingForm) return;
+
+    function removeDynamic() {
+        Array.from(bookingForm.querySelectorAll('input[data-dynamic-service]')).forEach(n => n.remove());
+        Array.from(bookingForm.querySelectorAll('input[data-dynamic-qty]')).forEach(n => n.remove());
+        Array.from(bookingForm.querySelectorAll('input[data-dynamic-flag]')).forEach(n => n.remove());
+    }
+    function addHidden(name, value, attrs = {}) {
+        const inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = name;
+        inp.value = value;
+        Object.keys(attrs).forEach(k => inp.setAttribute(k, attrs[k]));
+        bookingForm.appendChild(inp);
+        return inp;
+    }
+
+    function buildServiceHiddenInputs() {
+        removeDynamic();
+
+        // 1) Visible toggles (visible-check-<id>)
+        document.querySelectorAll('input[id^="visible-check-"]').forEach(el => {
+            const m = el.id.match(/visible-check-(\d+)/);
+            if (!m) return;
+            const id = m[1];
+            const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
+            const qty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : 1;
+            if (el.checked) addHidden('services[]', id, {'data-dynamic-service':'1'});
+            addHidden('service_quantity[' + id + ']', qty || 1, {'data-dynamic-qty':'1'});
+        });
+
+        // 2) Hidden srv-check checkboxes
+        document.querySelectorAll('input[id^="srv-check-"]').forEach(el => {
+            if (el.checked) {
+                addHidden('services[]', el.value, {'data-dynamic-service':'1'});
+                const id = el.value;
+                const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
+                const qty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : 1;
+                addHidden('service_quantity[' + id + ']', qty || 1, {'data-dynamic-qty':'1'});
+            }
+        });
+
+        // 3) Counters (display-qty-/disp-)
+        document.querySelectorAll('[id^="display-qty-"], [id^="disp-"]').forEach(el => {
+            const m = el.id.match(/(?:display-qty-|disp-)(\d+)/);
+            if (!m) return;
+            const id = m[1];
+            const qty = parseInt((el.value !== undefined ? el.value : el.innerText) || 0, 10) || 0;
+            if (qty > 0) {
+                if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
+                addHidden('service_quantity[' + id + ']', qty, {'data-dynamic-qty':'1'});
+            }
+        });
+
+        // 4) Fallback: hidden patterns like hidden_srv_*, svc-*, etc.
+        document.querySelectorAll('input[id^="hidden_srv_"], input[id^="svc-"]').forEach(h => {
+            const val = h.value;
+            if (!val) return;
+            const id = String(val);
+            if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
+            const qEl = document.getElementById('hidden_qty_' + id) || document.getElementById('srv-qty-' + id) || document.getElementById('qty-' + id);
+            const qv = qEl ? (qEl.value !== undefined ? qEl.value : qEl.innerText) : 0;
+            addHidden('service_quantity['+id+']', qv || 0, {'data-dynamic-qty':'1'});
+        });
+
+        // 5) Flag service_only if no kamar hidden inputs present
+        const hasServiceHidden = bookingForm.querySelectorAll('input[name="services[]"]').length > 0;
+        const hasKamarHidden = bookingForm.querySelectorAll('input[name="kamar_ids[]"], input[name="selected_rooms[]"]').length > 0;
+        if (hasServiceHidden && !hasKamarHidden) addHidden('service_only', '1', {'data-dynamic-flag':'1'});
+
+        // DEBUG: log what we will submit (sementara, hapus setelah yakin)
+        console.log('DEBUG buildServiceHiddenInputs -> services[]:', Array.from(bookingForm.querySelectorAll('input[name="services[]"]')).map(i => i.value));
+        console.log('DEBUG buildServiceHiddenInputs -> service_quantity:', Array.from(bookingForm.querySelectorAll('input[name^="service_quantity"]')).map(i => ({ name: i.name, value: i.value })));
+    }
+
+    // Attach on submit
+    bookingForm.addEventListener('submit', function(e){
+        try {
+            buildServiceHiddenInputs();
+            // don't prevent default; hidden inputs added synchronously
+        } catch(err){
+            console.error('buildServiceHiddenInputs error', err);
+        }
+    });
+
+    // Also attach on click for every submit button inside form
+    Array.from(bookingForm.querySelectorAll('button[type="submit"], input[type="submit"]')).forEach(btn => {
+        btn.addEventListener('click', function(evt){
+            try { buildServiceHiddenInputs(); } catch(err){ console.error(err); }
+        });
+    });
+})();
 
 </script>
 @endpush
