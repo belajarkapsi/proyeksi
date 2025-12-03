@@ -101,7 +101,7 @@
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Pesanan Dibatalkan</h2>
                     <p class="text-gray-500 mb-6">Waktu pembayaran telah habis atau pesanan dibatalkan.</p>
-                    <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}" class="inline-block bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition">Pesan Kembali</a>
+                    <a href="{{ isset($cabang) ? route('cabang.kamar.index', $cabang->route_params) : route('dashboard') }}" class="inline-block bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition">Pesan Kembali</a>
                 </div>
 
             @elseif($pemesanan->status == 'Lunas')
@@ -123,15 +123,26 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function copyToClipboard(text) {
-        navigator.clipboard.writeText(text);
-        Swal.fire({
-            icon: 'success',
-            title: 'Tersalin',
-            text: 'Nomor rekening berhasil disalin',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000
+        if (!navigator.clipboard) {
+            // fallback: buat elemen temporer untuk copy
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            try {
+                document.execCommand('copy');
+                Swal.fire({ icon: 'success', title: 'Tersalin', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Gagal menyalin', text: 'Silakan salin manual', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            }
+            document.body.removeChild(el);
+            return;
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            Swal.fire({ icon: 'success', title: 'Tersalin', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+        }).catch(() => {
+            Swal.fire({ icon: 'error', title: 'Gagal menyalin', text: 'Silakan salin manual', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
         });
     }
 
@@ -177,17 +188,38 @@
 
         }, 1000);
 
-        // Pastikan route booking.check_status ada di routes/web.php
-        function checkStatus() {
-            fetch("{{ route('booking.check_status', $pemesanan->id_pemesanan) }}")
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'Dibatalkan' || data.status === 'Lunas') {
-                        window.location.reload();
-                    }
-                })
-                .catch(error => console.error('Error checking status:', error));
-        }
+        /// Ganti/masukkan fungsi ini di file detail-pesanan.blade.php (di bagian <script> countdown)
+    function checkStatus() {
+    // pastikan route ada dan benar; blade akan menggantikan url ini
+    const url = "{{ route('booking.check_status', $pemesanan->id_pemesanan) }}";
+
+    // fetch dengan penanganan error HTTP dan JSON parse safety
+    fetch(url, { cache: "no-store" })
+        .then(response => {
+            if (!response.ok) {
+                // jika 404/500 — log sekali dan keluar (akan dicoba lagi oleh setInterval)
+                throw new Error('HTTP status ' + response.status);
+            }
+            return response.json().catch(err => {
+                throw new Error('Invalid JSON: ' + err.message);
+            });
+        })
+        .then(data => {
+            // jika server mengirim status baru, reload untuk update UI
+            if (!data || !data.status) return;
+            if (data.status === 'Dibatalkan' || data.status === 'Lunas') {
+                window.location.reload();
+            }
+            // opsional: bisa memperbarui countdown UI dari server jika kamu kirim sisa detik
+            // if (data.remaining_seconds) { updateCountdownFromServer(data.remaining_seconds); }
+        })
+        .catch(error => {
+            // jangan spam console tiap 5 detik — log sebagai debug agar tetap ada jejak, tapi ringkas
+            console.debug('checkStatus fetch error (will retry):', error.message || error);
+            // tidak melempar error lebih lanjut; setInterval akan memanggil ulang
+        });
+}
+
 
         setInterval(checkStatus, 5000);
     @endif

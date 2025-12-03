@@ -10,8 +10,9 @@ class ServiceSeeder extends Seeder
     public function run()
     {
         // Hati-hati: truncate hanya untuk dev environment
-        Service::truncate();
-
+        // Service::truncate();
+        $villa = Cabang::where('kategori_cabang', 'villa');
+        if($villa) {
         Service::create([
             'name' => 'Kolam Renang',
             'description' => 'Akses kolam renang privat selama menginap',
@@ -29,5 +30,8 @@ class ServiceSeeder extends Seeder
             'description' => 'Sound system lengkap untuk acara',
             'price' => 200000,
         ]);
+    } else {
+        $this->command->info('Skip ServiceSeeder: Cabang kategori villa belum dibuat.');
+    }
     }
 }

@@ -18,7 +18,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class BookingController extends Controller
 {
-   // Jembatan ke halaman checkout (form booking)
+
 public function checkout(Request $request)
 {
     // === 1. INISIALISASI VARIABEL GLOBAL ===
@@ -32,11 +32,6 @@ public function checkout(Request $request)
     $totalServicePrice = 0;
     $serviceOnly = false;
 
-    // ---------------- DEBUG optional (boleh hapus nanti) ----------------
-    \Log::debug('BookingController::checkout payload', $request->all());
-    // -------------------------------------------------------------------
-
-    // Normalisasi fallback incoming services (dari berbagai nama field yang mungkin)
     $normalizedIncomingServices = $request->input('services',
         $request->input('selected_services',
             $request->input('service_ids',
@@ -123,7 +118,7 @@ public function checkout(Request $request)
 
         foreach ($services as $srv) {
             $id = (string)$srv->id;
-            $qty = 1;
+            $qty = 0;
 
             if (is_array($qtySource) && array_key_exists($id, $qtySource)) {
                 $qRaw = $qtySource[$id];
@@ -132,7 +127,7 @@ public function checkout(Request $request)
             } else {
                 $altKey = 'service_quantity_' . $id;
                 if ($request->has($altKey)) {
-                    $q = intval($request->input($altKey, 1));
+                    $q = intval($request->input($altKey, 0));
                     if ($q > 0) $qty = $q;
                 }
             }
@@ -179,7 +174,6 @@ public function checkout(Request $request)
     ));
 }
 
-
 public function store(Request $request)
 {
     // Pastikan user login
@@ -188,9 +182,6 @@ public function store(Request $request)
         return redirect()->route('login');
     }
 
-    // -------- DEBUG: log request payload (sementara; hapus setelah debug) --------
-    \Log::debug('Booking.store incoming payload', ['payload' => $request->all(), 'user_id' => Auth::id()]);
-
     // DETEKSI SERVICE-ONLY (lebih robust)
     $rawServiceIds = $request->input('services', []);
     $hasServiceIds = is_array($rawServiceIds) ? count(array_filter($rawServiceIds)) > 0 : (!empty($rawServiceIds));
@@ -198,51 +189,45 @@ public function store(Request $request)
 
     // Jika tidak ada services[] tetapi ada checkbox/visible ids/hidden_srv_*, coba deteksi dari pola lain
     if (!$hasServiceIds) {
-        $detected = [];
+// ----- fallback detection (lebih ketat) -----
+$detected = [];
 
-        // 1) cari input yang berisi "srv-check-" atau "svc-" atau "hidden_srv_" yang mungkin ada
-        foreach ($request->all() as $k => $v) {
-            if (preg_match('/^(srv-check-|svc-|hidden_srv_)(\d+)$/', $k, $m)) {
-                $detected[] = (int)$v;
+// 1) Ambil dari keys yang secara eksplisit menunjukkan service
+foreach ($request->all() as $k => $v) {
+    // pola-pola yang khusus untuk service
+    if (preg_match('/^(srv-check-|svc-|hidden_srv_|service[_-]?id|vis-check-|service[_-]?ids?|selected_services|selected_service)$/i', $k)) {
+        if (is_array($v)) {
+            foreach ($v as $item) {
+                if (is_numeric($item) && (int)$item > 0) $detected[] = (int)$item;
             }
-            // pola nama value like vis-check-<id> mungkin dikirim sebagai vis-check-<id>=on (checkbox)
-            if (preg_match('/^vis-check-(\d+)$/', $k, $m)) {
-                // checkbox may come as "on" or "1" -> use id from key
-                $detected[] = (int)$m[1];
-            }
-            // pola alternative: service_id_<id> = on
-            if (preg_match('/^service[_-]?id[_-]?(\d+)$/', $k, $m)) {
-                $detected[] = (int)$m[1];
-            }
+        } elseif (is_string($v) && preg_match('/^\d+(,\d+)*$/', $v)) {
+            $parts = array_filter(array_map('trim', explode(',', $v)));
+            foreach ($parts as $p) if (is_numeric($p) && (int)$p > 0) $detected[] = (int)$p;
+        } elseif (is_numeric($v) && (int)$v > 0) {
+            $detected[] = (int)$v;
         }
+    }
 
-        // 2) cari keys yang mengandung "service-" atau "srv-" dan value array/strings of ids
-        foreach ($request->all() as $k => $v) {
-            if (is_string($v) && preg_match('/^\d+(,\d+)*$/', $v)) {
-                // kemungkinan "1,2,3"
-                $parts = array_filter(array_map('trim', explode(',', $v)));
-                foreach ($parts as $p) $detected[] = (int)$p;
-            }
-            if (is_array($v)) {
-                // array of ints? try to extract integers
-                foreach ($v as $item) {
-                    if (is_numeric($item)) $detected[] = (int)$item;
-                }
-            }
-        }
+    // juga deteksi pola key yang mengandung "service" + id di nama key (mis: service_12 = on)
+    if (preg_match('/^service[_-]?(\d+)$/i', $k, $m)) {
+        $detected[] = (int)$m[1];
+    }
+}
 
-        // unique & keep only positive ints
+// 2) Jika masih kosong, coba pola checkbox-like "vis-check-<id>"
+foreach ($request->all() as $k => $v) {
+    if (preg_match('/^vis-check-(\d+)$/', $k, $m)) {
+        $detected[] = (int)$m[1];
+    }
+}
         $detected = array_unique(array_filter($detected, function($x){ return is_numeric($x) && (int)$x > 0; }));
         if (count($detected) > 0) {
             $rawServiceIds = $detected;
             $hasServiceIds = true;
-            // set serviceOnlyFlag as true if no kamar_ids
             if (!$request->has('kamar_ids')) $serviceOnlyFlag = true;
             \Log::debug('Booking.store detected fallback service ids', ['detected' => $detected]);
         }
     }
-
-    // Build validation rules (dynamic)
     $rules = [
         'nama_lengkap' => 'required|string|max:255',
         'telepon'      => 'required|numeric',
@@ -268,12 +253,10 @@ public function store(Request $request)
     }
 
     $validated = $request->validate($rules);
-
     // Normalize kamar ids
     $kamarIds = isset($validated['kamar_ids']) && is_array($validated['kamar_ids'])
                 ? array_values(array_unique($validated['kamar_ids']))
                 : [];
-
     // Ambil kamar hanya jika ada kamarIds
     $kamars = collect();
     if (!empty($kamarIds)) {
@@ -282,7 +265,6 @@ public function store(Request $request)
             return back()->withInput()->withErrors(['booking' => 'Sebagian kamar tidak ditemukan.']);
         }
     }
-
     // Tanggal check-in
     $tanggalCheckin = null;
     if (!empty($validated['tanggal'])) {
@@ -324,7 +306,6 @@ public function store(Request $request)
             }
         }
     }
-
     // Clean serviceIds
     if (is_array($serviceIds)) {
         $serviceIds = array_values(array_filter(array_map(function($x){ return is_numeric($x) ? (int)$x : null; }, $serviceIds)));
@@ -335,7 +316,6 @@ public function store(Request $request)
     }
 
     $serviceIds = array_unique($serviceIds);
-
     // Load service models
     $serviceTotal = 0;
     $servicesCollection = collect();
@@ -398,9 +378,7 @@ public function store(Request $request)
                     'waktu_checkout' => $checkout->toDateString(),
                 ];
             }
-
             $grandTotal = $totalHargaHeader + $serviceTotal;
-
             $idPemesanan = $this->generateKodePemesanan();
             $pemesanan = Pemesanan::create([
                 'id_pemesanan'    => $idPemesanan,
@@ -463,15 +441,11 @@ public function store(Request $request)
         ]);
         return back()->withInput()->withErrors(['booking' => $e->getMessage()]);
     }
-
     $pemesanan->load(['items.kamar', 'penyewa']);
     Alert::success('Pemesanan Berhasil Dilakukan!', "Lakukan pembayaran untuk pesanan {$pemesanan->id_pemesanan} segera.");
     return redirect()->route('booking.pembayaran', $pemesanan->id_pemesanan);
 }
 
-
-
-    // Generate kode pemesanan: PS00001, PS00002, ...
     private function generateKodePemesanan(): string
     {
         $last = Pemesanan::orderBy('id_pemesanan', 'desc')->first();

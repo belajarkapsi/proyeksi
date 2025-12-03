@@ -10,6 +10,7 @@ class Service extends Model
     protected $table = 'services';
 
     protected $fillable = [
+        'id_cabang',
         'name',
         'description',
         'price',
@@ -23,5 +24,10 @@ class Service extends Model
      public function pemesananService(): HasMany
     {
         return $this->hasMany(\App\Models\PemesananService::class, 'id', 'id_service');
+    }
+
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Cabang::class, 'id_cabang', 'id_cabang');
     }
 }
