@@ -28,7 +28,7 @@ class DataKamarController extends Controller
         // 3. Query Kamar menggunakan 'whereIn' (dimana id_cabang ada di dalam array [1, 2])
         $kamars = Kamar::with('cabang')
                     ->whereIn('id_cabang', $arrayIdCabang)
-                    ->latest()
+                    ->orderBy('no_kamar', 'asc')
                     ->paginate(15);
 
         $cabang = $daftarCabang->first();

@@ -16,7 +16,7 @@ class CreatePemesananServiceTable extends Migration
         $table->bigInteger('price');
         $table->bigInteger('subtotal');
         $table->timestamps();
-    });
+        });
     }
 
     public function down()
