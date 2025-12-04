@@ -15,11 +15,11 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
+                <a href="{{ route('pengelola.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Pengelola</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <span class="text-green-600 text-sm font-medium">{{ $user->username }}</span>
+                <span class="text-green-600 text-sm font-medium">{{ $pengelola->username }}</span>
             </li>
         </ol>
     </nav>
@@ -31,7 +31,7 @@
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-user"></i> Rincian Biodata
         </h3>
-        <a href="{{ route('penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors">
+        <a href="{{ route('pengelola.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -42,12 +42,12 @@
 
             {{-- Foto Profil (Kiri) --}}
             <div class="shrink-0 flex flex-col items-center">
-                <img src="{{ $user->foto_profil ? asset('storage/' . $user->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode($user->nama_lengkap) . '&background=10b981&color=fff&size=128' }}"
-                    alt="{{ Auth::user()->nama_lengkap ?? 'User' }}"
+                <img src="{{ $pengelola->foto_profil ? asset('storage/' . $pengelola->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode($pengelola->nama_lengkap) . '&background=10b981&color=fff&size=128' }}"
+                    alt="{{ $pengelola->nama_lengkap ?? 'User' }}"
                     class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-green-100 shadow-md mb-4">
 
-                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $user->jenis_kelamin == 'Laki-laki' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }}">
-                    {{ $user->jenis_kelamin }}
+                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $pengelola->jenis_kelamin == 'Laki-laki' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }}">
+                    {{ $pengelola->jenis_kelamin }}
                 </span>
             </div>
 
@@ -56,48 +56,28 @@
 
                 <div class="col-span-1 md:col-span-2">
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Nama Lengkap</label>
-                    <p class="text-lg font-medium text-gray-800 border-b border-gray-100 pb-1">{{ $user->nama_lengkap }}</p>
+                    <p class="text-lg font-medium text-gray-800 border-b border-gray-100 pb-1">{{ $pengelola->nama_lengkap }}</p>
                 </div>
 
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Username:</label>
-                    <p class="text-md text-gray-800">{{ $user->username }}</p>
+                    <p class="text-md text-gray-800">{{ $pengelola->username }}</p>
                 </div>
 
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Email:</label>
-                    <p class="text-md text-gray-800">{{ $user->email }}</p>
+                    <p class="text-md text-gray-800">{{ $pengelola->email }}</p>
                 </div>
 
                 <div>
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Nomor Telepon:</label>
-                    <p class="text-md text-gray-800">{{ $user->no_telp }}</p>
-                </div>
-
-                <div>
-                    <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Tanggal Lahir:</label>
-                    <p class="text-md text-gray-800">
-                        {{ \Carbon\Carbon::parse($user->tanggal_lahir)->format('d F Y') }}
-                        <span class="text-sm text-gray-400">({{ $user->usia }} Tahun)</span>
-                    </p>
-                </div>
-
-                <div>
-                    <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Asal / Kota:</label>
-                    <p class="text-md text-gray-800">{{ $user->asal }}</p>
-                </div>
-
-                <div class="col-span-1 md:col-span-2">
-                    <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Alamat Lengkap:</label>
-                    <p class="text-md text-gray-800 bg-gray-50 p-3 rounded-md border border-gray-100 mt-1">
-                        {{ $user->alamat }}
-                    </p>
+                    <p class="text-md text-gray-800">{{ $pengelola->no_telp }}</p>
                 </div>
 
                 <div class="col-span-1 md:col-span-2 mt-2">
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Bergabung Sejak:</label>
                     <p class="text-sm text-gray-600">
-                        {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('l, d F Y H:i') }}
+                        {{ \Carbon\Carbon::parse($pengelola->created_at)->translatedFormat('l, d F Y H:i') }}
                     </p>
                 </div>
             </div>

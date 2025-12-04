@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
@@ -15,6 +16,11 @@ use App\Http\Controllers\BookingController;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
+
+// routes/web.php
+Route::view('/pusat-bantuan', 'pusat-bantuan')
+->name('pusat-bantuan');
+
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -35,6 +41,9 @@ Route::middleware('validasi.cabang')->group(function() {
 
     Route::get('/cabang/{lokasi}/{kategori}/villa/detail-villa', [CabangController::class, 'detailVilla'])
         ->name('cabang.villa.detail');
+
+    Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'checkStatus'])
+        ->name('booking.check_status');
 });
 
 
@@ -102,7 +111,10 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
 
+        // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
+        // Data Pengelola
+        Route::resource('pengelola', DataPengelolaController::class);
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');

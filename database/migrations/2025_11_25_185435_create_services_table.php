@@ -10,6 +10,9 @@ class CreateServicesTable extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id(); // bigIncrements
+            $table->foreignId('id_cabang')
+            ->constrained('cabang', 'id_cabang')
+            ->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('price')->default(0);
