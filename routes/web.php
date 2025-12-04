@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
+use App\Http\Controllers\Admin\InformasiCabangController;
 use App\Http\Controllers\Admin\LayananVillaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
@@ -115,6 +116,8 @@ Route::middleware(['auth:pemilik'])->group(function() {
 
             // Data Layanan Villa
             Route::resource('layanan-villa', LayananVillaController::class);
+            // Data Informasi Cabang
+            Route::resource('informasi-cabang', InformasiCabangController::class);
         });
 
         // Route Profil Admin

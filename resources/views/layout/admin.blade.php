@@ -66,7 +66,7 @@
                         <div class="py-2 space-y-1">
                             <a href="{{ route('admin.cabangkamar.index', ['lokasi' => 'parepare']) }}" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
                             <a href="{{ route('admin.cabanglayanan-villa.index', ['lokasi' => 'parepare']) }}" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-bell-concierge text-sm text-center"></i><span class="font-medium">Layanan Villa</span></a>
-                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
+                            <a href="{{ route('admin.cabanginformasi-cabang.index', ['lokasi' => 'parepare']) }}" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                     <div id="menu-parepare" class="dropdown-menu overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-green-800 rounded-lg mt-1 mx-1">
                         <div class="py-2 space-y-1">
                             <a href="{{ route('admin.cabangkamar.index', ['lokasi' => 'pangkep']) }}" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fas fa-bed text-sm text-center"></i><span class="font-medium">Data Kamar</span></a>
-                            <a href="#" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
+                            <a href="{{ route('admin.cabanginformasi-cabang.index', ['lokasi' => 'pangkep']) }}" class="flex gap-3 items-center px-8 py-2 rounded-lg text-sm text-white hover:text-gray-800 hover:bg-white transition-colors duration-200"><i class="fa-solid fa-circle-info text-sm text-center"></i><span class="font-medium">Informasi Cabang</span></a>
                         </div>
                     </div>
                 </div>
