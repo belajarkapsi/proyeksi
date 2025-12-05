@@ -24,13 +24,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        
+
         $faker = Faker\Factory::create('id_ID');
         return [
             'nama_lengkap' => fake()->name(),
             'no_telp' => $faker->randomNumber(8, true),
             'email' => $faker->freeEmail(),
-            'username' => 'penyewa',
+            'username' => 'penyewaa',
             'password' => static::$password ??= Hash::make('penyewa'),
             'tanggal_lahir' => fake()->date(),
             'usia' => $faker->randomNumber(2, true),

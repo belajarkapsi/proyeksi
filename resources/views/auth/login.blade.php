@@ -161,7 +161,7 @@
 
                             {{-- Submit Button: BACKGROUND HIJAU & TEKS PUTIH --}}
                             <button type="submit" class="w-full py-3.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl shadow-lg hover:shadow-green-500/50 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-all duration-300 transform">
-                                MASUK SEKARANG
+                                LOGIN
                             </button>
 
                             {{-- Register --}}

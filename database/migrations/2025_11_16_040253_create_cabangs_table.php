@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('cabang', function (Blueprint $table) {
             $table->id('id_cabang');
-            $table->string('nama_cabang');
+            $table->string('nama_cabang', 255);
             $table->text('deskripsi');
             $table->integer('jumlah_kamar');
-            $table->string('lokasi');
+            $table->string('lokasi', 255);
             $table->enum('kategori_cabang', ['kost', 'villa']);
-            $table->string('gambar_cabang');
+            $table->string('gambar_cabang', 255)->nullable();
             $table->timestamps();
         });
     }

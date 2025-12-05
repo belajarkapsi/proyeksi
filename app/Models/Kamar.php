@@ -12,10 +12,18 @@ class Kamar extends Model
     use HasFactory;
     protected $table = 'kamar';
     protected $primaryKey = 'id_kamar';
-    protected $fillable = ['id_cabang', 'no_kamar', 'tipe_kamar', 'harga_kamar', 'deskripsi', 'status', 'slug'];
+    protected $fillable = [
+        'id_cabang',
+        'no_kamar',
+        'tipe_kamar',
+        'harga_kamar',
+        'deskripsi',
+        'status',
+        'gambar',
+    ];
 
     // Tambahkan Eager Loading
-
+    protected $with =['cabang', 'pemesananItem'];
 
     public function cabang(): BelongsTo
     {
