@@ -27,4 +27,9 @@ class Service extends Model
     {
         return $this->hasMany(\App\Models\PemesananService::class, 'id', 'id_service');
     }
+
+    public function cabang(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Cabang::class, 'id_cabang', 'id_cabang');
+    }
 }

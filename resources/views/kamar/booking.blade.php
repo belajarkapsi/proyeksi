@@ -3,35 +3,25 @@
 
 @section('content')
 @php
-    // Jangan redirect dari view — set flag agar view menampilkan pesan tapi tetap berada di halaman
     $roomsMissing = false;
     if (!isset($rooms) || (is_object($rooms) && $rooms->isEmpty()) || (is_array($rooms) && empty($rooms))) {
         session()->flash('error', 'Silakan pilih kamar terlebih dahulu sebelum memesan.');
         $roomsMissing = true;
     }
-@endphp
 
-@php
     $firstRoom = $roomsMissing ? null : ($rooms->first() ?? null);
     $activeCabang = $firstRoom ? $firstRoom->cabang : ($cabang ?? null);
     $kategoriRaw = $activeCabang->kategori_cabang ?? '';
     $kategoriClean = strtolower(trim($kategoriRaw));
     $isVilla = ($kategoriClean === 'villa');
-
-    // Default tanggal: tetap kosong jika tidak ada old() / check_in
     $defaultTanggal = old('tanggal', old('check_in', ''));
-
-    // Pastikan $services collection tersedia (controller sudah menyiapkan)
     if (!isset($services) || $services === null) {
         try { $services = \App\Models\Service::all(); } catch (\Throwable $e) { $services = collect(); }
     }
-
-    // Pastikan $serviceOnly ada (controller men-define jika service-only)
     $serviceOnly = $serviceOnly ?? false;
     $totalServicePrice = $totalServicePrice ?? 0;
 @endphp
 
-{{-- TOMBOL KEMBALI --}}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-30 pointer-events-none">
     @if(isset($cabang))
     <a href="{{ route('cabang.kamar.index', array_merge($cabang->route_params, request()->all())) }}" class="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 text-green-700 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:bg-green-600 hover:text-white transition-all duration-300 group transform hover:-translate-y-0.5">
@@ -49,7 +39,6 @@
 <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
 
-        {{-- tampilkan session error (jika ada) --}}
         @if(session('error'))
             <div class="max-w-6xl mx-auto mb-6">
                 <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -72,7 +61,6 @@
         </div>
         @endif
 
-        {{-- bila roomsMissing tetapi bukan service-only, tampilkan notice --}}
         @if($roomsMissing && !$serviceOnly)
             <div class="max-w-6xl mx-auto mb-6">
                 <div class="bg-yellow-50 border border-yellow-300 text-yellow-700 px-4 py-3 rounded relative" role="alert">
@@ -88,34 +76,40 @@
         </div>
 
         <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
-            {{-- KOLOM KIRI: FORM DATA DIRI --}}
             <div class="lg:col-span-7">
-                {{-- 
-                    Tampilkan FORM jika:
-                    - Ada kamar (normal flow) OR
-                    - service-only (user hanya memesan layanan) => tetap tampilkan form
-                    Jika roomsMissing && !serviceOnly maka form tidak tampil (user diminta pilih kamar)
-                --}}
                 @if(!$roomsMissing || $serviceOnly)
                 <form id="bookingForm" action="{{ route('booking.store') }}" method="POST" class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                     @csrf
 
-                    {{-- Jika ada kamar -> kirim kamar_ids seperti biasa --}}
                     @if(!$roomsMissing)
                         @foreach($rooms as $room)
                             <input type="hidden" name="kamar_ids[]" value="{{ $room->id_kamar }}">
                         @endforeach
                     @else
-                        {{-- Service-only: beri flag agar backend tahu ini order layanan tanpa kamar --}}
                         <input type="hidden" name="service_only" value="1">
                     @endif
 
-                    {{-- Jika ada services terpilih (service-only atau combined), sertakan input hidden untuk masing-masing supaya backend menerima data saat submit --}}
                     @if(isset($services) && $services->isNotEmpty())
+                        @php $requestQtys = request()->input('service_quantity', []); @endphp
                         @foreach($services as $srv)
-                            {{-- Hidden inputs untuk services + qty --}}
-                            <input type="hidden" name="services[]" value="{{ $srv->id }}" form="bookingForm" id="hidden_srv_{{ $srv->id }}">
-                            <input type="hidden" name="service_quantity[{{ $srv->id }}]" value="{{ $srv->requested_qty ?? 0 }}" form="bookingForm" id="hidden_qty_{{ $srv->id }}">
+                            @php
+                                $qtyFromSrv = $srv->requested_qty ?? null;
+                                $qtyFromReq = isset($requestQtys[$srv->id]) ? intval($requestQtys[$srv->id]) : null;
+                                $qty = $qtyFromSrv !== null ? intval($qtyFromSrv) : ($qtyFromReq !== null ? $qtyFromReq : 0);
+                            @endphp
+                            @if($qty > 0)
+                                <input type="hidden"
+                                    name="services[]"
+                                    value="{{ $srv->id }}"
+                                    form="bookingForm"
+                                    id="hidden_srv_{{ $srv->id }}"
+                                    data-price="{{ $srv->price ?? $srv->harga ?? 0 }}">
+                                <input type="hidden"
+                                    name="service_quantity[{{ $srv->id }}]"
+                                    value="{{ $qty }}"
+                                    form="bookingForm"
+                                    id="hidden_qty_{{ $srv->id }}">
+                            @endif
                         @endforeach
                     @endif
 
@@ -141,7 +135,6 @@
                                 <input type="email" name="email" required value="{{ old('email', Auth::user()->email) }}" class="mt-1 block w-full rounded-lg border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed shadow-sm focus:ring-0" readonly>
                             </div>
 
-                            {{-- Tanggal check-in tetap wajib di form, walau service-only (user mungkin perlu memilih tanggal service) --}}
                             <div class="sm:col-span-6">
                                 <label class="block text-sm font-bold text-gray-800 mb-1">Tanggal</label>
                                 <div class="relative">
@@ -175,7 +168,6 @@
                     </div>
                 </form>
                 @else
-                {{-- roomsMissing && !serviceOnly: pesan agar pilih kamar --}}
                 <div class="p-6 sm:p-8 bg-white rounded-xl border border-gray-100">
                     <p class="text-sm text-gray-700">Anda belum memilih kamar. Silakan pilih kamar terlebih dahulu.</p>
                     <div class="mt-4">
@@ -189,7 +181,6 @@
                 @endif
             </div>
 
-            {{-- KOLOM KANAN: PANEL DINAMIS --}}
             <div class="lg:col-span-5 mt-8 lg:mt-0">
                 <div class="bg-white shadow-xl rounded-2xl overflow-hidden sticky top-24 border border-gray-100">
                     <div class="p-5 bg-gradient-to-r from-green-50 to-white border-b border-green-100">
@@ -201,7 +192,6 @@
                         </h2>
                     </div>
 
-                    {{-- KHUSUS: jika service-only tampilkan ringkasan layanan saja --}}
                     @if($serviceOnly)
                         <div class="p-6 space-y-4">
                             <div class="text-sm text-gray-600">
@@ -244,22 +234,15 @@
                             </div>
 
                             <div class="pt-4">
-                                {{-- Tombol kembali ke daftar kamar (agar user bisa edit/menambah kamar) --}}
                                 @if(isset($cabang))
                                     <a href="{{ route('cabang.kamar.index', array_merge($cabang->route_params, request()->all())) }}" class="inline-block px-4 py-2 bg-white text-green-700 border border-green-200 rounded-lg shadow-sm hover:bg-green-50">Kembali / Tambah Kamar</a>
                                 @endif
                             </div>
-
-                            {{-- NOTE: tombol konfirmasi service-only dihapus di sini.
-                                     Gunakan tombol konfirmasi utama (di bagian "TOTAL BAYAR") agar hanya ada 1 tombol submit. --}}
                         </div>
 
                     @else
-                        {{-- START IF / ELSE: VILLA atau NON-VILLA (original UI preserved) --}}
                         @if($isVilla)
                             <div class="p-6 space-y-6">
-                                {{-- (existing villa panel content kept untouched) --}}
-                                {{-- 1. DURASI GLOBAL VILLA --}}
                                 <div>
                                     <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Durasi Sewa (Malam)</label>
                                     <div class="flex items-center border border-gray-300 rounded-xl overflow-hidden w-full sm:w-1/2">
@@ -269,7 +252,6 @@
                                     </div>
                                 </div>
 
-                                {{-- 2. LIST KAMAR (READONLY) --}}
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
                                         <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Unit Terpilih</label>
@@ -294,13 +276,11 @@
                                         @endforeach
                                     </div>
 
-                                    {{-- wajib: kamar_ids hidden (kunci villa) --}}
                                     @foreach($rooms as $room)
                                         <input type="hidden" name="kamar_ids[]" value="{{ $room->id_kamar }}" form="bookingForm">
                                     @endforeach
                                 </div>
 
-                                {{-- 3. LAYANAN TAMBAHAN --}}
                                 @if($services->isNotEmpty())
                                 <div>
                                     <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Layanan Tambahan</label>
@@ -324,8 +304,7 @@
                                                     <div class="text-sm font-bold text-gray-800 group-hover:text-green-700 transition">{{ $service->name }}</div>
                                                     <div class="text-xs text-gray-500">IDR {{ number_format($service->price) }}</div>
 
-                                                    {{-- hidden inputs --}}
-                                                    <input type="checkbox" class="hidden service-check" id="svc-{{ $service->id }}" name="services[]" form="bookingForm" value="{{ $service->id }}" data-price="{{ $service->price }}" @checked($isChecked)>
+                                                    <input type="checkbox" class="hidden service-check" id="svc-{{ $service->id }}" name="services[]" form="bookingForm" value="{{ $service->id }}" data-price="{{ $service->price }}">
                                                     <input type="hidden" id="qty-{{ $service->id }}" name="service_quantity[{{ $service->id }}]" value="{{ $qty }}" form="bookingForm">
                                                 </div>
 
@@ -347,7 +326,6 @@
                                 </div>
                                 @endif
 
-                                {{-- 4. SUMMARY VILLA --}}
                                 <div class="border-t border-dashed border-gray-300 pt-4 space-y-2 text-sm text-gray-600">
                                     <div class="flex justify-between">
                                         <span>Total Sewa (<span id="villa_nights_disp">1</span> malam)</span>
@@ -361,7 +339,6 @@
                             </div>
 
                         @else
-                            {{-- NON-VILLA: tampilkan daftar kamar & summary (existing) --}}
                             <div class="p-6 max-h-[500px] overflow-y-auto custom-scrollbar space-y-6">
                                 @foreach($rooms as $room)
                                 <div class="room-item flex flex-col gap-3 pb-4 border-b border-gray-100 last:border-0" data-price="{{ $room->harga_kamar }}">
@@ -401,18 +378,14 @@
                                 @endforeach
                             </div>
                         @endif
-                        {{-- END IF/ELSE VILLA / NON-VILLA --}}
                     @endif
 
-                    {{-- TOTAL BAYAR --}}
                     <div class="bg-gray-100 p-6 border-t border-gray-200">
                         <div class="flex justify-between items-end pt-2">
                             <span class="text-base font-bold text-gray-900">Total Bayar</span>
                             <span class="text-2xl font-bold text-green-700" id="grand_total">Rp0</span>
                         </div>
 
-                        {{-- **Hanya satu tombol submit utama (ini tombol asli dari kode Anda)**
-                             Saya tidak menambahkan tombol konfirmasi lain; service-only akan submit menggunakan form ini. --}}
                         <button type="submit" form="bookingForm" class="w-full mt-6 hidden lg:flex justify-center items-center rounded-xl bg-green-600 px-6 py-4 text-base font-bold text-white shadow-lg hover:bg-green-700 transition-all transform hover:-translate-y-0.5">
                             Konfirmasi & Bayar
                         </button>
@@ -424,192 +397,177 @@
     </div>
 </div>
 
-<!-- //JS LOGIC -->
 <script>
+// Fungsi Global untuk Villa Duration (Harus di luar DOMContentLoaded agar bisa diakses onclick HTML)
+window.adjustVillaDuration = function(change) {
+    const durationInput = document.getElementById('villa_duration');
+    const displayNights = document.getElementById('villa_nights_disp');
+    
+    if (durationInput) {
+        let currentVal = parseInt(durationInput.value) || 1;
+        let newVal = currentVal + change;
+        
+        if (newVal < 1) newVal = 1;
+        
+        // Update tampilan input
+        durationInput.value = newVal;
+        
+        // Update text durasi malam
+        if(displayNights) displayNights.textContent = newVal;
+
+        // Update semua hidden input durasi per kamar
+        document.querySelectorAll('.villa-final-days-input').forEach(input => {
+            input.value = newVal;
+        });
+
+        // Trigger event untuk recalculate total
+        const event = new Event('input', { bubbles: true });
+        durationInput.dispatchEvent(event);
+    }
+};
+
+// Fungsi Global untuk UI Service
+window.toggleServiceUI = function(id) {
+    const checkbox = document.getElementById('svc-' + id);
+    if(checkbox) {
+        checkbox.checked = !checkbox.checked;
+        // Trigger perubahan event manually
+        const event = new Event('change', { bubbles: true });
+        checkbox.dispatchEvent(event);
+    }
+};
+
+window.updateServiceUI = function(id, change, max) {
+    const qtyInput = document.getElementById('qty-' + id);
+    const dispSpan = document.getElementById('disp-' + id);
+    const checkbox = document.getElementById('svc-' + id);
+    
+    if(qtyInput && dispSpan) {
+        let val = parseInt(qtyInput.value) || 0;
+        val += change;
+        if(val < 0) val = 0;
+        
+        qtyInput.value = val;
+        dispSpan.innerText = val;
+        
+        // Auto check/uncheck based on qty
+        if(checkbox) {
+            checkbox.checked = val > 0;
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            checkbox.dispatchEvent(event);
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-    const isVilla = {{ $isVilla ? 'true' : 'false' }};
-    const isServiceOnly = {{ $serviceOnly ? 'true' : 'false' }};
-    const formatRupiah = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => Array.from(document.querySelectorAll(s));
-    const grandTotalEl = $('#grand_total');
+    const bookingForm = document.getElementById('bookingForm'); 
+    if (!bookingForm) return;
 
-    // sync visible tanggal with hidden (if any)
+    // --- Inisialisasi Elemen ID ---
+    const grandTotalElement = document.getElementById('grand_total'); // Menggunakan ID yang benar: grand_total
+    const villaRoomTotalElement = document.getElementById('villa_room_total');
+    const villaServiceTotalElement = document.getElementById('villa_service_total');
+
+    // --- LOGIKA KALENDER (Format dd-mm-yy & Min Date) ---
     const tanggalInput = document.getElementById('tanggal');
-    const hiddenTanggal = document.getElementById('hidden_tanggal');
-    if (tanggalInput && hiddenTanggal) {
-        tanggalInput.addEventListener('change', () => {
-            hiddenTanggal.value = tanggalInput.value;
-        });
+    if (tanggalInput) {
+        // 1. Set minimal tanggal hari ini (Native HTML5 validation)
+        const today = new Date().toISOString().split('T')[0];
+        tanggalInput.setAttribute('min', today);
+
+        // 2. Format dd-mm-yy menggunakan Flatpickr (Jika library tersedia)
+        // Jika tidak ada flatpickr, akan tetap menggunakan native datepicker (yyyy-mm-dd) namun tetap dengan validasi min date
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr(tanggalInput, {
+                dateFormat: "d-m-Y", // Format sesuai permintaan
+                minDate: "today",
+                defaultDate: tanggalInput.value || "today",
+                disableMobile: "true" 
+            });
+        }
     }
 
-    // Jika hanya service-only: hitung ringkasan layanan di panel kanan dan juga grand_total pada form
-    function calcServiceOnlyTotals() {
-        let serviceTotal = 0;
-        $$('.service-check, input[id^="hidden_srv_"]').forEach(el => {
-            // kalau kita menggunakan hidden_srv_* pattern (yang saya output di form kiri),
-            // ambil qty dari hidden_qty_<id>
-            if (el.id && el.id.startsWith('hidden_srv_')) {
-                const id = el.value;
-                const qtyEl = document.getElementById('hidden_qty_' + id);
-                const qty = qtyEl ? Math.max(0, parseInt(qtyEl.value||0,10)) : 0;
-                const price = Number(el.getAttribute('data-price') || 0);
-                serviceTotal += price * qty;
-            } else if (el.classList && el.classList.contains('service-check')) {
-                const id = el.value;
-                const qtyEl = document.getElementById('qty-' + id) || document.getElementById('hidden_qty_' + id);
-                const qty = qtyEl ? Math.max(0, parseInt(qtyEl.value||0,10)) : 0;
-                const price = Number(el.getAttribute('data-price') || 0);
-                if ((el.checked || qty > 0)) serviceTotal += price * qty;
-            }
-        });
+    // --- LOGIKA KALKULASI UTAMA ---
+    function updateTotal() {
+        let totalRoom = 0;
+        let totalService = 0;
 
-        if (grandTotalEl) grandTotalEl.innerText = formatRupiah(serviceTotal);
-    }
-
-    if (isServiceOnly) {
-        // Attach listeners to quantity hidden inputs (if UI allows editing, they will be updated by other handlers)
-        $$('input[name^="service_quantity"], input[id^="qty-"], input[id^="hidden_qty_"]').forEach(i => {
-            i.addEventListener('change', calcServiceOnlyTotals);
-            i.addEventListener('input', calcServiceOnlyTotals);
-        });
-        calcServiceOnlyTotals();
-    }
-
-    // -- preserve original JS logic for villa/non-villa as much as possible --
-    // (I intentionally don't change your existing JS — original handlers remain below)
-    if (isVilla) {
-        // existing villa JS must remain here (adjustVillaDuration, calcVillaTotal, toggleServiceUI, updateServiceUI)
-        // If you have those functions declared elsewhere in this file, they continue to work.
-        // Example: ensure you still have window.calcVillaTotal(), window.adjustVillaDuration(), etc.
-    } else {
-        // Non-villa: your existing room calculation handlers
-    }
-
-    // -----------------------
-    // --- HIDDEN INPUTS BEFORE SUBMIT (safe, non-intrusive)
-    // -----------------------
-    const bookingForm = document.getElementById('bookingForm');
-    if (bookingForm) {
-        // helper to add/replace hidden input
-        function setHidden(name, value) {
-            if (name.endsWith('[]')) {
-                const inp = document.createElement('input');
-                inp.type = 'hidden';
-                inp.name = name;
-                inp.value = value;
-                inp.setAttribute('data-dynamic-service', '1');
-                bookingForm.appendChild(inp);
-                return inp;
-            } else {
-                let ex = bookingForm.querySelector('input[name="'+name+'"]');
-                if (ex) { ex.value = value; return ex; }
-                const inp = document.createElement('input');
-                inp.type = 'hidden';
-                inp.name = name;
-                inp.value = value;
-                inp.setAttribute('data-dynamic-qty', '1');
-                bookingForm.appendChild(inp);
-                return inp;
-            }
+        // 1. Hitung Harga Kamar / Villa
+        const villaDurationInput = document.getElementById('villa_duration');
+        let duration = 1;
+        
+        if (villaDurationInput) {
+            // Mode Villa (Satu durasi untuk semua unit)
+            duration = parseInt(villaDurationInput.value) || 1;
         }
 
-        bookingForm.addEventListener('submit', function(e) {
-            try {
-                // remove previously injected dynamic hidden services/qty to avoid duplicates
-                Array.from(bookingForm.querySelectorAll('input[data-dynamic-service]')).forEach(n => n.remove());
-                Array.from(bookingForm.querySelectorAll('input[data-dynamic-qty]')).forEach(n => n.remove());
+        // Ambil elemen kamar dari list visual (Rincian Pesanan)
+        // Kita menggunakan class .villa-room-item (mode villa) dan .room-item (mode biasa)
+        const roomItems = document.querySelectorAll('.villa-room-item, .room-item');
+        
+        if (roomItems.length > 0) {
+            roomItems.forEach(item => {
+                const price = parseFloat(item.dataset.price) || 0;
+                let itemDuration = duration;
 
-                // 1) Visible toggles (ids like vis-check-<id>)
-                const visChecks = document.querySelectorAll('input[id^="vis-check-"]');
-                visChecks.forEach(v => {
-                    const m = v.id.match(/vis-check-(\d+)/);
-                    if (!m) return;
-                    const id = m[1];
-                    if (v.checked) {
-                        const s = document.createElement('input');
-                        s.type = 'hidden'; s.name = 'services[]'; s.value = id;
-                        s.setAttribute('data-dynamic-service', '1');
-                        bookingForm.appendChild(s);
+                // Cek jika ini adalah item mode biasa yang punya input durasi sendiri
+                const specificDurationInput = item.querySelector('.final-days-input');
+                if (specificDurationInput) {
+                    itemDuration = parseInt(specificDurationInput.value) || 1;
+                    
+                    // Update tampilan subtotal per item (Mode Biasa)
+                    const subDisplay = item.querySelector('.subtotal-display');
+                    if(subDisplay) {
+                        subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(price * itemDuration);
                     }
-                    // get qty: check for qty-<id>, hidden_qty_<id>, disp-<id>
-                    const qEl = document.getElementById('qty-'+id) || document.getElementById('hidden_qty_'+id) || document.getElementById('disp-'+id) || document.getElementById('display-qty-'+id);
-                    const qv = qEl ? (qEl.value !== undefined ? qEl.value : qEl.innerText) : 1;
-                    const qh = document.createElement('input');
-                    qh.type = 'hidden'; qh.name = 'service_quantity['+id+']'; qh.value = qv || 1;
-                    qh.setAttribute('data-dynamic-qty', '1');
-                    bookingForm.appendChild(qh);
-                });
-
-                // 2) Gazebo/counter style elements (disp-<id> / display-qty-<id> / display_qty_<id>)
-                const qtyElsSelector = '[id^="disp-"], [id^="display-qty-"], [id^="display_qty_"]';
-                const qtyEls = document.querySelectorAll(qtyElsSelector);
-                qtyEls.forEach(el => {
-                    const match = el.id.match(/(?:disp-|display-qty-|display_qty_)(\d+)/);
-                    if (!match) return;
-                    const id = match[1];
-                    const qty = parseInt((el.value !== undefined ? el.value : el.innerText) || 0, 10) || 0;
-                    if (qty > 0) {
-                        // add service id if not already added
-                        const existing = bookingForm.querySelector('input[name="services[]"][value="'+id+'"]');
-                        if (!existing) {
-                            const s = document.createElement('input');
-                            s.type = 'hidden'; s.name = 'services[]'; s.value = id;
-                            s.setAttribute('data-dynamic-service', '1');
-                            bookingForm.appendChild(s);
-                        }
-                        const qh = document.createElement('input');
-                        qh.type = 'hidden'; qh.name = 'service_quantity['+id+']'; qh.value = qty;
-                        qh.setAttribute('data-dynamic-qty', '1');
-                        bookingForm.appendChild(qh);
-                    }
-                });
-
-                // 3) Also respect any existing hidden inputs named like hidden_srv_<id> or svc-<id>
-                // Convert them into standard 'services[]' + 'service_quantity[...]' if needed
-                const hiddenSrvInputs = document.querySelectorAll('input[id^="hidden_srv_"], input[id^="svc-"]');
-                hiddenSrvInputs.forEach(h => {
-                    const val = h.value;
-                    if (!val) return;
-                    const id = String(val);
-                    // ensure services[] has this id
-                    const existing = bookingForm.querySelector('input[name="services[]"][value="'+id+'"]');
-                    if (!existing) {
-                        const s = document.createElement('input');
-                        s.type = 'hidden'; s.name = 'services[]'; s.value = id;
-                        s.setAttribute('data-dynamic-service', '1');
-                        bookingForm.appendChild(s);
-                    }
-                    // qty from hidden_qty_<id> if exists
-                    const qEl = document.getElementById('hidden_qty_' + id) || document.getElementById('qty-' + id);
-                    const qv = qEl ? (qEl.value !== undefined ? qEl.value : qEl.innerText) : 0;
-                    const qh = document.createElement('input');
-                    qh.type = 'hidden'; qh.name = 'service_quantity['+id+']'; qh.value = qv || 0;
-                    qh.setAttribute('data-dynamic-qty', '1');
-                    bookingForm.appendChild(qh);
-                });
-
-                // 4) If we added any services and there are no kamar_ids[] fields, set service_only flag
-                const hasServiceHidden = bookingForm.querySelectorAll('input[name="services[]"]').length > 0;
-                const hasKamarHidden = bookingForm.querySelectorAll('input[name="kamar_ids[]"]').length > 0;
-                if (hasServiceHidden && !hasKamarHidden) {
-                    setHidden('service_only', '1');
                 }
 
-                // done — form will submit normally
-            } catch (err) {
-                // jika terjadi error JS, jangan blok submit — biarkan server-side fallback menangani
-                console.error('bookingForm submit helper error', err);
+                totalRoom += (price * itemDuration);
+            });
+        }
+
+        // 2. Hitung Harga Service
+        const serviceCheckboxes = document.querySelectorAll('input[name="services[]"]');
+        serviceCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                const price = parseFloat(cb.dataset.price) || 0;
+                const id = cb.value;
+                const qtyInput = document.getElementById('qty-' + id);
+                const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+                
+                totalService += (price * qty);
             }
         });
+
+        // 3. Update UI
+        const grandTotal = totalRoom + totalService;
+        const formatter = new Intl.NumberFormat('id-ID');
+
+        if (grandTotalElement) {
+            grandTotalElement.innerText = 'Rp' + formatter.format(grandTotal);
+        }
+        
+        // Update rincian sub-total (Khusus Mode Villa)
+        if (villaRoomTotalElement) villaRoomTotalElement.innerText = 'Rp' + formatter.format(totalRoom);
+        if (villaServiceTotalElement) villaServiceTotalElement.innerText = 'Rp' + formatter.format(totalService);
     }
 
+    // --- EVENT LISTENERS ---
+    
+    // Listen perubahan pada input durasi villa
+    const villaInput = document.getElementById('villa_duration');
+    if(villaInput) {
+        villaInput.addEventListener('input', updateTotal);
+        villaInput.addEventListener('change', updateTotal);
+    }
+
+    // Listen perubahan checkbox layanan (delegasi event)
+    const services = document.querySelectorAll('input[name="services[]"]');
+    services.forEach(s => s.addEventListener('change', updateTotal));
+
+    // Panggil sekali saat load
+    updateTotal();
 });
 </script>
-<style>
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #f9fafb; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-</style>
 @endsection

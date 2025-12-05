@@ -19,6 +19,11 @@ use App\Http\Controllers\BookingController;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
+
+// routes/web.php
+Route::view('/pusat-bantuan', 'pusat-bantuan')
+->name('pusat-bantuan');
+
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -39,6 +44,9 @@ Route::middleware('validasi.cabang')->group(function() {
 
     Route::get('/cabang/{lokasi}/{kategori}/villa/detail-villa', [CabangController::class, 'detailVilla'])
         ->name('cabang.villa.detail');
+
+    Route::get('/booking/check-status/{id_pemesanan}', [BookingController::class, 'checkStatus'])
+        ->name('booking.check_status');
 });
 
 
