@@ -14,7 +14,7 @@ class DataPenyewaController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('id_penyewa', 'desc')->paginate(10);
+        $users = User::orderBy('id_penyewa', 'asc')->paginate(10);
 
         return view('admin.data-penyewa.index', compact('users'));
     }

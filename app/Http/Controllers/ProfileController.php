@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    // Proses Menampilkan halaman edit 
+    // Proses Menampilkan halaman edit
     public function edit()
     {
         $penyewa = Auth::user();
@@ -20,7 +20,7 @@ class ProfileController extends Controller
 
     // Update data
     public function update(Request $request)
-    {        
+    {
         $penyewa = Auth::user();
 
         // Validasi dulu
@@ -37,7 +37,7 @@ class ProfileController extends Controller
             [
                 'reqired' => 'Data ini wajib diisi, jangan dikosongkan!',
                 'numeric' => 'Harus Berupa Angka!',
-                'unique' => 'Username sudah digunakan!',
+                'unique' => 'Username sudah ada yang digunakan!',
                 'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
                 'username.min' => 'Username minimal memiliki panjang 8 karakter',
                 'tanggal_lahir.before' => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.'
@@ -58,7 +58,7 @@ class ProfileController extends Controller
 
         // Logika Upload Foto
         $pesan = 'Data profil berhasil diperbarui!';
-        
+
         if ($request->hasFile('foto_profil')) {
             try{
                 if($penyewa->foto_profil && Storage::disk('public')->exists($penyewa->foto_profil)) {

@@ -20,7 +20,7 @@ class PenyewaSeeder extends Seeder
             'no_telp' => '081234567892',
             'email' => 'iniemail@gmail.com',
             'username' => 'abrielyosua',
-            'password' => 'abriel_yosua',
+            'password' => 'abrielyosua',
             'tanggal_lahir' => '2005-11-11',
             'usia' => '20',
             'asal' => 'Makassar',

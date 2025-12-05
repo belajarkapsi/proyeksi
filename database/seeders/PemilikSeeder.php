@@ -18,8 +18,8 @@ class PemilikSeeder extends Seeder
 
         Pemilik::create([
             'nama_lengkap'  => 'Siti Hajar',
+            'email'         => 'adminpemilik@gmail.com',
             'username'      => 'admin123',
-            'email'         => 'admin@sipestar.com',
             'password'      => 'password123',
             'no_telp'       => $faker->phoneNumber,
             'role'          => 'admin'
