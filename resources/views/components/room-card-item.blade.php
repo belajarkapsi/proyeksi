@@ -2,6 +2,7 @@
 @props(['room', 'isAvailable'])
 
 @php
+    // gunakan nomor kamar sebagai identifier yang konsisten dengan kode Anda
     $roomId = $room->no_kamar;
     $bookingUrl = route('booking.checkout', ['kamar' => $roomId]);
 
@@ -12,6 +13,10 @@
         'kategori' => str_replace(' ', '-', strtolower($cabang->kategori_cabang)),
         'no_kamar' => $roomId
     ]);
+
+    // Make detail URL tipe-aware (tambahkan query param ?tipe=)
+    $tipeParam = urlencode($room->tipe_kamar ?? $room->type ?? '');
+    $detailUrlWithTipe = $detailUrl . (str_contains($detailUrl, '?') ? '&' : '?') . 'tipe=' . $tipeParam;
 
     // Ambil harga mentah sebagai integer (tanpa pemisah) untuk data-price
     $rawPrice = (int) ($room->harga ?? $room->harga_kamar ?? 0);
@@ -27,13 +32,16 @@
   data-id="{{ $roomId }}"
   data-available="{{ $isAvailable ? '1' : '0' }}"
   data-booking-url="{{ $bookingUrl }}"
-  data-price="{{ $rawPrice }}" {{-- <-- tambahkan data-price di sini --}}
+  data-price="{{ $rawPrice }}"                 {{-- tetap ada --}}
+  data-room-price="{{ $rawPrice }}"            {{-- tambahan fallback untuk skrip yang membaca data-room-price --}}
+  data-detail-url="{{ $detailUrlWithTipe }}"   {{-- URL detail yang menyertakan tipe --}}
+  data-room-type="{{ $room->tipe_kamar ?? $room->type ?? '' }}"
 
   {{-- Event hanya aktif jika tersedia --}}
   @if($isAvailable)
     onmousedown="startPress('{{ $roomId }}')"
     onmouseup="cancelPress('{{ $roomId }}')"
-    mouseleave="cancelPress('{{ $roomId }}')"
+    onmouseleave="cancelPress('{{ $roomId }}')"   {{-- perbaikan: gunakan onmouseleave --}}
     ontouchstart="startPress('{{ $roomId }}')"
     ontouchend="cancelPress('{{ $roomId }}')"
     ontouchmove="cancelPress('{{ $roomId }}')"
@@ -42,8 +50,17 @@
 >
     {{-- Checkbox (Hanya jika tersedia) --}}
     @if($isAvailable)
-        {{-- Tambahan: tambahkan kelas room-select agar JS dapat mendeteksi --}}
-        <input type="checkbox" name="selected_rooms[]" value="{{ $roomId }}" id="check-{{ $roomId }}" class="hidden room-select">
+        {{-- Pastikan name sama dengan yang digunakan di JS/controller (selected_rooms[]) --}}
+        {{-- tambahkan data-price & form untuk menghindari edge-case ketika elemen dipindah di DOM --}}
+        <input
+            type="checkbox"
+            name="selected_rooms[]"
+            value="{{ $roomId }}"
+            id="check-{{ $roomId }}"
+            class="hidden room-select"
+            data-price="{{ $rawPrice }}"
+            form="bookingForm"
+        >
 
         {{-- Overlay Hijau --}}
         <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-20 hidden border-2 border-green-500 rounded-xl flex items-center justify-center pointer-events-none">
@@ -94,7 +111,7 @@
 
         {{-- Tombol Detail --}}
         @if($isAvailable)
-            <a href="{{ $detailUrl }}" onclick="event.stopPropagation()" class="detail-btn mt-4 block w-full text-center py-2 rounded-lg bg-gray-50 text-gray-600 font-bold text-xs hover:bg-green-600 hover:text-white transition-all border border-gray-100">
+            <a href="{{ $detailUrlWithTipe }}" onclick="event.stopPropagation()" class="detail-btn mt-4 block w-full text-center py-2 rounded-lg bg-gray-50 text-gray-600 font-bold text-xs hover:bg-green-600 hover:text-white transition-all border border-gray-100">
                 LIHAT DETAIL
             </a>
         @else
