@@ -63,7 +63,7 @@ class LoginController extends Controller
         // Jika di Pemilik TIDAK ADA dan di Web juga TIDAK ADA
         if (!$checkPemilik && !$checkWeb) {
             return back()->withErrors([
-                'username' => 'Username/password tidak ditemukan! Akun belum terdaftar.',
+                'username' => 'Username/Password tidak ditemukan! Akun belum terdaftar.',
             ])->onlyInput('username');
         }
 

@@ -19,12 +19,12 @@ return new class extends Migration
                 table:'cabang',
                 column: 'id_cabang'
             )->onUpdate('cascade')->onDelete('cascade');
-            $table->char('no_kamar', length:10);
+            $table->char('no_kamar', length:10)->unique();
             $table->enum('tipe_kamar', ['Ekonomis', 'Standar']);
             $table->integer('harga_kamar');
             $table->text('deskripsi');
             $table->enum('status', ['Tersedia', 'Dihuni'])->default('Tersedia');
-            $table->string('slug');
+            $table->string('gambar', 255)->nullable();
             $table->timestamps();
         });
     }

@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
+use App\Http\Controllers\Admin\DataKamarController;
+use App\Http\Controllers\Admin\InformasiCabangController;
+use App\Http\Controllers\Admin\LayananVillaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -115,6 +118,15 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
         Route::resource('pengelola', DataPengelolaController::class);
+        // Data Kamar
+        Route::prefix('{lokasi}')->name('admin.cabang')->group(function() {
+            Route::resource('kamar', DataKamarController::class);
+
+            // Data Layanan Villa
+            Route::resource('layanan-villa', LayananVillaController::class);
+            // Data Informasi Cabang
+            Route::resource('informasi-cabang', InformasiCabangController::class);
+        });
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
