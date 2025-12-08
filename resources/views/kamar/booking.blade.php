@@ -106,7 +106,7 @@
                                     data-price="{{ $srv->price ?? $srv->harga ?? 0 }}">
                                 <input type="hidden"
                                     name="service_quantity[{{ $srv->id }}]"
-                                    value="{{ $qty }}"
+                                    value="{{ $qty > 0 ? $qty : 1 }}"
                                     form="bookingForm"
                                     id="hidden_qty_{{ $srv->id }}">
                             @endif
@@ -509,21 +509,28 @@ document.addEventListener('DOMContentLoaded', function() {
         if (roomItems.length > 0) {
             roomItems.forEach(item => {
                 const price = parseFloat(item.dataset.price) || 0;
-                let itemDuration = duration;
+                let itemDurationDays = duration; // default: villa mode uses nights directly
 
                 // Cek jika ini adalah item mode biasa yang punya input durasi sendiri
                 const specificDurationInput = item.querySelector('.final-days-input');
                 if (specificDurationInput) {
-                    itemDuration = parseInt(specificDurationInput.value) || 1;
+                    // --- NEW: read unit multiplier from unit-select inside the same room item ---
+                    const unitSelect = item.querySelector('.unit-select');
+                    const unitMultiplier = unitSelect ? (parseInt(unitSelect.value) || 1) : 1;
+                    // specificDurationInput.value stores NUMBER OF UNITS (e.g., 2 means "2 minggu" if unit=7)
+                    const unitCount = parseInt(specificDurationInput.value) || 1;
+
+                    // itemDurationDays = jumlah hari sebenarnya = unitCount * unitMultiplier
+                    itemDurationDays = unitCount * unitMultiplier;
                     
-                    // Update tampilan subtotal per item (Mode Biasa)
+                    // Update tampilan subtotal per item (Mode Biasa) menggunakan hari sebenarnya
                     const subDisplay = item.querySelector('.subtotal-display');
                     if(subDisplay) {
-                        subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(price * itemDuration);
+                        subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(price * itemDurationDays);
                     }
                 }
 
-                totalRoom += (price * itemDuration);
+                totalRoom += (price * itemDurationDays);
             });
         }
 
@@ -554,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- EVENT LISTENERS ---
-    
+
     // Listen perubahan pada input durasi villa
     const villaInput = document.getElementById('villa_duration');
     if(villaInput) {
@@ -565,6 +572,81 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listen perubahan checkbox layanan (delegasi event)
     const services = document.querySelectorAll('input[name="services[]"]');
     services.forEach(s => s.addEventListener('change', updateTotal));
+
+    // ======= NEW: Handlers untuk mode BIASA (per-kamar + / - dan unit-select) =======
+    // Menangani tombol plus/minus per room, update .display-amount, .final-days-input, detail-text, subtotal-display
+    // Perubahan penting:
+    //  - final-days-input tetap menyimpan jumlah UNIT (mis. 2 jika memilih 2 Minggu) -> supaya server-side logic TETAP sama
+    //  - perhitungan harga di UI (subtotal & grand total) memakai multiplier unit (1,7,30,365)
+    document.querySelectorAll('.room-item').forEach(roomEl => {
+        const btnPlus = roomEl.querySelector('.btn-plus');
+        const btnMinus = roomEl.querySelector('.btn-minus');
+        const displaySpan = roomEl.querySelector('.display-amount');
+        const finalInput = roomEl.querySelector('.final-days-input');
+        const detailText = roomEl.querySelector('.detail-text');
+        const unitSelect = roomEl.querySelector('.unit-select');
+        const subDisplay = roomEl.querySelector('.subtotal-display');
+
+        // Helper untuk meng-update tampilan dan input
+        function setUnits(newUnits) {
+            // Jaga minimal 1 unit
+            if (newUnits < 1) newUnits = 1;
+
+            // Update tampilan unit count dan input yang dikirim ke server (jumlah unit)
+            if (displaySpan) displaySpan.innerText = newUnits;
+            if (finalInput) finalInput.value = newUnits;
+
+            // Hitung multiplier berdasarkan unitSelect (1,7,30,365)
+            const multiplier = unitSelect ? (parseInt(unitSelect.value) || 1) : 1;
+
+            // Update detail text (mis. "2 Minggu")
+            let unitLabel = 'Hari';
+            if (unitSelect) {
+                const u = unitSelect.value;
+                if (u === '7') unitLabel = 'Minggu';
+                else if (u === '30') unitLabel = 'Bulan';
+                else if (u === '365') unitLabel = 'Tahun';
+            }
+            if (detailText) detailText.innerText = `${newUnits} ${unitLabel}`;
+
+            // Update subtotal visible (harga_per_hari * jumlah_unit * multiplier)
+            const price = parseFloat(roomEl.dataset.price) || 0;
+            const subtotal = price * newUnits * multiplier;
+            if (subDisplay) subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(subtotal);
+
+            // Recalculate totals (grand total)
+            updateTotal();
+        }
+
+        // Attach click events
+        if (btnPlus) {
+            btnPlus.addEventListener('click', () => {
+                const current = parseInt(displaySpan?.innerText || finalInput?.value || '1') || 1;
+                setUnits(current + 1);
+            });
+        }
+        if (btnMinus) {
+            btnMinus.addEventListener('click', () => {
+                const current = parseInt(displaySpan?.innerText || finalInput?.value || '1') || 1;
+                setUnits(current - 1); // setUnits akan memastikan >=1
+            });
+        }
+
+        // Jika user mengubah unit (Hari/Minggu/Bulan/Tahun), recalculate & refresh label & subtotal
+        if (unitSelect) {
+            unitSelect.addEventListener('change', () => {
+                const current = parseInt(displaySpan?.innerText || finalInput?.value || '1') || 1;
+                setUnits(current); // refresh subtotal & detail sesuai multiplier baru
+            });
+        }
+
+        // Initial sync (agar saat load nilai 1 tercermin di detail & subtotal)
+        (function initRoom() {
+            const current = parseInt(displaySpan?.innerText || finalInput?.value || '1') || 1;
+            setUnits(current);
+        })();
+    });
+    // ======= END NEW Handlers =======
 
     // Panggil sekali saat load
     updateTotal();

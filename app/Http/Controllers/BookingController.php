@@ -150,214 +150,239 @@ class BookingController extends Controller
     }
 
     public function store(Request $request)
-{
-    if (!Auth::check()) {
-        Alert::error('Eitss', 'Silakan login terlebih dahulu untuk melakukan pemesanan.');
-        return redirect()->route('login');
-    }
+    {
+        if (!Auth::check()) {
+            Alert::error('Eitss', 'Silakan login terlebih dahulu untuk melakukan pemesanan.');
+            return redirect()->route('login');
+        }
 
-    $rawServiceIds = $request->input('services', []);
-    $hasServiceIds = is_array($rawServiceIds)
-        ? count(array_filter($rawServiceIds)) > 0
-        : !empty($rawServiceIds);
+        // --- lebih robust detection untuk services dan kamar ---
+        $rawServiceIds = $request->input('services', []);
+        $hasServiceIds = (is_array($rawServiceIds) && count(array_filter($rawServiceIds, fn($v) => $v !== null && $v !== '')) > 0)
+            || (!is_array($rawServiceIds) && filled($rawServiceIds));
 
-    $serviceOnlyFlag = $request->filled('service_only')
-        || ($hasServiceIds && !$request->has('kamar_ids'));
+        // Treat kamar_ids as "filled" only when it contains at least one non-empty value
+        $hasKamarIds = $request->has('kamar_ids') && is_array($request->input('kamar_ids')) && count(array_filter($request->input('kamar_ids'))) > 0;
 
-    if (!$hasServiceIds) {
-        $detected = [];
+        $serviceOnlyFlag = $request->filled('service_only')
+            || ($hasServiceIds && !$hasKamarIds);
 
-        foreach ($request->all() as $k => $v) {
-            if (preg_match('/^(srv-check-|svc-|hidden_srv_|service[_-]?id|vis-check-|service[_-]?ids?|selected_services|selected_service)$/i', $k)) {
-                if (is_array($v)) {
-                    foreach ($v as $item) {
-                        if (is_numeric($item) && (int) $item > 0) {
-                            $detected[] = (int) $item;
+        if (!$hasServiceIds) {
+            $detected = [];
+
+            foreach ($request->all() as $k => $v) {
+                if (preg_match('/^(srv-check-|svc-|hidden_srv_|service[_-]?id|vis-check-|service[_-]?ids?|selected_services|selected_service)$/i', $k)) {
+                    if (is_array($v)) {
+                        foreach ($v as $item) {
+                            if (is_numeric($item) && (int) $item > 0) {
+                                $detected[] = (int) $item;
+                            }
                         }
-                    }
-                } elseif (is_string($v) && preg_match('/^\d+(,\d+)*$/', $v)) {
-                    foreach (explode(',', $v) as $p) {
-                        if (is_numeric($p)) {
-                            $detected[] = (int) $p;
+                    } elseif (is_string($v) && preg_match('/^\d+(,\d+)*$/', $v)) {
+                        foreach (explode(',', $v) as $p) {
+                            if (is_numeric($p)) {
+                                $detected[] = (int) $p;
+                            }
                         }
+                    } elseif (is_numeric($v)) {
+                        $detected[] = (int) $v;
                     }
-                } elseif (is_numeric($v)) {
-                    $detected[] = (int) $v;
+                }
+
+                if (preg_match('/^service[_-]?(\d+)$/i', $k, $m)) {
+                    $detected[] = (int) $m[1];
                 }
             }
 
-            if (preg_match('/^service[_-]?(\d+)$/i', $k, $m)) {
-                $detected[] = (int) $m[1];
+            foreach ($request->all() as $k => $v) {
+                if (preg_match('/^vis-check-(\d+)$/', $k, $m)) {
+                    $detected[] = (int) $m[1];
+                }
+            }
+
+            $detected = array_unique(array_filter($detected));
+
+            if (count($detected) > 0) {
+                $rawServiceIds = $detected;
+                $hasServiceIds = true;
+
+                // recompute kamar presence
+                $hasKamarIds = $request->has('kamar_ids') && is_array($request->input('kamar_ids')) && count(array_filter($request->input('kamar_ids'))) > 0;
+                if (!$hasKamarIds) {
+                    $serviceOnlyFlag = true;
+                }
+
+                \Log::debug('Booking.store detected fallback service ids', ['detected' => $detected]);
             }
         }
 
+        $rules = [
+            'nama_lengkap'         => 'required|string|max:255',
+            'telepon'              => 'required|numeric',
+            'email'                => 'required|email',
+            'tanggal'              => 'nullable|date',
+            'check_in'             => 'nullable|date',
+            'check_out'            => 'nullable|date|after:check_in',
+            'services'             => 'nullable|array',
+            'services.*'           => 'nullable|integer|exists:services,id',
+            'service_quantity'     => 'nullable|array',
+            // ubah min ke 1 - minimal qty layanan 1 jika dipilih (controller juga memfilter qty>0)
+            'service_quantity.*'   => 'nullable|integer|min:1',
+        ];
+
+        if (!$serviceOnlyFlag) {
+            $rules['kamar_ids'] = 'required|array|min:1';
+            $rules['kamar_ids.*'] = 'exists:kamar,id_kamar';
+            $rules['durasi'] = 'required|array';
+            $rules['durasi.*'] = 'integer|min:1';
+        } else {
+            $rules['kamar_ids'] = 'nullable|array';
+            $rules['durasi'] = 'nullable|array';
+            $rules['durasi.*'] = 'nullable|integer|min:1';
+        }
+
+        $validated = $request->validate($rules);
+
+        $kamarIds = isset($validated['kamar_ids'])
+            ? array_values(array_unique($validated['kamar_ids']))
+            : [];
+
+        $kamars = collect();
+
+        if (!empty($kamarIds)) {
+            $kamars = Kamar::whereIn('id_kamar', $kamarIds)->get();
+
+            if ($kamars->count() !== count($kamarIds)) {
+                return back()->withErrors(['booking' => 'Sebagian kamar tidak ditemukan.']);
+            }
+        }
+
+        if (!empty($validated['tanggal'])) {
+            $tanggalCheckin = Carbon::parse($validated['tanggal'])->startOfDay();
+        } elseif ($request->filled('check_in')) {
+            $tanggalCheckin = Carbon::parse($request->input('check_in'))->startOfDay();
+        } else {
+            return back()->withErrors(['booking' => 'Tanggal check-in tidak ditemukan.']);
+        }
+
+        $idPenyewa = Auth::user()->id_penyewa ?? Auth::id();
+        $idCabang  = $kamars->first()->id_cabang ?? null;
+
+        // Ambil service ids & qtys dari validated atau raw
+        $serviceIds  = $validated['services'] ?? $rawServiceIds ?? [];
+        $serviceQtys = $validated['service_quantity'] ?? $request->input('service_quantity', []);
+
+        // fallback: deteksi qty dari field lain nama pola qty
         foreach ($request->all() as $k => $v) {
-            if (preg_match('/^vis-check-(\d+)$/', $k, $m)) {
-                $detected[] = (int) $m[1];
+            if (preg_match('/(?:^|_)(?:qty|quantity|jumlah)[-_]?(\d+)$/i', $k, $m)) {
+                if (!isset($serviceQtys[$m[1]])) {
+                    $serviceQtys[$m[1]] = (int) $v;
+                }
             }
         }
 
-        $detected = array_unique(array_filter($detected));
+        // normalize arrays
+        $serviceIds = array_unique(array_map('intval', (array) $serviceIds));
+        $serviceQtys = is_array($serviceQtys) ? $serviceQtys : [];
 
-        if (count($detected) > 0) {
-            $rawServiceIds = $detected;
-            $hasServiceIds = true;
-
-            if (!$request->has('kamar_ids')) {
-                $serviceOnlyFlag = true;
-            }
-
-            \Log::debug('Booking.store detected fallback service ids', ['detected' => $detected]);
-        }
-    }
-
-    $rules = [
-        'nama_lengkap'         => 'required|string|max:255',
-        'telepon'              => 'required|numeric',
-        'email'                => 'required|email',
-        'tanggal'              => 'nullable|date',
-        'check_in'             => 'nullable|date',
-        'check_out'            => 'nullable|date|after:check_in',
-        'services'             => 'nullable|array',
-        'services.*'           => 'nullable|integer|exists:services,id',
-        'service_quantity'     => 'nullable|array',
-        'service_quantity.*'   => 'nullable|integer|min:0',
-    ];
-
-    if (!$serviceOnlyFlag) {
-        $rules['kamar_ids'] = 'required|array|min:1';
-        $rules['kamar_ids.*'] = 'exists:kamar,id_kamar';
-        $rules['durasi'] = 'required|array';
-        $rules['durasi.*'] = 'integer|min:1';
-    } else {
-        $rules['kamar_ids'] = 'nullable|array';
-        $rules['durasi'] = 'nullable|array';
-        $rules['durasi.*'] = 'nullable|integer|min:1';
-    }
-
-    $validated = $request->validate($rules);
-
-    $kamarIds = isset($validated['kamar_ids'])
-        ? array_values(array_unique($validated['kamar_ids']))
-        : [];
-
-    $kamars = collect();
-
-    if (!empty($kamarIds)) {
-        $kamars = Kamar::whereIn('id_kamar', $kamarIds)->get();
-
-        if ($kamars->count() !== count($kamarIds)) {
-            return back()->withErrors(['booking' => 'Sebagian kamar tidak ditemukan.']);
-        }
-    }
-
-    if (!empty($validated['tanggal'])) {
-        $tanggalCheckin = Carbon::parse($validated['tanggal'])->startOfDay();
-    } elseif ($request->filled('check_in')) {
-        $tanggalCheckin = Carbon::parse($request->input('check_in'))->startOfDay();
-    } else {
-        return back()->withErrors(['booking' => 'Tanggal check-in tidak ditemukan.']);
-    }
-
-    $idPenyewa = Auth::user()->id_penyewa ?? Auth::id();
-    $idCabang  = $kamars->first()->id_cabang ?? null;
-
-    $serviceIds  = $validated['services'] ?? $rawServiceIds ?? [];
-    $serviceQtys = $validated['service_quantity'] ?? $request->input('service_quantity', []);
-
-    foreach ($request->all() as $k => $v) {
-        if (preg_match('/(?:^|_)(?:qty|quantity|jumlah)[-_]?(\d+)$/i', $k, $m)) {
-            if (!isset($serviceQtys[$m[1]])) {
-                $serviceQtys[$m[1]] = (int) $v;
+        // FILTER: hanya proses services yang memiliki qty > 0
+        $serviceIdsFiltered = [];
+        foreach ($serviceIds as $sid) {
+            $qty = isset($serviceQtys[$sid]) ? (int)$serviceQtys[$sid] : 0;
+            if ($qty > 0) {
+                $serviceIdsFiltered[] = $sid;
             }
         }
-    }
+        $serviceIdsFiltered = array_values(array_unique($serviceIdsFiltered));
+        // assign back
+        $serviceIds = $serviceIdsFiltered;
 
-    $serviceIds = array_unique(array_map('intval', (array) $serviceIds));
-
-    $serviceTotal = 0;
-    $servicesCollection = Service::whereIn('id', $serviceIds)->get();
-
-    foreach ($servicesCollection as $svc) {
-        $qty = $serviceQtys[$svc->id] ?? 1;
-        $serviceTotal += $svc->price * $qty;
-    }
-
-    try {
-        $pemesanan = DB::transaction(function () use (
-            $kamarIds,
-            $kamars,
-            $validated,
-            $tanggalCheckin,
-            $idPenyewa,
-            $idCabang,
-            $serviceTotal,
-            $serviceIds,
-            $serviceQtys,
-            $servicesCollection
-        ) {
-            $totalHargaHeader = 0;
-            $itemsData = [];
-
-            foreach ($kamarIds as $idKamar) {
-                $kamar = $kamars->firstWhere('id_kamar', $idKamar);
-                $lamaSewa = (int) $validated['durasi'][$idKamar];
-
-                $checkin  = clone $tanggalCheckin;
-                $checkout = (clone $tanggalCheckin)->addDays($lamaSewa);
-
-                $subtotal = $kamar->harga_kamar * $lamaSewa;
-                $totalHargaHeader += $subtotal;
-
-                $itemsData[] = [
-                    'id_kamar'       => $idKamar,
-                    'jumlah_pesan'   => 1,
-                    'harga'          => $subtotal,
-                    'waktu_checkin'  => $checkin->toDateString(),
-                    'waktu_checkout' => $checkout->toDateString(),
-                ];
-            }
-
-            $grandTotal = $totalHargaHeader + $serviceTotal;
-
-            $pemesanan = Pemesanan::create([
-                'id_pemesanan'    => $this->generateKodePemesanan(),
-                'id_penyewa'      => $idPenyewa,
-                'id_cabang'       => $idCabang,
-                'waktu_pemesanan' => now(),
-                'total_harga'     => $grandTotal,
-                'status'          => 'Belum Dibayar',
-                'expired_at'      => now()->addMinutes(30),
-            ]);
-
-            foreach ($itemsData as $item) {
-                $item['id_pemesanan'] = $pemesanan->id_pemesanan;
-                PemesananItem::create($item);
-            }
+        $serviceTotal = 0;
+        $servicesCollection = collect();
+        if (!empty($serviceIds)) {
+            $servicesCollection = Service::whereIn('id', $serviceIds)->get();
 
             foreach ($servicesCollection as $svc) {
-                DB::table('pemesanan_service')->insert([
-                    'id_pemesanan' => $pemesanan->id_pemesanan,
-                    'id_service'   => $svc->id,
-                    'quantity'     => $serviceQtys[$svc->id] ?? 1,
-                    'price'        => $svc->price,
-                    'subtotal'     => $svc->price * ($serviceQtys[$svc->id] ?? 1),
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
-                ]);
+                $qty = $serviceQtys[$svc->id] ?? 1;
+                $serviceTotal += $svc->price * $qty;
             }
+        }
 
-            return $pemesanan;
-        });
-    } catch (\Exception $e) {
-        \Log::error($e->getMessage());
-        return back()->withErrors(['booking' => $e->getMessage()]);
+        try {
+            $pemesanan = DB::transaction(function () use (
+                $kamarIds,
+                $kamars,
+                $validated,
+                $tanggalCheckin,
+                $idPenyewa,
+                $idCabang,
+                $serviceTotal,
+                $serviceIds,
+                $serviceQtys,
+                $servicesCollection
+            ) {
+                $totalHargaHeader = 0;
+                $itemsData = [];
+
+                foreach ($kamarIds as $idKamar) {
+                    $kamar = $kamars->firstWhere('id_kamar', $idKamar);
+                    $lamaSewa = (int) $validated['durasi'][$idKamar];
+
+                    $checkin  = clone $tanggalCheckin;
+                    $checkout = (clone $tanggalCheckin)->addDays($lamaSewa);
+
+                    $subtotal = $kamar->harga_kamar * $lamaSewa;
+                    $totalHargaHeader += $subtotal;
+
+                    $itemsData[] = [
+                        'id_kamar'       => $idKamar,
+                        'jumlah_pesan'   => 1,
+                        'harga'          => $subtotal,
+                        'waktu_checkin'  => $checkin->toDateString(),
+                        'waktu_checkout' => $checkout->toDateString(),
+                    ];
+                }
+
+                $grandTotal = $totalHargaHeader + $serviceTotal;
+
+                $pemesanan = Pemesanan::create([
+                    'id_pemesanan'    => $this->generateKodePemesanan(),
+                    'id_penyewa'      => $idPenyewa,
+                    'id_cabang'       => $idCabang,
+                    'waktu_pemesanan' => now(),
+                    'total_harga'     => $grandTotal,
+                    'status'          => 'Belum Dibayar',
+                    'expired_at'      => now()->addMinutes(30),
+                ]);
+
+                foreach ($itemsData as $item) {
+                    $item['id_pemesanan'] = $pemesanan->id_pemesanan;
+                    PemesananItem::create($item);
+                }
+
+                // insert pemesanan_service hanya untuk servicesCollection (yang sudah difilter qty>0)
+                foreach ($servicesCollection as $svc) {
+                    DB::table('pemesanan_service')->insert([
+                        'id_pemesanan' => $pemesanan->id_pemesanan,
+                        'id_service'   => $svc->id,
+                        'quantity'     => $serviceQtys[$svc->id] ?? 1,
+                        'price'        => $svc->price,
+                        'subtotal'     => $svc->price * ($serviceQtys[$svc->id] ?? 1),
+                        'created_at'   => now(),
+                        'updated_at'   => now(),
+                    ]);
+                }
+
+                return $pemesanan;
+            });
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return back()->withErrors(['booking' => $e->getMessage()]);
+        }
+
+        Alert::success('Berhasil', 'Pemesanan berhasil dibuat.');
+        return redirect()->route('booking.pembayaran', $pemesanan->id_pemesanan);
     }
-
-    Alert::success('Berhasil', 'Pemesanan berhasil dibuat.');
-    return redirect()->route('booking.pembayaran', $pemesanan->id_pemesanan);
-}
-
 
     private function generateKodePemesanan(): string
     {
