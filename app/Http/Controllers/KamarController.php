@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kamar;
 use Illuminate\Http\Request;
 use App\Models\Service;
-use Illuminate\Support\Facades\Schema; 
+use Illuminate\Support\Facades\Schema;
 
 class KamarController extends Controller
 {
@@ -27,8 +27,8 @@ class KamarController extends Controller
 
         // --- tambahan: kirim daftar layanan ke view hanya jika cabang adalah villa
         if ($cabang && strtolower(trim($cabang->kategori_cabang ?? '')) === 'villa') {
-        if (class_exists(\App\Models\Service::class) && Schema::hasTable('services')) {
-        $services = \App\Models\Service::all();
+        if (class_exists(Service::class) && Schema::hasTable('services')) {
+        $services = Service::all();
         } else {
             $services = collect();
          }

@@ -73,9 +73,12 @@
             @if($isVilla)
                 @php
                     if (!isset($services) || $services === null) {
-                        try { $services = \App\Models\Service::all(); } catch (\Throwable $e) { $services = collect(); }
+                        try { $services = \App\Models\Service::where('id_cabang', $cabang->id_cabang ?? null)->get(); } catch (\Throwable $e) { $services = collect(); }
                     }
                 @endphp
+
+                {{-- Hidden --}}
+                <input type="hidden" name="cabang_id" value="{{ $cabang->id_cabang }}" form="bookingForm">
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     {{-- KOLOM KIRI: daftar unit --}}
@@ -94,7 +97,7 @@
                                             $isAvailable = stripos($status, 'sedia') !== false;
                                         @endphp
 
-                                        <div class="relative w-full {{ !$isAvailable ? 'opacity-60 grayscale-[80%] pointer-events-none' : '' }}">
+                                        <div class="relative w-full {{ !$isAvailable ? 'opacity-60 grayscale-80 pointer-events-none' : '' }}">
                                             {{-- room-card-item harus menyertakan elemen input[name="selected_rooms[]"] dengan id "check-{id}" dan data-price --}}
                                             @include('components.room-card-item', [
                                                 'room' => $room,

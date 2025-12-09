@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -54,6 +55,42 @@ class BookingController extends Controller
             );
         }
 
+        $detectedServiceIds = [];
+
+        foreach ($request->all() as $k => $v) {
+            if (preg_match('/^(srv-check-|svc-|hidden_srv_|service[_-]?id|vis-check-|service[_-]?ids?|selected_services|selected_service)$/i', $k)) {
+                if (is_array($v)) {
+                    foreach ($v as $item) {
+                        if (is_numeric($item) && (int) $item > 0) {
+                            $detectedServiceIds[] = (int) $item;
+                        }
+                    }
+                } elseif (is_string($v) && preg_match('/^\d+(,\d+)* $$/', $v)) {
+                    foreach (explode(',', $v) as $p) {
+                        if (is_numeric($p)) {
+                            $detectedServiceIds[] = (int) $p;
+                        }
+                    }
+                } elseif (is_numeric($v)) {
+                    $detectedServiceIds[] = (int) $v;
+                }
+            }
+
+            if (preg_match('/^service[_-]?(\d+)$/i', $k, $m)) {
+                $detectedServiceIds[] = (int) $m[1];
+            }
+
+            if (preg_match('/^vis-check-(\d+)$/', $k, $m)) {
+                $detectedServiceIds[] = (int) $m[1];
+            }
+        }
+
+        // Gabungkan dengan normalisasi dan buat unik/filter
+        $selectedServiceIds = array_values(array_unique(array_merge(
+            array_map('intval', $normalizedIncomingServices),
+            $detectedServiceIds
+        )));
+
         if ($request->isMethod('post') && $request->has('selected_rooms')) {
             $nos = $request->input('selected_rooms');
             $rooms = Kamar::whereIn('no_kamar', $nos)->get();
@@ -76,12 +113,19 @@ class BookingController extends Controller
                 return redirect()->route('dashboard');
             }
 
-            $rooms = Kamar::where('id_cabang', $cabangVilla->id_cabang)->get();
-            $isVilla = true;
+            // TAMBAH: Check untuk service-only di villa (jangan fetch rooms jika !include_rooms)
+            if ($request->has('cabang_villa') && !$request->has('include_rooms')) {
+                $cabang = $cabangVilla;
+                $rooms = collect(); // Kamar kosong untuk service-only
+                $isVilla = true;
+            } else {
+                $rooms = Kamar::where('id_cabang', $cabangVilla->id_cabang)->get();
+                $isVilla = true;
 
-            if ($rooms->isEmpty()) {
-                Alert::error('Gagal', 'Villa ditemukan tetapi tidak memiliki kamar untuk dipesan.');
-                return redirect()->route('dashboard');
+                if ($rooms->isEmpty()) {
+                    Alert::error('Gagal', 'Villa ditemukan tetapi tidak memiliki kamar untuk dipesan.');
+                    return redirect()->route('dashboard');
+                }
             }
         }
 
@@ -136,6 +180,36 @@ class BookingController extends Controller
         }
 
         $cabang = $firstRoom?->cabang;
+
+        if ($serviceOnly) {
+            if ($request->has('cabang_id')) {
+                $cabang = Cabang::where('id_cabang', $request->input('cabang_id'))
+                    ->where('kategori_cabang', 'villa')
+                    ->first();
+                if ($cabang) {
+                    $isVilla = true;
+                } else {
+                    Alert::error('Gagal', 'Cabang tidak valid untuk pemesanan layanan.');
+                    return redirect()->route('dashboard');
+                }
+            } elseif ($services->isNotEmpty()) {
+                // Fallback: Ambil cabang dari service pertama (asumsi Service punya cabang_id)
+                $firstService = $services->first();
+                if ($firstService && isset($firstService->id_cabang)) {
+                    $cabang = Cabang::where('id_cabang', $firstService->id_cabang)
+                        ->where('kategori_cabang', 'villa')
+                        ->first();
+                    if ($cabang) {
+                        $isVilla = true;
+                    }
+                }
+            }
+            if (!$cabang) {
+                Alert::error('Gagal', 'Cabang diperlukan untuk pemesanan layanan.');
+                return redirect()->route('dashboard');
+            }
+        }
+
         $totalBasePrice = $rooms->sum('harga_kamar');
 
         return view('kamar.booking', compact(
@@ -212,7 +286,7 @@ class BookingController extends Controller
                     $serviceOnlyFlag = true;
                 }
 
-                \Log::debug('Booking.store detected fallback service ids', ['detected' => $detected]);
+                Log::debug('Booking.store detected fallback service ids', ['detected' => $detected]);
             }
         }
 
@@ -266,7 +340,20 @@ class BookingController extends Controller
         }
 
         $idPenyewa = Auth::user()->id_penyewa ?? Auth::id();
-        $idCabang  = $kamars->first()->id_cabang ?? null;
+        $idCabang = $kamars->first()->id_cabang ?? $request->input('cabang_id') ?? null;
+
+        if ($serviceOnlyFlag && !$idCabang) {
+            $serviceIds = $validated['services'] ?? $rawServiceIds ?? [];
+            if (!empty($serviceIds)) {
+                $firstService = Service::whereIn('id', $serviceIds)->first();
+                if ($firstService && isset($firstService->id_cabang)) {
+                    $idCabang = $firstService->id_cabang;
+                }
+            }
+            if (!$idCabang) {
+                return back()->withErrors(['booking' => 'Cabang diperlukan untuk pemesanan layanan.']);
+            }
+        }
 
         // Ambil service ids & qtys dari validated atau raw
         $serviceIds  = $validated['services'] ?? $rawServiceIds ?? [];
@@ -376,7 +463,7 @@ class BookingController extends Controller
                 return $pemesanan;
             });
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return back()->withErrors(['booking' => $e->getMessage()]);
         }
 
