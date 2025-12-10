@@ -106,7 +106,7 @@
                                     data-price="{{ $srv->price ?? $srv->harga ?? 0 }}">
                                 <input type="hidden"
                                     name="service_quantity[{{ $srv->id }}]"
-                                    value="{{ $qty }}"
+                                    value="{{ $qty > 0 ? $qty : 1 }}"
                                     form="bookingForm"
                                     id="hidden_qty_{{ $srv->id }}">
                             @endif
@@ -183,7 +183,7 @@
 
             <div class="lg:col-span-5 mt-8 lg:mt-0">
                 <div class="bg-white shadow-xl rounded-2xl overflow-hidden sticky top-24 border border-gray-100">
-                    <div class="p-5 bg-gradient-to-r from-green-50 to-white border-b border-green-100">
+                    <div class="p-5 bg-linear-to-r from-green-50 to-white border-b border-green-100">
                         <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <span class="bg-green-100 text-green-600 p-1.5 rounded-lg">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -196,7 +196,7 @@
                         <div class="p-6 space-y-4">
                             <div class="text-sm text-gray-600">
                                 <p class="font-medium">Kamu memesan layanan tanpa kamar.</p>
-                                <p class="text-xs text-gray-500">Form di sebelah kiri tetap bisa dilengkapi. Tekan "Konfirmasi & Bayar" (tombol di bawah) untuk menyelesaikan pemesanan layanan.</p>
+                                <p class="text-xs text-gray-500">Form di sebelah kiri tetap bisa dilengkapi. Tekan tombol "Konfirmasi & Bayar" untuk menyelesaikan pemesanan layanan.</p>
                             </div>
 
                             <div class="space-y-3 max-h-56 overflow-y-auto pr-2">
@@ -262,7 +262,7 @@
                                         @foreach($rooms as $room)
                                         <div class="villa-room-item flex justify-between items-start" data-price="{{ $room->harga_kamar }}">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-10 h-10 rounded-lg bg-white border border-gray-200 overflow-hidden flex-shrink-0">
+                                                <div class="w-10 h-10 rounded-lg bg-white border border-gray-200 overflow-hidden shrink-0">
                                                     <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}" class="w-full h-full object-cover">
                                                 </div>
                                                 <div>
@@ -317,7 +317,7 @@
                                                 @else
                                                     <label class="relative inline-flex items-center cursor-pointer">
                                                         <input type="checkbox" id="vis-check-{{ $service->id }}" onchange="toggleServiceUI({{ $service->id }})" class="sr-only peer" @checked($isChecked)>
-                                                        <div class="w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-green-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                                        <div class="w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-green-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                                                     </label>
                                                 @endif
                                             </div>
@@ -402,16 +402,16 @@
 window.adjustVillaDuration = function(change) {
     const durationInput = document.getElementById('villa_duration');
     const displayNights = document.getElementById('villa_nights_disp');
-    
+
     if (durationInput) {
         let currentVal = parseInt(durationInput.value) || 1;
         let newVal = currentVal + change;
-        
+
         if (newVal < 1) newVal = 1;
-        
+
         // Update tampilan input
         durationInput.value = newVal;
-        
+
         // Update text durasi malam
         if(displayNights) displayNights.textContent = newVal;
 
@@ -441,15 +441,15 @@ window.updateServiceUI = function(id, change, max) {
     const qtyInput = document.getElementById('qty-' + id);
     const dispSpan = document.getElementById('disp-' + id);
     const checkbox = document.getElementById('svc-' + id);
-    
+
     if(qtyInput && dispSpan) {
         let val = parseInt(qtyInput.value) || 0;
         val += change;
         if(val < 0) val = 0;
-        
+
         qtyInput.value = val;
         dispSpan.innerText = val;
-        
+
         // Auto check/uncheck based on qty
         if(checkbox) {
             checkbox.checked = val > 0;
@@ -461,7 +461,7 @@ window.updateServiceUI = function(id, change, max) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const bookingForm = document.getElementById('bookingForm'); 
+    const bookingForm = document.getElementById('bookingForm');
     if (!bookingForm) return;
 
     // --- Inisialisasi Elemen ID ---
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dateFormat: "d-m-Y", // Format sesuai permintaan
                 minDate: "today",
                 defaultDate: tanggalInput.value || "today",
-                disableMobile: "true" 
+                disableMobile: "true"
             });
         }
     }
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // 1. Hitung Harga Kamar / Villa
         const villaDurationInput = document.getElementById('villa_duration');
         let duration = 1;
-        
+
         if (villaDurationInput) {
             // Mode Villa (Satu durasi untuk semua unit)
             duration = parseInt(villaDurationInput.value) || 1;
@@ -505,56 +505,83 @@ document.addEventListener('DOMContentLoaded', function() {
         // Ambil elemen kamar dari list visual (Rincian Pesanan)
         // Kita menggunakan class .villa-room-item (mode villa) dan .room-item (mode biasa)
         const roomItems = document.querySelectorAll('.villa-room-item, .room-item');
-        
+
         if (roomItems.length > 0) {
             roomItems.forEach(item => {
                 const price = parseFloat(item.dataset.price) || 0;
-                let itemDuration = duration;
+                let itemDurationDays = duration; // default: villa mode
 
                 // Cek jika ini adalah item mode biasa yang punya input durasi sendiri
                 const specificDurationInput = item.querySelector('.final-days-input');
                 if (specificDurationInput) {
-                    itemDuration = parseInt(specificDurationInput.value) || 1;
-                    
-                    // Update tampilan subtotal per item (Mode Biasa)
+                    // itemDurationDays = jumlah hari sebenarnya = unitCount * unitMultiplier
+                    itemDurationDays = parseInt(specificDurationInput.value) || 1;
+
+                    // Update tampilan subtotal per item (Mode Biasa) menggunakan hari sebenarnya
                     const subDisplay = item.querySelector('.subtotal-display');
                     if(subDisplay) {
-                        subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(price * itemDuration);
+                        subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(price * itemDurationDays);
                     }
                 }
 
-                totalRoom += (price * itemDuration);
+                totalRoom += (price * itemDurationDays);
             });
         }
 
         // 2. Hitung Harga Service
-        const serviceCheckboxes = document.querySelectorAll('input[name="services[]"]');
-        serviceCheckboxes.forEach(cb => {
-            if (cb.checked) {
-                const price = parseFloat(cb.dataset.price) || 0;
-                const id = cb.value;
-                const qtyInput = document.getElementById('qty-' + id);
+        const serviceCheckboxes = document.querySelectorAll('input[name="services[]"].service-check');
+        if (serviceCheckboxes.length > 0) {
+            // --- KASUS A: MODE INTERAKTIF (ADA CHECKBOX) ---
+            serviceCheckboxes.forEach(cb => {
+                // Hanya hitung jika dicentang
+                if (cb.checked) {
+                    const price = parseFloat(cb.dataset.price) || 0;
+                    const id = cb.value;
+                    const qtyInput = document.getElementById('qty-' + id);
+                    const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+
+                    totalService += (price * qty);
+                }
+            });
+        } else {
+            // --- KASUS B: MODE SERVICE ONLY (HIDDEN INPUT) ---
+            const hiddenServices = document.querySelectorAll('input[name="services[]"][type="hidden"][data-price]');
+
+            hiddenServices.forEach(input => {
+                // Input hidden dianggap pasti dipilih (karena user sudah di halaman konfirmasi)
+                const price = parseFloat(input.dataset.price) || 0;
+                const id = input.value;
+
+                // Cari qty pasangannya. Di blade kamu ID-nya: 'hidden_qty_{id}'
+                // atau fallback ke 'qty-{id}' jika struktur ID berbeda
+                let qtyInput = document.getElementById('hidden_qty_' + id);
+                if (!qtyInput) qtyInput = document.getElementById('qty-' + id);
+
                 const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
-                
+
                 totalService += (price * qty);
-            }
-        });
+            });
+        }
 
         // 3. Update UI
         const grandTotal = totalRoom + totalService;
         const formatter = new Intl.NumberFormat('id-ID');
 
+        // const grandTotalElement = document.getElementById('grand_total');
         if (grandTotalElement) {
             grandTotalElement.innerText = 'Rp' + formatter.format(grandTotal);
         }
-        
+
+        // const villaRoomTotalElement = document.getElementById('villa_room_total');
+        // const villaServiceTotalElement = document.getElementById('villa_service_total');
+
         // Update rincian sub-total (Khusus Mode Villa)
         if (villaRoomTotalElement) villaRoomTotalElement.innerText = 'Rp' + formatter.format(totalRoom);
         if (villaServiceTotalElement) villaServiceTotalElement.innerText = 'Rp' + formatter.format(totalService);
     }
 
     // --- EVENT LISTENERS ---
-    
+
     // Listen perubahan pada input durasi villa
     const villaInput = document.getElementById('villa_duration');
     if(villaInput) {
@@ -565,6 +592,84 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listen perubahan checkbox layanan (delegasi event)
     const services = document.querySelectorAll('input[name="services[]"]');
     services.forEach(s => s.addEventListener('change', updateTotal));
+
+    // ======= NEW: Handlers untuk mode BIASA (per-kamar + / - dan unit-select) =======
+    // Menangani tombol plus/minus per room, update .display-amount, .final-days-input, detail-text, subtotal-display
+    // Perubahan penting:
+    //  - final-days-input tetap menyimpan jumlah UNIT (mis. 2 jika memilih 2 Minggu) -> supaya server-side logic TETAP sama
+    //  - perhitungan harga di UI (subtotal & grand total) memakai multiplier unit (1,7,30,365)
+    document.querySelectorAll('.room-item').forEach(roomEl => {
+        const btnPlus = roomEl.querySelector('.btn-plus');
+        const btnMinus = roomEl.querySelector('.btn-minus');
+        const displaySpan = roomEl.querySelector('.display-amount');
+        const finalInput = roomEl.querySelector('.final-days-input');
+        const detailText = roomEl.querySelector('.detail-text');
+        const unitSelect = roomEl.querySelector('.unit-select');
+        const subDisplay = roomEl.querySelector('.subtotal-display');
+
+        // Helper untuk meng-update tampilan dan input
+        function setUnits(newUnits) {
+            // Jaga minimal 1 unit
+            if (newUnits < 1) newUnits = 1;
+
+            // Update tampilan unit count dan input yang dikirim ke server (jumlah unit)
+            if (displaySpan) displaySpan.innerText = newUnits;
+
+            // Hitung multiplier berdasarkan unitSelect (1,7,30,365)
+            const multiplier = unitSelect ? (parseInt(unitSelect.value) || 1) : 1;
+
+            // Input hidden (yang dikirim ke Controller/Database) diisi Total Hari
+            // Contoh: 1 Minggu -> value = 7. Controller akan menghitung 7 * HargaPerMalam
+            if (finalInput) finalInput.value = newUnits * multiplier;
+
+            // Update detail text (mis. "2 Minggu")
+            let unitLabel = 'Hari';
+            if (unitSelect) {
+                const u = unitSelect.value;
+                if (u === '7') unitLabel = 'Minggu';
+                else if (u === '30') unitLabel = 'Bulan';
+                else if (u === '365') unitLabel = 'Tahun';
+            }
+            if (detailText) detailText.innerText = `${newUnits} ${unitLabel}`;
+
+            // Update subtotal visible (harga_per_hari * jumlah_unit * multiplier)
+            const price = parseFloat(roomEl.dataset.price) || 0;
+            const subtotal = price * newUnits * multiplier;
+            if (subDisplay) subDisplay.innerText = 'Rp' + new Intl.NumberFormat('id-ID').format(subtotal);
+
+            // Recalculate totals (grand total)
+            updateTotal();
+        }
+
+        // Attach click events
+        if (btnPlus) {
+            btnPlus.addEventListener('click', () => {
+                const current = parseInt(displaySpan?.innerText || '1') || 1;
+                setUnits(current + 1);
+            });
+        }
+        if (btnMinus) {
+            btnMinus.addEventListener('click', () => {
+                const current = parseInt(displaySpan?.innerText || '1') || 1;
+                setUnits(current - 1);
+            });
+        }
+
+        // Jika user mengubah unit (Hari/Minggu/Bulan/Tahun), refresh perhitungan
+        if (unitSelect) {
+            unitSelect.addEventListener('change', () => {
+                const current = parseInt(displaySpan?.innerText || '1') || 1;
+                setUnits(current);
+            });
+        }
+
+        // Initial sync (agar saat load nilai 1 tercermin di detail & subtotal)
+        (function initRoom() {
+            const current = parseInt(displaySpan?.innerText || '1') || 1;
+            setUnits(current);
+        })();
+    });
+    // ======= END NEW Handlers =======
 
     // Panggil sekali saat load
     updateTotal();

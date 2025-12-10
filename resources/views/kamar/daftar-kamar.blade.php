@@ -73,9 +73,12 @@
             @if($isVilla)
                 @php
                     if (!isset($services) || $services === null) {
-                        try { $services = \App\Models\Service::all(); } catch (\Throwable $e) { $services = collect(); }
+                        try { $services = \App\Models\Service::where('id_cabang', $cabang->id_cabang ?? null)->get(); } catch (\Throwable $e) { $services = collect(); }
                     }
                 @endphp
+
+                {{-- Hidden --}}
+                <input type="hidden" name="cabang_id" value="{{ $cabang->id_cabang }}" form="bookingForm">
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     {{-- KOLOM KIRI: daftar unit --}}
@@ -94,7 +97,7 @@
                                             $isAvailable = stripos($status, 'sedia') !== false;
                                         @endphp
 
-                                        <div class="relative w-full {{ !$isAvailable ? 'opacity-60 grayscale-[80%] pointer-events-none' : '' }}">
+                                        <div class="relative w-full {{ !$isAvailable ? 'opacity-60 grayscale-80 pointer-events-none' : '' }}">
                                             {{-- room-card-item harus menyertakan elemen input[name="selected_rooms[]"] dengan id "check-{id}" dan data-price --}}
                                             @include('components.room-card-item', [
                                                 'room' => $room,
@@ -369,33 +372,35 @@
     }
 
     // ====== SERVICES LOGIC ======
-    function updateServiceQty(id, change, maxLimit) {
-        const qtyInput = document.getElementById('srv-qty-' + id);
-        const displayEl = document.getElementById('display-qty-' + id);
-        const checkbox = document.getElementById('srv-check-' + id);
+function updateServiceQty(id, change, maxLimit) {
+    const qtyInput = document.getElementById('srv-qty-' + id);
+    const displayEl = document.getElementById('display-qty-' + id);
+    const checkbox = document.getElementById('srv-check-' + id);
 
-        let currentQty = parseInt(qtyInput.value) || 0;
-        let newQty = currentQty + change;
-        if (newQty < 0) newQty = 0;
-        if (newQty > (maxLimit || 9999)) newQty = maxLimit || 9999;
+    let currentQty = parseInt(qtyInput.value) || 0;
+    let newQty = currentQty + change;
+    if (newQty < 0) newQty = 0;
+    if (typeof maxLimit === 'number' && newQty > maxLimit) newQty = maxLimit;
 
-        qtyInput.value = newQty;
-        if (displayEl) displayEl.innerText = newQty;
-        if (checkbox) checkbox.checked = (newQty > 0);
+    qtyInput.value = newQty;
+    if (displayEl) displayEl.innerText = newQty;
+    if (checkbox) checkbox.checked = (newQty > 0);
 
-        recalcTotals();
-    }
+    recalcTotals();
+}
 
-    function toggleStandardService(id) {
-        const visibleCheck = document.getElementById('visible-check-' + id);
-        const hiddenCheck = document.getElementById('srv-check-' + id);
-        const qtyInput = document.getElementById('srv-qty-' + id);
+function toggleStandardService(id) {
+    const visibleCheck = document.getElementById('visible-check-' + id);
+    const hiddenCheck = document.getElementById('srv-check-' + id);
+    const qtyInput = document.getElementById('srv-qty-' + id);
 
-        if (hiddenCheck) hiddenCheck.checked = !!visibleCheck.checked;
-        if (qtyInput) qtyInput.value = visibleCheck.checked ? 1 : 0;
+    if (!qtyInput || !hiddenCheck) return;
 
-        recalcTotals();
-    }
+    hiddenCheck.checked = !!visibleCheck.checked;
+    qtyInput.value = visibleCheck.checked ? 1 : 0;
+
+    recalcTotals();
+}
 
     // ====== CALCULATION (JANGAN HITUNG SERVICE JIKA TIDAK CHECKED) ======
     function recalcTotals() {
@@ -473,16 +478,15 @@
         }
     }
 
-    // ====== PRE-SUBMIT HELPER (tetap ada) ======
+    // ====== PRE-SUBMIT HELPER (tetap ada, disederhanakan untuk robust) ======
     (function attachPreSubmitHelper(){
         const bookingForm = document.getElementById('bookingForm');
         if (!bookingForm) return;
 
         function removeDynamic() {
             Array.from(bookingForm.querySelectorAll('input[data-dynamic-service]')).forEach(n => n.remove());
-            Array.from(bookingForm.querySelectorAll('input[data-dynamic-qty]')).forEach(n => n.remove());
-            Array.from(bookingForm.querySelectorAll('input[data-dynamic-flag]')).forEach(n => n.remove());
         }
+
         function addHidden(name, value, attrs = {}) {
             const inp = document.createElement('input');
             inp.type = 'hidden';
@@ -493,58 +497,75 @@
             return inp;
         }
 
-        function buildServiceHiddenInputs() {
-            removeDynamic();
+        // SIMPLIFIED: scan all srv-qty-* inputs and add services[] only when qty>0
+       function buildServiceHiddenInputs() {
+    removeDynamic();
 
-            // visible toggles
-            document.querySelectorAll('input[id^="visible-check-"]').forEach(el => {
-                const m = el.id.match(/visible-check-(\d+)/);
-                if (!m) return;
-                const id = m[1];
-                const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
-                const qty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : 1;
-                if (el.checked) addHidden('services[]', id, {'data-dynamic-service':'1'});
-                addHidden('service_quantity[' + id + ']', qty || 1, {'data-dynamic-qty':'1'});
-            });
-
-            // hidden srv-check inputs
-            document.querySelectorAll('input[id^="srv-check-"]').forEach(el => {
-                if (el.checked) {
-                    addHidden('services[]', el.value, {'data-dynamic-service':'1'});
-                    const id = el.value;
-                    const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
-                    const qty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : 1;
-                    addHidden('service_quantity[' + id + ']', qty || 1, {'data-dynamic-qty':'1'});
-                }
-            });
-
-            // counters
-            document.querySelectorAll('[id^="display-qty-"], [id^="disp-"]').forEach(el => {
-                const m = el.id.match(/(?:display-qty-|disp-)(\d+)/);
-                if (!m) return;
-                const id = m[1];
-                const qty = parseInt((el.value !== undefined ? el.value : el.innerText) || 0, 10) || 0;
-                if (qty > 0) {
-                    if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
-                    addHidden('service_quantity[' + id + ']', qty, {'data-dynamic-qty':'1'});
-                }
-            });
-
-            // fallback hidden patterns
-            document.querySelectorAll('input[id^="hidden_srv_"], input[id^="svc-"]').forEach(h => {
-                const val = h.value;
-                if (!val) return;
-                const id = String(val);
-                if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
-                const qEl = document.getElementById('hidden_qty_' + id) || document.getElementById('srv-qty-' + id) || document.getElementById('qty-' + id);
-                const qv = qEl ? (qEl.value !== undefined ? qEl.value : qEl.innerText) : 0;
-                addHidden('service_quantity['+id+']', qv || 0, {'data-dynamic-qty':'1'});
-            });
-
-            const hasServiceHidden = bookingForm.querySelectorAll('input[name="services[]"]').length > 0;
-            const hasKamarHidden = bookingForm.querySelectorAll('input[name="kamar_ids[]"], input[name="selected_rooms[]"]').length > 0;
-            if (hasServiceHidden && !hasKamarHidden) addHidden('service_only', '1', {'data-dynamic-flag':'1'});
+    // visible toggles
+    document.querySelectorAll('input[id^="visible-check-"]').forEach(el => {
+        const m = el.id.match(/visible-check-(\d+)/);
+        if (!m) return;
+        const id = m[1];
+        const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
+        let rawQty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : '';
+        let qty = parseInt(String(rawQty).replace(/\D/g,''), 10);
+        if (isNaN(qty)) qty = 0;
+        // if user ticked visible checkbox but qty is 0 -> assume 1
+        if (el.checked && qty === 0) qty = 1;
+        if (qty > 0) {
+            addHidden('services[]', id, {'data-dynamic-service':'1'});
+            addHidden('service_quantity[' + id + ']', qty, {'data-dynamic-qty':'1'});
         }
+    });
+
+    // hidden srv-check inputs (gazebo and others)
+    document.querySelectorAll('input[id^="srv-check-"]').forEach(el => {
+        const id = el.value;
+        const qtyEl = document.getElementById('srv-qty-' + id) || document.getElementById('display-qty-' + id) || document.getElementById('disp-' + id);
+        let rawQty = qtyEl ? (qtyEl.value !== undefined ? qtyEl.value : qtyEl.innerText) : '';
+        let qty = parseInt(String(rawQty).replace(/\D/g,''), 10);
+        if (isNaN(qty)) qty = 0;
+        if (el.checked && qty === 0) qty = 1;
+        if (el.checked && qty > 0) {
+            addHidden('services[]', id, {'data-dynamic-service':'1'});
+            addHidden('service_quantity[' + id + ']', qty, {'data-dynamic-qty':'1'});
+        }
+    });
+
+    // counters (safety: pick up any visible counter elements)
+    document.querySelectorAll('[id^="display-qty-"], [id^="disp-"]').forEach(el => {
+        const mm = el.id.match(/(?:display-qty-|disp-)(\d+)/);
+        if (!mm) return;
+        const id = mm[1];
+        let raw = (el.value !== undefined ? el.value : el.innerText) || '0';
+        let qty = parseInt(String(raw).replace(/\D/g,''), 10);
+        if (isNaN(qty)) qty = 0;
+        if (qty > 0) {
+            if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
+            addHidden('service_quantity[' + id + ']', qty, {'data-dynamic-qty':'1'});
+        }
+    });
+
+    // fallback hidden patterns
+    document.querySelectorAll('input[id^="hidden_srv_"], input[id^="svc-"]').forEach(h => {
+        const val = h.value;
+        if (!val) return;
+        const id = String(val);
+        const qEl = document.getElementById('hidden_qty_' + id) || document.getElementById('srv-qty-' + id) || document.getElementById('qty-' + id);
+        let qv = qEl ? (qEl.value !== undefined ? qEl.value : qEl.innerText) : '';
+        let qty = parseInt(String(qv).replace(/\D/g,''), 10);
+        if (isNaN(qty)) qty = 0;
+        // if hidden srv exists but qty==0, assume 1 (only if the element appears intentionally)
+        if (qty === 0) qty = 1;
+        if (!bookingForm.querySelector('input[name="services[]"][value="'+id+'"]')) addHidden('services[]', id, {'data-dynamic-service':'1'});
+        addHidden('service_quantity['+id+']', qty || 0, {'data-dynamic-qty':'1'});
+    });
+
+    const hasServiceHidden = bookingForm.querySelectorAll('input[name="services[]"]').length > 0;
+    const hasKamarHidden = bookingForm.querySelectorAll('input[name="kamar_ids[]"], input[name="selected_rooms[]"]').length > 0;
+    if (hasServiceHidden && !hasKamarHidden) addHidden('service_only', '1', {'data-dynamic-flag':'1'});
+}
+
 
         bookingForm.addEventListener('submit', function(e){
             try { buildServiceHiddenInputs(); } catch(err){ console.error(err); }
