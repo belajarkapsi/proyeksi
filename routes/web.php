@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
 use App\Http\Controllers\Admin\InformasiCabangController;
 use App\Http\Controllers\Admin\LayananVillaController;
+use App\Http\Controllers\Admin\DaftarPemesananController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -113,7 +115,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
-
+        
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -127,6 +129,11 @@ Route::middleware(['auth:pemilik'])->group(function() {
             // Data Informasi Cabang
             Route::resource('informasi-cabang', InformasiCabangController::class);
         });
+
+        //Daftar Pemesanan
+        Route::resource('daftar-pemesanan', DaftarPemesananController::class);
+
+        Route::patch('daftar-pemesanan/{daftar_pemesanan}/verifikasi', [DaftarPemesananController::class, 'verifikasi']);
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
