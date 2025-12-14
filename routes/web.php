@@ -50,13 +50,13 @@ Route::middleware('validasi.cabang')->group(function() {
 });
 
 
-// Route untuk user belum login
+// Route untuk Login / user belum login
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'authenticate']);
 
     Route::get('register', [RegisterController::class, 'register'])->name('register');
-    Route::post('register', [RegisterController::class, 'store']);
+    Route::post('register', [RegisterController::class, 'store'])->name('register.store');
 });
 
 

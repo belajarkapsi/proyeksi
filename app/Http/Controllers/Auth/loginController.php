@@ -29,7 +29,7 @@ class LoginController extends Controller
         ],
         [
             'username.required' => 'Kolom Username Tidak Boleh Kosong!',
-            'password.required' => 'Kolom PasswordTidak Boleh Kosong!',
+            'password.required' => 'Kolom Password Tidak Boleh Kosong!',
         ]
 
     );

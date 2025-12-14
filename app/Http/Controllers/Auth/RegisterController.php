@@ -40,7 +40,7 @@ class RegisterController extends Controller
             'password.required'     => 'Password wajib diisi.',
             'password.min'          => 'Password minimal harus 8 karakter agar aman.',
             'password.confirmed'    => 'Konfirmasi password tidak cocok dengan password yang dimasukkan.',
-        ];  
+        ];
 
         $validasi_data = $request->validate($rules, $message);
 
