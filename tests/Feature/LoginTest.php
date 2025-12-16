@@ -43,8 +43,6 @@ class LoginTest extends TestCase
     // skenario 1: pemilik berhasil login
     public function test_pemilik_bisa_login_dengan_username()
     {
-        $this->withoutExceptionHandling();
-
         $pemilik = Pemilik::create([
             'nama_lengkap' => 'Admin Penginapan',
             'email' => 'admin@contoh.com',
@@ -137,7 +135,7 @@ class LoginTest extends TestCase
         ]);
     }
 
-    // Skenario 4: Bisa Logout
+    // Skenario 5: Bisa Logout
     public function test_bisa_logout()
     {
         $user = User::create([

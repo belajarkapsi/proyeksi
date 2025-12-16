@@ -1,13 +1,13 @@
-@extends('layout.admin')
+@extends('layout.pengelola')
 @section('title', 'Data Kamar')
 
 @section('content')
 {{-- Navbar --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
-                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">
+                <a href="{{ route('pengelola.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">
                     <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
                     </svg>
                     Dashboard
@@ -15,19 +15,30 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <span class="text-green-600 text-sm font-medium">Data Kamar {{ Str::ucfirst($lokasi) }}</span>
+                <span class="text-green-600 text-sm font-medium">Data Kamar</span>
             </li>
         </ol>
     </nav>
 </div>
 
-{{-- Kontent --}}
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
-    <h2 class="py-4 text-2xl font-semibold text-gray-700">
-        Data Kamar {{ Str::ucfirst($lokasi) }}
-    </h2>
+{{-- Konten --}}
+<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto">
 
-    <a href="{{ route('admin.cabangkamar.create', ['lokasi' => $lokasi]) }}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold mb-2">Tambah</a>
+    <a href="{{ route('pengelola.dashboard') }}" class="inline-flex items-center gap-2 text-gray-500 mt-5 hover:text-green-600 text-sm transition-colors">
+        <i class="fas fa-arrow-left"></i>
+        <span>Kembali</span>
+    </a>
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold text-gray-700">
+            Data Kamar
+        </h2>
+
+        <a href="{{ route('pengelola.kamar.create') }}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold">
+            <i class="fa-solid fa-plus text-sm"></i> Tambah
+        </a>
+
+    </div>
+
 
     {{-- CONTAINER TABEL YANG AMAN UNTUK MOBILE --}}
     <div class="flex flex-col w-full min-w-0 mb-6">
@@ -39,8 +50,6 @@
                             {{-- Gunakan whitespace-nowrap agar teks tidak turun ke bawah --}}
                             <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">No. Kamar</th>
                             <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Gambar</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Cabang</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Kategori Cabang</th>
                             <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Tipe</th>
                             <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Harga</th>
                             <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Status</th>
@@ -62,19 +71,6 @@
                                     </div>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">{{ $kamar->cabang->lokasi ?? '-'}}</td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">
-                                @php
-                                // Ambil kategori dari relasi kamar -> cabang
-                                $kategori = Str::lower($kamar->cabang->kategori_cabang ?? '');
-                                $badgeClass = ($kategori === 'villa')
-                                ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
-                                : 'bg-purple-100 text-purple-800 border-purple-200';
-                                @endphp
-                                <span class="px-2.5 py-0.5 rounded border {{ $badgeClass }} text-xs">
-                                    {{ Str::ucfirst($kamar->cabang->kategori_cabang ?? '-') }}
-                                </span>
-                            </td>
                             <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">{{ $kamar->tipe_kamar }}</td>
                             <td class="px-4 py-3 text-center text-sm text-gray-800 whitespace-nowrap">Rp {{ number_format($kamar->harga_kamar, 0, ',', '.') }}</td>
                             <td class="px-4 py-3 text-center text-sm whitespace-nowrap">
@@ -83,14 +79,18 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-center text-sm font-medium whitespace-nowrap">
-                                <form id="delete-form-{{ $kamar->id_kamar }}" action="{{ route('admin.cabangkamar.destroy',['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" method="POST" class="inline-block">
+                                <form id="delete-form-{{ $kamar->id_kamar }}" action="{{ route('pengelola.kamar.destroy', $kamar->id_kamar) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
 
-                                    <a href="{{ route('admin.cabangkamar.edit', ['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" class="uppercase text-amber-600 hover:text-amber-800">Edit</a>
+                                    @can('update', $kamar)
+                                    <a href="{{ route('pengelola.kamar.edit', $kamar->id_kamar) }}" class="uppercase text-amber-600 hover:text-amber-800">Edit</a>
+                                    @endcan
                                     <span class="text-gray-500">|</span>
 
+                                    @can('delete', $kamar)
                                     <button type="button" onclick="confirmDelete('{{ $kamar->id_kamar }}', '{{ $kamar->no_kamar }}')" class="uppercase text-red-600 hover:text-red-800 font-bold">Hapus</button>
+                                    @endcan
                                 </form>
                             </td>
                         </tr>
@@ -103,12 +103,14 @@
                 </table>
             </div>
         </div>
-        {{-- ✨ Pagination Links --}}
+        {{-- Pagination Links --}}
         <div class="mt-4">
-            {{ $kamars->appends(['lokasi' => $lokasi])->links() }}
+            {{ $kamars->links() }}
         </div>
     </div>
 </div>
+
+
 @endsection
 
 @push('scripts')
@@ -132,4 +134,3 @@
         })
     }
 </script>
-@endpush

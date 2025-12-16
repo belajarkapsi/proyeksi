@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cabang;
 use App\Models\Pengelola;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,19 +27,7 @@ class PengelolaSeeder extends Seeder
             'usia'          => fake()->randomNumber(2, true),
             'jenis_kelamin' => 'Laki-laki',
             'role'          => 'pengelola',
-            'created_at'    => now(),
-        ]);
-
-        Pengelola::create([
-            'nama_lengkap'  => 'Khalik Hartono',
-            'no_telp'       => $faker->phoneNumber,
-            'email'         => 'pengelola2@sipestar.com',
-            'username'      => 'khalikhartono',
-            'password'      => 'khalikhartono',
-            'tanggal_lahir' => fake()->date('Y-m-d'),
-            'usia'          => fake()->randomNumber(2, true),
-            'jenis_kelamin' => 'Perempuan',
-            'role'          => 'pengelola',
+            'id_cabang'     => 2,
             'created_at'    => now(),
         ]);
     }

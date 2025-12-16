@@ -45,6 +45,12 @@ class LoginController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
+        if (Auth::guard('pengelola')->attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('pengelola.dashboard'));
+        }
+
         if (Auth::guard('web')->attempt($credentials)) {
             $request->session()->regenerate();
 
@@ -56,12 +62,16 @@ class LoginController extends Controller
             $login_type => $request->input('username')
         ]);
 
-        $checkWeb = Auth::guard('web')->getProvider()->retrieveByCredentials([
+        $checkPengelola = Auth::guard('pengelola')->getProvider()->retrieveByCredentials([
+            $login_type => $request->input('username')
+        ]);
+
+        $checkPenyewa = Auth::guard('web')->getProvider()->retrieveByCredentials([
             $login_type => $request->input('username')
         ]);
 
         // Jika di Pemilik TIDAK ADA dan di Web juga TIDAK ADA
-        if (!$checkPemilik && !$checkWeb) {
+        if (!$checkPemilik && !$checkPengelola && !$checkPenyewa) {
             return back()->withErrors([
                 'username' => 'Username/Password tidak ditemukan! Akun belum terdaftar.',
             ])->onlyInput('username');
@@ -78,15 +88,11 @@ class LoginController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         // Logout dari semua guard yang mungkin terpakai
-        if (Auth::guard('pemilik')->check()) {
-            Auth::guard('pemilik')->logout();
+        foreach (['pemilik', 'pengelola', 'web'] as $guard) {
+            if (Auth::guard($guard)->check()) {
+                Auth::guard($guard)->logout();
+            }
         }
-
-        if (Auth::guard('web')->check()) {
-            Auth::guard('web')->logout();
-        }
-
-        Auth::logout();
 
         // invalidate session dan regenerate token
         $request->session()->invalidate();

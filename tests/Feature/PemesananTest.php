@@ -28,7 +28,6 @@ class PemesananTest extends TestCase
         Route::get('/pesanan/riwayat-pesanan/detail-pesanan/{id_pemesanan}', function ($id_pemesanan) {
             return 'Halaman Pembayaran: ' . $id_pemesanan;
         })->middleware('web')->name('booking.pembayaran');
-
         Route::get('/login', function () {
             return 'Halaman Login';
         })->name('login');
@@ -37,6 +36,8 @@ class PemesananTest extends TestCase
     // Skenario 1: Penyewa bisa memesan kamar
     public function test_penyewa_bisa_memesan_kamar()
     {
+        $this->assertEmpty(Pemesanan::all()); // pastikan pemesanan masih kosong
+
         $cabang = Cabang::create([
                 'nama_cabang' => 'Pondok Siti Hajar',
                 'deskripsi' => fake()->text(300),
@@ -84,7 +85,7 @@ class PemesananTest extends TestCase
 
         // Assert
         $pemesanan = Pemesanan::first();
-        $this->assertNotNull($pemesanan);
+        $this->assertNotEmpty(Pemesanan::all());
         $this->assertEquals('PS00001', $pemesanan->id_pemesanan);
         $response->assertRedirect(route('booking.pembayaran', $pemesanan->id_pemesanan));
     }
@@ -148,7 +149,8 @@ class PemesananTest extends TestCase
         // Assert
         $pemesanan = Pemesanan::first();
         $this->assertEquals(140000, $pemesanan->total_harga);
-        $this->assertNotNull($pemesanan);
+        $this->assertNotEquals('PS00002', $pemesanan->id_pemesanan);
+        $this->assertNotEmpty(Pemesanan::all());
     }
 
     // Skenario 3: user tidak bisa pesan kalau belum login

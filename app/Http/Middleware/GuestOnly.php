@@ -20,6 +20,10 @@ class GuestOnly
                 return redirect()->route('admin.dashboard');
             }
 
+            if (Auth::guard('pengelola')->check()) {
+                return redirect()->route('pengelola.dashboard');
+            }
+
             // Jika Penyewa sudah login -> Lempar ke Dashboard Utama
             if (Auth::guard('web')->check()) {
                 return redirect()->route('dashboard');

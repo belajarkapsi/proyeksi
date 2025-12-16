@@ -3,14 +3,10 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\ProfileController;
-use App\Models\Cabang;
-use App\Models\Kamar;
-use App\Models\Pemilik;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 

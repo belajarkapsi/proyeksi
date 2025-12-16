@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
 use App\Http\Controllers\PengelolaController;
 
 
@@ -72,12 +73,8 @@ Route::middleware('auth')->group(function(){
 
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
-    ->middleware('auth:web,pemilik')
+    ->middleware('auth:web,pemilik,pengelola')
     ->name('logout');
-    // Antisipasi ketika langsung cari /logout:
-Route::get('logout', function() {
-    return redirect()->route('dashboard');
-});
 
 
 // Route Booking
@@ -116,7 +113,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
-        
+
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -143,6 +140,13 @@ Route::middleware(['auth:pemilik'])->group(function() {
 });
 
 
-Route::prefix('pengelola')->group(function () {
-    Route::get('/dashboard', [PengelolaController::class, 'index']);
+// Route Pengelola
+Route::middleware(['auth:pengelola'])->group(function() {
+    Route::prefix('pengelola')->group(function () {
+        // Dashboard Pengelola
+        Route::get('/dashboard', [PengelolaController::class, 'index']) ->name('pengelola.dashboard');
+
+        // Data Kamar
+        Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+    });
 });
