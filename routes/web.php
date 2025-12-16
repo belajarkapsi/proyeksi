@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PengelolaController;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -132,5 +133,9 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     });
+});
 
+
+Route::prefix('pengelola')->group(function () {
+    Route::get('/dashboard', [PengelolaController::class, 'index']);
 });
