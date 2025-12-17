@@ -155,6 +155,9 @@ Route::middleware(['auth:pengelola'])->group(function() {
         // Verifikasi Pemesanan
         Route::patch('pemesanan/{id}/verifikasi', [PengelolaDaftarPemesananController::class, 'verifikasi'])
             ->name('pengelola.pemesanan.verifikasi');
+        // Batalkan Pemesanan
+        Route::patch('pemesanan/{id}/batalkan', [PengelolaDaftarPemesananController::class, 'batalkan'])
+            ->name('pengelola.pemesanan.batalkan');
 
         // Route Profil Pengelola
         Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');

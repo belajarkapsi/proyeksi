@@ -23,7 +23,7 @@ class Kamar extends Model
     ];
 
     // Tambahkan Eager Loading
-    protected $with =['cabang', 'pemesananItem'];
+    protected $with =['cabang'];
 
     public function cabang(): BelongsTo
     {

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->enum('status', ['Belum Dibayar', 'Lunas', 'Dibatalkan'])->default('Belum Dibayar');
             // tambahan kecil: simpan kapan dibatalkan (nullable)
             $table->timestamp('cancelled_at')->nullable();
+            $table->text('alasan_batal')->nullable();
             $table->timestamps();
 
             // index tambahan untuk mempercepat pencarian berdasarkan cabang / waktu / status

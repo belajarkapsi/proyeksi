@@ -3,7 +3,7 @@
 @section('title', 'Detail Pemesanan #' . $pemesanan->id_pemesanan)
 
 @section('content')
-<div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 relative">
 
     {{-- BREADCRUMB & HEADER --}}
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -19,7 +19,7 @@
             </nav>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 Order #{{ $pemesanan->id_pemesanan }}
-                {{-- Status Badge Dinamis --}}
+
                 @php
                     $statusColor = match($pemesanan->status) {
                         'Lunas' => 'bg-green-100 text-green-800 border-green-200',
@@ -39,7 +39,7 @@
                 </span>
             </h1>
             <p class="text-sm text-gray-500 mt-1">
-                Dibuat pada: {{ \Carbon\Carbon::parse($pemesanan->created_at)->format('l, d F Y - H:i') }}
+                Dibuat pada: {{ \Carbon\Carbon::parse($pemesanan->waktu_pemesanan)->format('l, d F Y - H:i') }}
             </p>
         </div>
 
@@ -50,16 +50,43 @@
             </button>
 
             @if($pemesanan->status === 'Belum Dibayar')
-                <form action="{{ route('pengelola.pemesanan.verifikasi', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('Verifikasi pembayaran ini sekarang?')">
+                {{-- Tombol Batalkan (Memicu Modal) --}}
+                <button type="button" onclick="openModal('modal-batal')" class="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all">
+                    <i class="fas fa-ban mr-2"></i> Tolak / Batalkan
+                </button>
+
+                {{-- Tombol Verifikasi --}}
+                <form action="{{ route('pengelola.pemesanan.verifikasi', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('Pastikan Anda sudah menerima pembayaran sejumlah Rp {{ number_format($pemesanan->total_harga,0,',','.') }}. Lanjutkan?')">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all">
-                        <i class="fas fa-check-double mr-2"></i> Verifikasi Pembayaran
+                        <i class="fas fa-check-double mr-2"></i> Verifikasi
                     </button>
                 </form>
             @endif
         </div>
     </div>
+
+    {{-- ALERT: ALASAN PEMBATALAN (Hanya muncul jika dibatalkan) --}}
+    @if($pemesanan->status === 'Dibatalkan')
+        <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm">
+            <div class="flex">
+                <div class="shrink-0">
+                    <i class="fas fa-exclamation-triangle text-red-500 fa-lg"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Pemesanan Dibatalkan</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <p class="font-bold">Alasan:</p>
+                        <p class="italic">"{{ $pemesanan->alasan_batal ?? 'Tidak ada alasan spesifik.' }}"</p>
+                        <p class="mt-2 text-xs text-red-500">
+                            Dibatalkan pada: {{ $pemesanan->cancelled_at ? \Carbon\Carbon::parse($pemesanan->cancelled_at)->format('d M Y H:i') : '-' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -84,11 +111,11 @@
                                 @php
                                     $checkin = \Carbon\Carbon::parse($item->waktu_checkin);
                                     $checkout = \Carbon\Carbon::parse($item->waktu_checkout);
-                                    $durasi = $checkin->diffInDays($checkout) ?: 1; // Minimal 1 hari
+                                    $durasi = $checkin->diffInDays($checkout) ?: 1;
                                     $subtotal = $item->harga * $durasi * $item->jumlah_pesan;
                                 @endphp
                                 <div class="flex flex-col sm:flex-row gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
-                                    {{-- Gambar Kamar (Thumbnail) --}}
+                                    {{-- Gambar --}}
                                     <div class="w-full sm:w-32 h-24 bg-gray-200 rounded-lg overflow-hidden shrink-0">
                                         @if($item->kamar->gambar)
                                             <img src="{{ asset('storage/' . $item->kamar->gambar) }}" alt="Kamar" class="w-full h-full object-cover">
@@ -99,7 +126,7 @@
                                         @endif
                                     </div>
 
-                                    {{-- Detail Text --}}
+                                    {{-- Detail --}}
                                     <div class="grow">
                                         <div class="flex justify-between items-start">
                                             <div>
@@ -114,7 +141,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- Timeline Checkin-Checkout --}}
+                                        {{-- Timeline --}}
                                         <div class="mt-3 flex items-center gap-4 bg-green-50 p-3 rounded-lg border border-green-100">
                                             <div class="flex-1">
                                                 <p class="text-xs text-gray-500 uppercase font-semibold">Check-In</p>
@@ -148,7 +175,7 @@
                 </div>
             </div>
 
-            {{-- 2. INFORMASI LAYANAN (SERVICES) --}}
+            {{-- 2. INFORMASI LAYANAN --}}
             @if($pemesanan->service && $pemesanan->service->isNotEmpty())
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -194,7 +221,7 @@
         {{-- KOLOM KANAN (SIDEBAR INFO) --}}
         <div class="space-y-6">
 
-            {{-- 1. INFORMASI PENYEWA (CUSTOMER CARD) --}}
+            {{-- 1. INFORMASI PENYEWA --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="bg-linear-to-r from-green-600 to-green-500 px-6 py-4">
                     <h2 class="text-white font-semibold flex items-center gap-2">
@@ -203,14 +230,18 @@
                 </div>
                 <div class="p-6">
                     <div class="flex items-center gap-4 mb-6">
-                        <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
-                             src="https://ui-avatars.com/api/?name={{ urlencode($pemesanan->penyewa->username ?? 'Guest') }}&background=random"
-                             alt="Avatar">
+                        @if($pemesanan->penyewa->foto_profil)
+                             <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
+                                  src="{{ asset('storage/' . $pemesanan->penyewa->foto_profil) }}" alt="Avatar">
+                        @else
+                             <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
+                                  src="https://ui-avatars.com/api/?name={{ urlencode($pemesanan->penyewa->username ?? 'Guest') }}&background=random"
+                                  alt="Avatar">
+                        @endif
+
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">{{ $pemesanan->penyewa->username ?? 'Tamu Umum' }}</h3>
-                            <span class="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                Member
-                            </span>
+                            <p class="text-sm text-gray-500">{{ $pemesanan->penyewa->nama_lengkap ?? '' }}</p>
                         </div>
                     </div>
 
@@ -237,45 +268,11 @@
                     <h2 class="font-semibold text-gray-800">Ringkasan Tagihan</h2>
                 </div>
                 <div class="p-6 space-y-3">
-                    {{-- Hitung Subtotal (Opsional, jika ingin ditampilkan terpisah) --}}
-                    @php
-                        $totalKamar = 0;
-                        foreach($pemesanan->items as $i) {
-                            $dur = \Carbon\Carbon::parse($i->waktu_checkin)->diffInDays(\Carbon\Carbon::parse($i->waktu_checkout)) ?: 1;
-                            $totalKamar += ($i->harga * $dur * $i->jumlah_pesan);
-                        }
-
-                        $totalService = 0;
-                        if($pemesanan->service) {
-                            foreach($pemesanan->service as $s) {
-                                $totalService += ($s->price * ($s->qty ?? 1));
-                            }
-                        }
-                    @endphp
-
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Total Sewa Kamar</span>
-                        <span>Rp {{ number_format($totalKamar, 0, ',', '.') }}</span>
-                    </div>
-
-                    @if($totalService > 0)
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Total Layanan</span>
-                        <span>Rp {{ number_format($totalService, 0, ',', '.') }}</span>
-                    </div>
-                    @endif
-
-                    <div class="border-t border-dashed border-gray-300 my-2 pt-2"></div>
-
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-gray-900 text-lg">Total Bayar</span>
                         <span class="font-bold text-green-600 text-xl">
                             Rp {{ number_format($pemesanan->total_harga, 0, ',', '.') }}
                         </span>
-                    </div>
-
-                    <div class="mt-4 text-xs text-gray-400 text-center">
-                        *Harga sudah termasuk pajak & biaya layanan
                     </div>
                 </div>
 
@@ -295,13 +292,13 @@
                 @endif
             </div>
 
-            {{-- 3. HAPUS PESANAN --}}
-            <div class="mt-8">
+            {{-- 3. HAPUS PESANAN (Hanya Admin/Pengelola Tertentu yg bisa hapus permanen) --}}
+            <div class="mt-8 text-center">
                  <form action="{{ route('pengelola.pemesanan.destroy', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('PERINGATAN: Menghapus data ini bersifat permanen. Lanjutkan?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full text-red-600 hover:text-red-700 text-sm font-medium hover:underline transition-all">
-                        <i class="fas fa-trash-alt mr-1"></i> Hapus Data Pesanan Ini
+                    <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-medium hover:underline transition-all">
+                        <i class="fas fa-trash-alt mr-1"></i> Hapus Data dari Database
                     </button>
                 </form>
             </div>
@@ -310,15 +307,73 @@
     </div>
 </div>
 
-{{-- CSS KHUSUS UNTUK PRINT (Agar tampilan rapi saat dicetak) --}}
+{{-- MODAL PEMBATALAN --}}
+<div id="modal-batal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    {{-- Backdrop --}}
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('modal-batal')"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        {{-- Modal Panel --}}
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <form action="{{ route('pengelola.pemesanan.batalkan', $pemesanan->id_pemesanan) }}" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-exclamation-triangle text-red-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Batalkan Pemesanan
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 mb-4">
+                                    Tindakan ini akan membatalkan pesanan secara permanen. Mohon berikan alasan yang jelas agar penyewa mengerti.
+                                </p>
+                                <label for="alasan_batal" class="block text-sm font-medium text-gray-700 mb-1">Alasan Pembatalan <span class="text-red-500">*</span></label>
+                                <textarea name="alasan_batal" id="alasan_batal" rows="3" required
+                                    class="shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                                    placeholder="Contoh: Maaf, kamar sedang dalam perbaikan mendadak..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batalkan Pesanan
+                    </button>
+                    <button type="button" onclick="closeModal('modal-batal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Tutup
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- SCRIPT INTERAKTIVITAS --}}
+<script>
+    function openModal(modalID) {
+        document.getElementById(modalID).classList.remove('hidden');
+    }
+
+    function closeModal(modalID) {
+        document.getElementById(modalID).classList.add('hidden');
+    }
+</script>
+
+{{-- CSS KHUSUS PRINT --}}
 <style>
     @media print {
         body * { visibility: hidden; }
         .container, .container * { visibility: visible; }
-        .container { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; }
-        button, nav, .fa-arrow-left { display: none !important; } /* Sembunyikan tombol saat print */
-        .shadow-sm, .shadow-md { box-shadow: none !important; border: 1px solid #ddd; }
-        .bg-gray-50 { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
+        .container { position: absolute; left: 0; top: 0; width: 100%; }
+        button, nav, .hidden { display: none !important; }
+        .bg-red-50 { border: 1px solid #red; }
     }
 </style>
 @endsection

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Pengelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kamar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pemesanan;
+use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class DaftarPemesananController extends Controller
@@ -90,16 +92,49 @@ class DaftarPemesananController extends Controller
     {
         $pengelola = Auth::user();
 
-        // Cari pemesanan & pastikan milik cabang pengelola ini (Security Check)
+        DB::transaction(function () use ($id, $pengelola) {
+            // Cari pemesanan & pastikan milik cabang pengelola ini (Security Check)
+            $pemesanan = Pemesanan::where('id_pemesanan', $id)
+                ->where('id_cabang', $pengelola->cabang->id_cabang)
+                ->with('items')
+                ->firstOrFail();
+
+            // Update Status
+            $pemesanan->update(['status' => 'Lunas']);
+
+            // Ubah status kamar menjadi dihuni
+            foreach ($pemesanan->items as $item) {
+                Kamar::where('id_kamar', $item->id_kamar)
+                ->update(['status' => 'Dihuni']);
+            }
+        });
+
+        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi');
+        return redirect()->back();
+    }
+
+    public function batalkan(Request $request, $id)
+    {
+        $request->validate([
+            'alasan_batal' => 'required|string|max:500', // Validasi alasan wajib diisi
+        ]);
+
+        $pengelola = Auth::user();
+
+        // Cari pemesanan sesuai cabang pengelola
         $pemesanan = Pemesanan::where('id_pemesanan', $id)
             ->where('id_cabang', $pengelola->cabang->id_cabang)
             ->firstOrFail();
 
-        // Update Status
-        $pemesanan->update(['status' => 'Lunas']);
+        // Update Data
+        $pemesanan->update([
+            'status' => 'Dibatalkan',
+            'cancelled_at' => now(),
+            'alasan_batal' => $request->alasan_batal
+        ]);
 
-        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi');
-        return redirect()->back();
+        Alert::error('Dibatalkan', 'Pemesanan dibatalkan dengan alasan tertentu.');
+        return redirect()->back()->with('success', 'Pemesanan berhasil dibatalkan.');
     }
 
 }
