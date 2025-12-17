@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
 use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
 use App\Http\Controllers\PengelolaController;
 
@@ -148,5 +149,15 @@ Route::middleware(['auth:pengelola'])->group(function() {
 
         // Data Kamar
         Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+
+        // Daftar Pemesanan
+        Route::resource('pemesanan', PengelolaDaftarPemesananController::class)->names('pengelola.pemesanan');
+        // Verifikasi Pemesanan
+        Route::patch('pemesanan/{id}/verifikasi', [PengelolaDaftarPemesananController::class, 'verifikasi'])
+            ->name('pengelola.pemesanan.verifikasi');
+
+        // Route Profil Pengelola
+        Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');
+        Route::patch('/profil', [PengelolaController::class, 'update'])->name('pengelola.profile.update');
     });
 });
