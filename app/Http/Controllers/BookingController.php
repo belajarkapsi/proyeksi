@@ -95,12 +95,18 @@ class BookingController extends Controller
             $nos = $request->input('selected_rooms');
             $rooms = Kamar::whereIn('no_kamar', $nos)->get();
         } elseif ($request->has('kamar')) {
-            $room = Kamar::where('no_kamar', $request->query('kamar'))->first();
 
-            if (!$room) {
-                Alert::error('Gagal', 'Kamar tidak ditemukan!');
-                return redirect()->route('dashboard');
-            }
+    $kamarParam = $request->query('kamar');
+
+    // Adapter kecil: terima no_kamar ATAU id_kamar
+    $room = Kamar::where('no_kamar', $kamarParam)
+        ->orWhere('id_kamar', $kamarParam)
+        ->first();
+
+    if (!$room) {
+        Alert::error('Gagal', 'Kamar tidak ditemukan!');
+        return redirect()->route('dashboard');
+    }
 
             $rooms = collect([$room]);
         } elseif ($request->has('cabang_villa')) {

@@ -106,10 +106,15 @@
                         </div>
 
                         <!-- Button Action -->
-                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-roboto font-bold py-4 rounded-lg shadow-lg transform transition hover:-translate-y-1 text-lg flex justify-center items-center gap-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Reservasi Sekarang
-                        </button>
+                        <a href="{{ route('booking.checkout', ['kamar' => $room->id_kamar ?? $room->no_kamar]) }}"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-roboto font-bold py-4 rounded-lg shadow-lg transform transition hover:-translate-y-1 text-lg flex justify-center items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Reservasi Sekarang
+                        </a>
+
                         
                         <a href="https://wa.me/6281234567890" class="block w-full text-center text-green-600 font-bold text-sm hover:underline">
                             Tanya Ketersediaan via WhatsApp
@@ -371,10 +376,18 @@
                                     </div>
                                 </div>
 
-                                <button class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Pesan Sekarang
-                                </button>
+                                <a href="{{ route('booking.checkout', [
+        'kamar' => $room->id_kamar ?? $room->no_kamar,
+        'tipe'  => $roomType
+    ]) }}"
+   class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
+    </svg>
+    Pesan Sekarang
+</a>
+
 
                                 <a href="https://wa.me/6281234567890" class="w-full bg-green-50 hover:bg-green-100 text-green-700 font-bold py-3 rounded-xl border border-green-200 transition-colors flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-..."/></svg>
@@ -408,10 +421,18 @@
                                     </div>
                                 </div>
 
-                                <button class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Pesan Sekarang
-                                </button>
+                                <a href="{{ route('booking.checkout', [
+        'kamar' => $room->id_kamar ?? $room->no_kamar,
+        'tipe'  => $roomType
+    ]) }}"
+   class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
+    </svg>
+    Pesan Sekarang
+</a>
+
 
                                 <a href="https://wa.me/6281234567890" class="w-full bg-green-50 hover:bg-green-100 text-green-700 font-bold py-3 rounded-xl border border-green-200 transition-colors flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-..."/></svg>
@@ -452,9 +473,11 @@
                         <p class="text-xl font-bold text-green-600 font-roboto">Rp {{ number_format($room->price_per_month ?? 300000, 0, ',', '.') }}</p>
                     @endif
                 </div>
-                <button class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex-1 font-roboto">
-                    {{ strtolower($cabang->kategori_cabang) === 'villa' ? 'Reservasi' : 'Ajukan Sewa' }}
-                </button>
+                <a href="{{ route('booking.checkout', ['kamar' => $room->id_kamar ?? $room->no_kamar]) }}"
+   class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex-1 font-roboto text-center">
+    {{ strtolower($cabang->kategori_cabang) === 'villa' ? 'Reservasi' : 'Ajukan Sewa' }}
+</a>
+
             </div>
         </div>
 

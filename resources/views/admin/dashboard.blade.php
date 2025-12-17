@@ -2,178 +2,317 @@
 @section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <li class="inline-flex items-center">
-                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-green-600 transition-colors">
-                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                    </svg>
-                    Dashboard
-                </a>
-            </li>
-        </ol>
-    </nav>
-</div>
+<div class="w-full px-2 py-2 mx-auto">
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
-
-    {{-- Header Dashboard --}}
-    <h2 class="py-4 text-2xl font-semibold text-gray-700">
-        Dashboard
-    </h2>
-
-    {{-- KARTU STATISTIK (GRID 4 KOLOM) --}}
-    <div class="grid gap-6 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-
-        {{-- Kartu 1: Primary --}}
-        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-blue-500">
-            <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600">
-                    Total Booking
-                </p>
-                <p class="text-lg font-semibold text-gray-700">
-                    1,250
-                </p>
-            </div>
-        </div>
-
-        {{-- Kartu 2: Warning --}}
-        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-yellow-500">
-            <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600">
-                    Kamar Terisi
-                </p>
-                <p class="text-lg font-semibold text-gray-700">
-                    15
-                </p>
-            </div>
-        </div>
-
-        {{-- Kartu 3: Success --}}
-        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-green-500">
-            <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600">
-                    Pendapatan
-                </p>
-                <p class="text-lg font-semibold text-gray-700">
-                    Rp 45.000.000
-                </p>
-            </div>
-        </div>
-
-        {{-- Kartu 4: Danger --}}
-        <div class="flex items-center p-4 bg-gray-200 rounded-lg shadow-xs border-l-4 border-red-500">
-            <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600">
-                    Pending
-                </p>
-                <p class="text-lg font-semibold text-gray-700">
-                    5
-                </p>
-            </div>
+    {{-- HEADER --}}
+    <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800">Dashboard</h2>
+            <p class="text-gray-500 mt-1">Ringkasan statistik dan performa sistem.</p>
         </div>
     </div>
 
-    {{-- GRAFIK (GRID 2 KOLOM) --}}
-    <div class="grid gap-6 mb-8 grid-cols-1 lg:grid-cols-3">
-        {{-- Area Chart --}}
-        <div class="lg:col-span-2 min-w-0 p-4 bg-gray-200 rounded-lg shadow-xs">
-            <h4 class="mb-4 font-semibold text-gray-800">
-                Area Chart Example
-            </h4>
-            <canvas id="myAreaChart" class="w-full h-64"></canvas>
+    {{-- GRID KARTU STATISTIK --}}
+    <div class="grid gap-6 mb-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+
+        {{-- TOTAL BOOKING --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-blue-600 bg-blue-100 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Calendar -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Total Booking</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $totalBooking }}</p>
+            </div>
         </div>
 
-        {{-- Bar Chart --}}
-        <div class="min-w-0 p-4 bg-gray-200 rounded-lg shadow-xs">
-            <h4 class="mb-4 font-semibold text-gray-800">
-                Bar Chart Example
-            </h4>
-            <canvas id="myBarChart" class="w-full h-64"></canvas>
+        {{-- TOTAL KAMAR --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-lg group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Home -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Total Kamar</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $totalKamar }}</p>
+            </div>
         </div>
+
+        {{-- KAMAR TERISI --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-emerald-500 bg-emerald-100 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Key/Check -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Kamar Terisi</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $kamarTerisi }}</p>
+            </div>
+        </div>
+
+        {{-- KAMAR TERSEDIA --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-lg group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Door Open -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Kamar Tersedia</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $kamarTersedia }}</p>
+            </div>
+        </div>
+
+        {{-- TOTAL CABANG --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-indigo-500 bg-indigo-100 rounded-lg group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Building -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Total Cabang</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $totalCabang }}</p>
+            </div>
+        </div>
+
+        {{-- TOTAL LAYANAN --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+            <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-lg group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Cube/Services -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Total Layanan</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $totalLayanan }}</p>
+            </div>
+        </div>
+
+        {{-- TOTAL AKUN PENYEWA --}}
+        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 sm:col-span-2 lg:col-span-1">
+            <div class="p-3 mr-4 text-pink-500 bg-pink-100 rounded-lg group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300">
+                <!-- Icon Users -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+            <div>
+                <p class="mb-1 text-sm font-medium text-gray-500">Total Penyewa</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $totalPenyewa }}</p>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- ===================== --}}
+    {{-- CHART SECTION --}}
+    {{-- ===================== --}}
+    <div class="grid gap-6 mb-8 grid-cols-1 lg:grid-cols-2">
+
+        {{-- CHART 1 : BOOKING / PEMESANAN --}}
+        <div class="min-w-0 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-800">Tren Pemesanan</h4>
+                <span class="text-xs font-medium text-blue-600 bg-blue-100 py-1 px-2 rounded-full">Realtime</span>
+            </div>
+            {{-- Wrapper untuk responsivitas Chart.js --}}
+            <div class="relative h-64 w-full">
+                <canvas id="bookingChart"></canvas>
+            </div>
+        </div>
+
+        {{-- CHART 2 : RINGKASAN DATA --}}
+        <div class="min-w-0 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-800">Ringkasan Sistem</h4>
+                <span class="text-xs font-medium text-gray-500">Status Saat Ini</span>
+            </div>
+            <div class="relative h-64 w-full">
+                <canvas id="summaryChart"></canvas>
+            </div>
+        </div>
+
     </div>
 </div>
 @endsection
 
 @push('scripts')
-{{-- Load Chart.js via CDN --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-<script>
-    // --- AREA CHART (TAILWIND STYLED) ---
-    var ctx = document.getElementById("myAreaChart");
-    if(ctx) {
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ["Mar 1", "Mar 2", "Mar 3", "Mar 4", "Mar 5", "Mar 6", "Mar 7", "Mar 8", "Mar 9", "Mar 10", "Mar 11", "Mar 12", "Mar 13"],
-                datasets: [{
-                    label: "Sessions",
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(59, 130, 246, 0.2)", // Blue-500 with opacity
-                    borderColor: "rgba(59, 130, 246, 1)", // Blue-500
-                    pointRadius: 5,
-                    pointBackgroundColor: "rgba(59, 130, 246, 1)",
-                    pointBorderColor: "rgba(255,255,255,0.8)",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(59, 130, 246, 1)",
-                    pointHitRadius: 50,
-                    pointBorderWidth: 2,
-                    data: [10000, 30162, 26263, 18394, 18287, 28682, 31274, 33259, 25849, 24159, 32651, 31984, 38451],
-                }],
-            },
-            options: {
-                scales: {
-                    xAxes: [{ time: { unit: 'date' }, gridLines: { display: false }, ticks: { maxTicksLimit: 7 } }],
-                    yAxes: [{ ticks: { min: 0, max: 40000, maxTicksLimit: 5 }, gridLines: { color: "rgba(0, 0, 0, .125)" } }],
-                },
-                legend: { display: false }
-            }
-        });
-    }
+{{-- Load Chart.js 2.8 --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 
-    // --- BAR CHART (TAILWIND STYLED) ---
-    var ctx2 = document.getElementById("myBarChart");
-    if(ctx2) {
-        new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June"],
-                datasets: [{
-                    label: "Revenue",
-                    backgroundColor: "rgba(16, 185, 129, 1)", // Green-500
-                    borderColor: "rgba(16, 185, 129, 1)",
-                    data: [4215, 5312, 6251, 7841, 9821, 14984],
-                }],
-            },
-            options: {
-                scales: {
-                    xAxes: [{ time: { unit: 'month' }, gridLines: { display: false }, ticks: { maxTicksLimit: 6 } }],
-                    yAxes: [{ ticks: { min: 0, max: 15000, maxTicksLimit: 5 }, gridLines: { display: true } }],
+<script>
+/* ===============================
+   DATA DARI BACKEND
+================================ */
+const bookingLabels = @json($areaChart->pluck('tanggal'));
+const bookingData   = @json($areaChart->pluck('total'));
+
+const summaryLabels = [
+    'Booking', 'Kamar', 'Terisi', 'Tersedia', 'Cabang', 'Layanan', 'Penyewa'
+];
+
+const summaryData = [
+    {{ $totalBooking }},
+    {{ $totalKamar }},
+    {{ $kamarTerisi }},
+    {{ $kamarTersedia }},
+    {{ $totalCabang }},
+    {{ $totalLayanan }},
+    {{ $totalPenyewa }}
+];
+
+/* ===============================
+   KONFIGURASI UMUM (STYLING)
+================================ */
+// Font family default agar sesuai dengan UI
+Chart.defaults.global.defaultFontFamily = "'Inter', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif";
+Chart.defaults.global.defaultFontColor = '#6B7280'; // gray-500
+
+/* ===============================
+   CHART 1 : BOOKING (Line Chart)
+================================ */
+const ctxBooking = document.getElementById('bookingChart').getContext('2d');
+
+// Membuat Gradient fill untuk area chart
+const gradientBooking = ctxBooking.createLinearGradient(0, 0, 0, 400);
+gradientBooking.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue start
+gradientBooking.addColorStop(1, 'rgba(59, 130, 246, 0.05)'); // Blue end
+
+const bookingChart = new Chart(ctxBooking, {
+    type: 'line',
+    data: {
+        labels: bookingLabels,
+        datasets: [{
+            label: 'Booking',
+            data: bookingData,
+            backgroundColor: gradientBooking,
+            borderColor: '#3B82F6', // Blue-500
+            borderWidth: 2,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#3B82F6',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            lineTension: 0.4, // Membuat garis melengkung halus
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: { display: false },
+        tooltips: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            titleFontColor: '#1F2937',
+            bodyFontColor: '#4B5563',
+            borderColor: '#E5E7EB',
+            borderWidth: 1,
+            xPadding: 10,
+            yPadding: 10,
+            displayColors: false,
+            cornerRadius: 4
+        },
+        scales: {
+            xAxes: [{
+                gridLines: {
+                    display: false,
+                    drawBorder: false
                 },
-                legend: { display: false }
-            }
-        });
+                ticks: {
+                    maxTicksLimit: 7
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    maxTicksLimit: 5,
+                    padding: 10
+                },
+                gridLines: {
+                    color: '#F3F4F6', // gray-100
+                    borderDash: [5, 5],
+                    drawBorder: false,
+                    zeroLineColor: '#F3F4F6'
+                }
+            }]
+        }
     }
+});
+
+/* ===============================
+   CHART 2 : RINGKASAN (Bar Chart)
+================================ */
+const summaryChart = new Chart(
+    document.getElementById('summaryChart'),
+    {
+        type: 'bar',
+        data: {
+            labels: summaryLabels,
+            datasets: [{
+                label: 'Jumlah',
+                data: summaryData,
+                backgroundColor: [
+                    '#3B82F6', // Blue
+                    '#F97316', // Orange
+                    '#10B981', // Emerald
+                    '#EF4444', // Red
+                    '#6366F1', // Indigo
+                    '#A855F7', // Purple
+                    '#EC4899'  // Pink
+                ],
+                borderWidth: 0,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: { display: false },
+            tooltips: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleFontColor: '#1F2937',
+                bodyFontColor: '#4B5563',
+                borderColor: '#E5E7EB',
+                borderWidth: 1,
+                xPadding: 10,
+                yPadding: 10,
+                cornerRadius: 4,
+                displayColors: true
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: { display: false, drawBorder: false },
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        maxTicksLimit: 5,
+                        padding: 10
+                    },
+                    gridLines: {
+                        color: '#F3F4F6',
+                        borderDash: [5, 5],
+                        drawBorder: false,
+                        zeroLineColor: '#F3F4F6'
+                    }
+                }]
+            }
+        }
+    }
+);
+
+/* ===============================
+   REALTIME POLLING
+================================ */
+setInterval(() => {
+    fetch('/api/admin/chart')
+        .then(res => res.json())
+        .then(res => {
+            // Update Line Chart Data
+            bookingChart.data.labels = res.area.map(i => i.tanggal);
+            bookingChart.data.datasets[0].data = res.area.map(i => i.total);
+            bookingChart.update();
+        });
+}, 5000);
 </script>
 @endpush
