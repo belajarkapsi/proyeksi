@@ -24,6 +24,11 @@ return new class extends Migration
             $table->string('foto_profil', 255)->nullable();
             $table->char('role', 10)->default('pengelola');
 
+            $table->foreignId('id_cabang')
+                ->unique()
+                ->constrained('cabang', 'id_cabang')
+                ->onDelete('cascade');
+
             $table->rememberToken();
             $table->timestamps();
         });

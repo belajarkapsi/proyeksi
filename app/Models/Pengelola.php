@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Pengelola extends Model
+class Pengelola extends Authenticatable
 {
     protected $table = 'pengelola';
     protected $primaryKey = 'id_pengelola';
@@ -19,7 +20,8 @@ class Pengelola extends Model
         'usia',
         'jenis_kelamin',
         'foto_profil',
-        'role'
+        'role',
+        'id_cabang'
     ];
 
     protected $hidden = [
@@ -32,5 +34,10 @@ class Pengelola extends Model
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
     }
 }

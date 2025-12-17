@@ -15,6 +15,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
+use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
+use App\Http\Controllers\PengelolaController;
 
 
 // Route utama saat membuka sistem/aplikasi
@@ -52,13 +55,13 @@ Route::middleware('validasi.cabang')->group(function() {
 });
 
 
-// Route untuk user belum login
+// Route untuk Login / user belum login
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'authenticate']);
 
     Route::get('register', [RegisterController::class, 'register'])->name('register');
-    Route::post('register', [RegisterController::class, 'store']);
+    Route::post('register', [RegisterController::class, 'store'])->name('register.store');
 });
 
 
@@ -71,12 +74,8 @@ Route::middleware('auth')->group(function(){
 
 // Route Logout
 Route::post('logout', [LoginController::class, 'destroy'])
-    ->middleware('auth:web,pemilik')
+    ->middleware('auth:web,pemilik,pengelola')
     ->name('logout');
-    // Antisipasi ketika langsung cari /logout:
-Route::get('logout', function() {
-    return redirect()->route('dashboard');
-});
 
 
 // Route Booking
@@ -135,6 +134,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ];
         });
         
+
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -158,5 +158,26 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     });
+});
 
+
+// Route Pengelola
+Route::middleware(['auth:pengelola'])->group(function() {
+    Route::prefix('pengelola')->group(function () {
+        // Dashboard Pengelola
+        Route::get('/dashboard', [PengelolaController::class, 'index']) ->name('pengelola.dashboard');
+
+        // Data Kamar
+        Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+
+        // Daftar Pemesanan
+        Route::resource('pemesanan', PengelolaDaftarPemesananController::class)->names('pengelola.pemesanan');
+        // Verifikasi Pemesanan
+        Route::patch('pemesanan/{id}/verifikasi', [PengelolaDaftarPemesananController::class, 'verifikasi'])
+            ->name('pengelola.pemesanan.verifikasi');
+
+        // Route Profil Pengelola
+        Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');
+        Route::patch('/profil', [PengelolaController::class, 'update'])->name('pengelola.profile.update');
+    });
 });

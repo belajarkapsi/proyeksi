@@ -13,6 +13,7 @@
 
     <x-navbar-admin></x-navbar-admin>
 
+    {{-- Sidebar --}}
     <aside id="sidebar" class="bg-green-700 w-64 fixed top-0 left-0 bottom-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col h-full shadow-xl">
 
         <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-green-800 [&::-webkit-scrollbar-thumb]:bg-green-500 hover:[&::-webkit-scrollbar-thumb]:bg-green-400">

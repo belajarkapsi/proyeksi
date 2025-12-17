@@ -24,11 +24,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            CabangDanKamarSeeder::class,
+            ServiceSeeder::class,
             PenyewaSeeder::class,
             PemilikSeeder::class,
             PengelolaSeeder::class,
-            CabangDanKamarSeeder::class,
-            ServiceSeeder::class,
         ]);
     }
 }

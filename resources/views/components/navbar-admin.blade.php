@@ -1,6 +1,6 @@
 <nav class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
     <div class="max-w-full mx-auto px-4 lg:px-6">
-        <div id="navbar-content-wrapper" class="flex items-center justify-between h-14 transition-all duration-300 ease-in-out">
+        <div id="navbar-content-wrapper" class="flex items-center justify-between h-16 transition-all duration-300 ease-in-out">
 
             {{-- LEFT: Hamburger --}}
             <div id="navbar-left" class="flex items-center">

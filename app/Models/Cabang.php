@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Cabang extends Model
@@ -27,6 +28,11 @@ class Cabang extends Model
     public function kamars(): HasMany
     {
         return $this->hasMany(Kamar::class, 'id_cabang', 'id_cabang');
+    }
+
+    public function pengelola(): HasOne
+    {
+        return $this->hasOne(Pengelola::class, 'id_cabang', 'id_cabang');
     }
 
     public function getRouteParamsAttribute()

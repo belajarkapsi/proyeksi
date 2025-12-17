@@ -124,7 +124,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
                                     </span>
-                                    <input id="nama_lengkap" name="nama_lengkap" type="text" required autofocus value="{{ old('nama_lengkap') }}" placeholder="Nama Lengkap Sesuai KTP" 
+                                    <input id="nama_lengkap" name="nama_lengkap" type="text" autofocus value="{{ old('nama_lengkap') }}" placeholder="Nama Lengkap Sesuai KTP" 
                                         class="w-full pl-10 pr-4 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
                                 </div>
                                 @error('nama_lengkap') <p class="text-red-300 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
@@ -137,7 +137,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
                                     </span>
-                                    <input id="no_telp" name="no_telp" type="tel" required value="{{ old('no_telp') }}" placeholder="Contoh: 08123456789" 
+                                    <input id="no_telp" name="no_telp" type="tel" value="{{ old('no_telp') }}" placeholder="Contoh: 08123456789" 
                                         class="w-full pl-10 pr-4 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
                                 </div>
                                 @error('no_telp') <p class="text-red-300 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
@@ -150,7 +150,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" /></svg>
                                     </span>
-                                    <input id="email" name="email" type="email" required value="{{ old('email') }}" placeholder="Masukkan Alamat Email" 
+                                    <input id="email" name="email" type="email" value="{{ old('email') }}" placeholder="Masukkan Alamat Email" 
                                         class="w-full pl-10 pr-4 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
                                 </div>
                                 @error('email') <p class="text-red-300 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
@@ -163,7 +163,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
                                     </span>
-                                    <input id="username" name="username" type="text" required value="{{ old('username') }}" placeholder="Buat Username Unik" 
+                                    <input id="username" name="username" type="text" value="{{ old('username') }}" placeholder="Buat Username Unik" 
                                         class="w-full pl-10 pr-4 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
                                 </div>
                                 @error('username') <p class="text-red-300 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
@@ -176,7 +176,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/></svg>
                                     </span>
-                                    <input id="password" name="password" type="password" required placeholder="Minimal 8 Karakter" 
+                                    <input id="password" name="password" type="password" placeholder="Minimal 8 Karakter" 
                                         class="w-full pl-10 pr-12 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
 
                                     {{-- Toggle Icon --}}
@@ -200,7 +200,7 @@
                                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-green-200">
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/></svg>
                                     </span>
-                                    <input id="password_confirmation" name="password_confirmation" type="password" required placeholder="Ulangi Password" 
+                                    <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Ulangi Password" 
                                         class="w-full pl-10 pr-12 py-3 bg-white/10 border border-green-600/30 rounded-xl text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white focus:text-gray-900 transition-all duration-300 shadow-inner">
 
                                     {{-- Toggle Icon --}}

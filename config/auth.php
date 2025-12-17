@@ -45,6 +45,11 @@ return [
             'driver' => 'session',
             'provider' => 'pemiliks',
         ],
+
+        'pengelola' => [
+            'driver' => 'session',
+            'provider' => 'pengelolas'
+        ],
     ],
 
     /*
@@ -74,6 +79,11 @@ return [
             'driver' => 'eloquent',
             'model'  => App\Models\Pemilik::class,
         ],
+
+        'pengelolas' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\Pengelola::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
