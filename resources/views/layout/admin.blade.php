@@ -99,7 +99,7 @@
 
                 {{-- Pemesanan --}}
                 <a href="{{ route('daftar-pemesanan.index') }}"
-   class="
+                class="
         flex items-center gap-3 px-3 py-2.5 rounded-lg
         text-white hover:text-gray-800 hover:bg-white
         transition-all duration-200 mb-1

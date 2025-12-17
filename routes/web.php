@@ -84,6 +84,10 @@ Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
     Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])
         ->name('booking.checkout');
 
+    // Booking Kamar di Halaman Detail Kamar
+    Route::get('/booking/checkout/{kamar}', [BookingController::class, 'checkout'])
+    ->name('booking.checkout');
+
     // Proses Simpan ke Database (Action dari form checkout)
     Route::post('/booking/store', [BookingController::class, 'store'])
         ->name('booking.store');
@@ -114,6 +118,22 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
+            
+        Route::get('/admin/chart', function () {
+        return [
+            'area' => Pemesanan::selectRaw('DATE(waktu_pemesanan) as tanggal, COUNT(*) as total')
+            ->whereDate('waktu_pemesanan', '>=', now()->subDays(7))
+            ->groupBy('tanggal')
+            ->orderBy('tanggal')
+            ->get(),
+
+            'bar' => Pemesanan::selectRaw('MONTH(waktu_pemesanan) as bulan, COUNT(*) as total')
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get(),
+            ];
+        });
+        
 
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
