@@ -97,18 +97,6 @@
                     </div>
                 </div>
 
-                {{-- Pemesanan --}}
-                <a href="{{ route('daftar-pemesanan.index') }}"
-                class="
-        flex items-center gap-3 px-3 py-2.5 rounded-lg
-        text-white hover:text-gray-800 hover:bg-white
-        transition-all duration-200 mb-1
-        {{ request()->routeIs('admin.daftar-pemesanan.*') ? 'bg-white text-gray-800 font-semibold' : '' }}
-    ">
-    <i class="fa-solid fa-clipboard-list w-6 text-center"></i>
-    <span class="font-medium">Daftar Pemesanan</span>
-</a>
-
                 {{-- Pembayaran --}}
                 <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:text-gray-800 hover:bg-white transition-all duration-200 mb-1"><i class="fas fa-file-invoice-dollar w-6 text-center"></i><span class="font-medium">Transaksi</span></a>
 

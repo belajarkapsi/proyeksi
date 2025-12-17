@@ -149,11 +149,6 @@ Route::middleware(['auth:pemilik'])->group(function() {
             Route::resource('informasi-cabang', InformasiCabangController::class);
         });
 
-        //Daftar Pemesanan
-        Route::resource('daftar-pemesanan', DaftarPemesananController::class);
-
-        Route::patch('daftar-pemesanan/{daftar_pemesanan}/verifikasi', [DaftarPemesananController::class, 'verifikasi']);
-
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::patch('/profil', [AdminProfileController::class, 'update'])->name('admin.profile.update');
