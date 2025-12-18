@@ -18,7 +18,8 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
 use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
 use App\Http\Controllers\PengelolaController;
-
+use App\Http\Controllers\Admin\HunianController;
+use App\Http\Controllers\Admin\KeuanganController;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -134,7 +135,6 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ];
         });
         
-
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -148,6 +148,20 @@ Route::middleware(['auth:pemilik'])->group(function() {
             // Data Informasi Cabang
             Route::resource('informasi-cabang', InformasiCabangController::class);
         });
+
+        // Laporan Hunian
+        Route::get('laporan-hunian', [HunianController::class, 'index'])
+        ->name('laporan-hunian.index');
+        
+        Route::get('laporan-keuangan', [KeuanganController::class, 'index'])
+            ->name('laporan-keuangan.index');
+        
+        Route::get('/admin/laporan-hunian/pdf', [HunianController::class,'pdf'])
+            ->name('laporan-hunian.pdf');
+
+        Route::get('/admin/laporan-keuangan/pdf', [KeuanganController::class,'pdf'])
+            ->name('laporan-keuangan.pdf');
+
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
