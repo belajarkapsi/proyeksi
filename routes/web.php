@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
 use App\Http\Controllers\Admin\InformasiCabangController;
 use App\Http\Controllers\Admin\LayananVillaController;
-use App\Http\Controllers\Admin\DaftarPemesananController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -17,8 +16,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
 use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
+use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewaController;
 use App\Http\Controllers\PengelolaController;
-
+use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -118,7 +118,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
-            
+
         Route::get('/admin/chart', function () {
         return [
             'area' => Pemesanan::selectRaw('DATE(waktu_pemesanan) as tanggal, COUNT(*) as total')
@@ -133,7 +133,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ->get(),
             ];
         });
-        
+
 
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
@@ -164,6 +164,9 @@ Route::middleware(['auth:pengelola'])->group(function() {
 
         // Data Kamar
         Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+
+        // Data Penyewa
+        Route::resource('penyewa', PengelolaDataPenyewaController::class)->names('pengelola.penyewa');
 
         // Daftar Pemesanan
         Route::resource('pemesanan', PengelolaDaftarPemesananController::class)->names('pengelola.pemesanan');

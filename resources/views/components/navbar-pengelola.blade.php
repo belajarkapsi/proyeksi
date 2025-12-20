@@ -11,6 +11,8 @@
                 <div class="flex justify-center items-center space-x-1 lg:space-x-4">
                     <a href="{{ route('pengelola.dashboard') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Home</a>
 
+                    <a href="{{ route('pengelola.penyewa.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Penyewa</a>
+
                     <a href="{{ route('pengelola.kamar.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Layanan</a>
 
                     <a href="{{ route('pengelola.pemesanan.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Daftar Pesanan</a>

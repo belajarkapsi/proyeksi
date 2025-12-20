@@ -12,17 +12,23 @@
 <div class="min-h-[70vh] bg-gray-50 flex items-start justify-center px-4 pt-8 pb-8">
     <div class="max-w-5xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
 
-        {{-- SISI KIRI: Detail Harga & Timer (Background Hijau Tua) --}}
+        {{-- SISI KIRI: Detail Harga & Timer --}}
         <div class="md:w-5/12 bg-green-900 p-8 text-white flex flex-col justify-between relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                {{-- dekorasi SVG --}}
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <path fill="#FFFFFF" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.2,-19.2,95.8,-5.3C93.5,8.6,82.1,21.5,70.9,32.2C59.7,42.9,48.8,51.4,37.3,58.4C25.8,65.4,13.7,70.9,-0.4,71.6C-14.5,72.3,-29,68.2,-41.2,60.3C-53.4,52.4,-63.3,40.7,-70.3,27.5C-77.3,14.3,-81.4,-0.4,-79.3,-14.2C-77.2,-28,-68.9,-40.9,-57.7,-50.6C-46.5,-60.3,-32.4,-66.8,-18.7,-70.3C-5,-73.8,8.7,-74.3,22.4,-74.8L36.1,-75.3Z" transform="translate(100 100)" />
                 </svg>
             </div>
 
             <div class="relative z-10">
-                <h1 class="text-2xl font-bold mb-1">Menunggu Pembayaran</h1>
+                @if($pemesanan->status == 'Dibatalkan')
+                    <h1 class="text-2xl font-bold mb-1 text-red-200">Pesanan Dibatalkan</h1>
+                @elseif($pemesanan->status == 'Lunas')
+                    <h1 class="text-2xl font-bold mb-1 text-green-200">Pembayaran Lunas</h1>
+                @else
+                    <h1 class="text-2xl font-bold mb-1">Menunggu Pembayaran</h1>
+                @endif
+
                 <p class="text-green-200 text-sm mb-8">Kode Pesanan: #{{ $pemesanan->id_pemesanan }}</p>
 
                 <p class="text-green-300 text-xs uppercase tracking-widest font-semibold mb-2">Total Tagihan</p>
@@ -31,7 +37,7 @@
                 </h2>
             </div>
 
-            {{-- COUNTDOWN TIMER --}}
+            {{-- STATUS BOX / TIMER --}}
             @if($pemesanan->status == 'Belum Dibayar')
             <div class="relative z-10 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
                 <p class="text-green-200 text-sm mb-2 flex items-center justify-center gap-2">
@@ -42,15 +48,18 @@
             </div>
             @else
             <div class="relative z-10 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
-                <span class="font-bold text-xl uppercase tracking-widest">{{ $pemesanan->status }}</span>
+                <span class="font-bold text-xl uppercase tracking-widest {{ $pemesanan->status == 'Dibatalkan' ? 'text-red-300' : 'text-white' }}">
+                    {{ $pemesanan->status }}
+                </span>
             </div>
             @endif
         </div>
 
-        {{-- SISI KANAN: Info Rekening (Background Putih) --}}
+        {{-- SISI KANAN: Info & Action --}}
         <div class="md:w-7/12 p-8 md:p-12 bg-white flex flex-col justify-center">
 
             @if($pemesanan->status == 'Belum Dibayar')
+                {{-- ----- JIKA BELUM DIBAYAR ----- --}}
                 <div class="mb-8">
                     <h3 class="text-gray-800 font-bold text-xl mb-4">Metode Transfer Bank</h3>
                     <div class="flex items-start gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-green-200 transition-colors">
@@ -84,8 +93,12 @@
                     </a>
 
                     <div class="pt-4 border-t border-gray-100 mt-4">
+                        {{-- FORM PEMBATALAN DENGAN INPUT HIDDEN --}}
                         <form id="form-batal" action="{{ route('booking.batal', $pemesanan->id_pemesanan) }}" method="POST">
                             @csrf
+                            {{-- Input Hidden untuk menyimpan alasan dari SweetAlert --}}
+                            <input type="hidden" name="alasan_batal" id="input_alasan_batal">
+
                             <button type="button" onclick="konfirmasiBatal()"
                                 class="w-full py-3 px-6 text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-xl transition border border-red-100 hover:border-red-200">
                                 Batalkan Pesanan
@@ -95,16 +108,31 @@
                 </div>
 
             @elseif($pemesanan->status == 'Dibatalkan')
-                <div class="text-center py-10">
+                {{-- ----- JIKA DIBATALKAN ----- --}}
+                <div class="text-center py-6">
                     <div class="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Pesanan Dibatalkan</h2>
-                    <p class="text-gray-500 mb-6">Waktu pembayaran telah habis atau pesanan dibatalkan.</p>
+
+                    {{-- ALERT ALASAN PEMBATALAN --}}
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 my-6 text-left max-w-md mx-auto relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-red-400"></div>
+                        <p class="text-xs font-bold text-red-500 uppercase tracking-wide mb-1">Alasan Pembatalan:</p>
+                        <p class="text-sm text-gray-700 italic">
+                            "{{ $pemesanan->alasan_batal ?? 'Pemesanan Dibatalkan Karena Waktu Habis / Dibatalkan Sistem.' }}"
+                        </p>
+                        <p class="text-xs text-gray-400 mt-2 text-right">
+                            {{ $pemesanan->cancelled_at ? \Carbon\Carbon::parse($pemesanan->cancelled_at)->format('d M Y H:i') : '-' }}
+                        </p>
+                    </div>
+
+                    <p class="text-gray-500 mb-6 text-sm">Anda dapat melakukan pemesanan ulang untuk kamar ini atau mencari kamar lain.</p>
                     <a href="{{ isset($cabang) ? route('cabang.kamar.index', $cabang->route_params) : route('dashboard') }}" class="inline-block bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition">Pesan Kembali</a>
                 </div>
 
             @elseif($pemesanan->status == 'Lunas')
+                {{-- ----- JIKA LUNAS ----- --}}
                 <div class="text-center py-10">
                     <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -124,29 +152,18 @@
 <script>
     function copyToClipboard(text) {
         if (!navigator.clipboard) {
-            // fallback: buat elemen temporer untuk copy
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            try {
-                document.execCommand('copy');
-                Swal.fire({ icon: 'success', title: 'Tersalin', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
-            } catch (err) {
-                Swal.fire({ icon: 'error', title: 'Gagal menyalin', text: 'Silakan salin manual', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
-            }
-            document.body.removeChild(el);
+            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            Swal.fire({ icon: 'success', title: 'Tersalin', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
             return;
         }
-
         navigator.clipboard.writeText(text).then(() => {
             Swal.fire({ icon: 'success', title: 'Tersalin', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
-        }).catch(() => {
-            Swal.fire({ icon: 'error', title: 'Gagal menyalin', text: 'Silakan salin manual', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
         });
     }
 
+    // --- LOGIKA 2 TAHAP KONFIRMASI BATAL ---
     function konfirmasiBatal() {
+        // Tahap 1: Konfirmasi Ya/Tidak
         Swal.fire({
             title: 'Batalkan Pesanan?',
             text: "Apakah Anda yakin ingin membatalkan pesanan ini?",
@@ -158,7 +175,31 @@
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('form-batal').submit();
+                // Tahap 2: Input Alasan
+                Swal.fire({
+                    title: 'Alasan Pembatalan',
+                    input: 'textarea',
+                    inputLabel: 'Mohon berikan alasan pembatalan Anda',
+                    inputPlaceholder: 'Tulis alasan Anda disini...',
+                    inputAttributes: {
+                        'aria-label': 'Tulis alasan Anda disini'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Kirim & Batalkan',
+                    cancelButtonText: 'Kembali',
+                    confirmButtonColor: '#d33',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Anda harus menuliskan alasan pembatalan!'
+                        }
+                    }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        // Masukkan alasan ke input hidden dan submit form
+                        document.getElementById('input_alasan_batal').value = res.value;
+                        document.getElementById('form-batal').submit();
+                    }
+                });
             }
         });
     }
@@ -188,39 +229,21 @@
 
         }, 1000);
 
-        /// Ganti/masukkan fungsi ini di file detail-pesanan.blade.php (di bagian <script> countdown)
-    function checkStatus() {
-    // pastikan route ada dan benar; blade akan menggantikan url ini
-    const url = "{{ route('booking.check_status', $pemesanan->id_pemesanan) }}";
-
-    // fetch dengan penanganan error HTTP dan JSON parse safety
-    fetch(url, { cache: "no-store" })
-        .then(response => {
-            if (!response.ok) {
-                // jika 404/500 — log sekali dan keluar (akan dicoba lagi oleh setInterval)
-                throw new Error('HTTP status ' + response.status);
-            }
-            return response.json().catch(err => {
-                throw new Error('Invalid JSON: ' + err.message);
-            });
-        })
-        .then(data => {
-            // jika server mengirim status baru, reload untuk update UI
-            if (!data || !data.status) return;
-            if (data.status === 'Dibatalkan' || data.status === 'Lunas') {
-                window.location.reload();
-            }
-            // opsional: bisa memperbarui countdown UI dari server jika kamu kirim sisa detik
-            // if (data.remaining_seconds) { updateCountdownFromServer(data.remaining_seconds); }
-        })
-        .catch(error => {
-            // jangan spam console tiap 5 detik — log sebagai debug agar tetap ada jejak, tapi ringkas
-            console.debug('checkStatus fetch error (will retry):', error.message || error);
-            // tidak melempar error lebih lanjut; setInterval akan memanggil ulang
-        });
-}
-
-
+        function checkStatus() {
+            const url = "{{ route('booking.check_status', $pemesanan->id_pemesanan) }}";
+            fetch(url, { cache: "no-store" })
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP status ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.status) return;
+                    if (data.status === 'Dibatalkan' || data.status === 'Lunas') {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => { console.debug('checkStatus fetch error:', error); });
+        }
         setInterval(checkStatus, 5000);
     @endif
 </script>
