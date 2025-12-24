@@ -30,10 +30,10 @@
 
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="#area-penginapan"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-green-600/30 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
-                    Jelajahi Sekarang
+                    class="bg-green-600 hover:bg-green-700 text-white hover:drop-shadow-lg font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-green-600/30 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
+                    Pesan Sekarang
                 </a>
-                <a href="#" class="px-8 py-3 rounded-full border-2 border-green-600 text-green-700 font-semibold hover:bg-green-50 transition-colors text-center">
+                <a href="#" class="px-8 py-3 rounded-full border-2 border-green-600 text-green-700 font-semibold hover:bg-green-50 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
                     Hubungi Kami
                 </a>
             </div>

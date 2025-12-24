@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pemilik;
+use App\Models\Pengelola;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -58,20 +61,23 @@ class LoginController extends Controller
         }
 
         // Cek apakah akun ada di database atau tidak
-        $checkPemilik = Auth::guard('pemilik')->getProvider()->retrieveByCredentials([
-            $login_type => $request->input('username')
-        ]);
-
-        $checkPengelola = Auth::guard('pengelola')->getProvider()->retrieveByCredentials([
-            $login_type => $request->input('username')
-        ]);
-
-        $checkPenyewa = Auth::guard('web')->getProvider()->retrieveByCredentials([
-            $login_type => $request->input('username')
-        ]);
+        $username = $request->input('username');
+        // cek pemilik
+        $checkPemilik = Pemilik::where('username', $username)
+            ->orWhere('email', $username)
+            ->first();
+        // cek pengelola
+        $checkPengelola = Pengelola::where('username', $username)
+            ->orWhere('email', $username)
+            ->first();
+        // cek penyewa
+        $checkPenyewa = User::where('username', $username)
+            ->orWhere('email', $username)
+            ->first();
 
         // Jika di Pemilik TIDAK ADA dan di Web juga TIDAK ADA
-        if (!$checkPemilik && !$checkPengelola && !$checkPenyewa) {
+        $userExists = $checkPemilik || $checkPengelola || $checkPenyewa;
+        if (!$userExists) {
             return back()->withErrors([
                 'username' => 'Username/Password tidak ditemukan! Akun belum terdaftar.',
             ])->onlyInput('username');

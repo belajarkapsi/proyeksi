@@ -10,12 +10,12 @@
 </div>
 
 <div class="container mx-auto px-4 py-16 max-w-5xl min-h-screen">
-    
+
     <!-- Header Section -->
     <div class="text-center mb-16 relative">
         <span class="text-green-600 font-bold tracking-wider uppercase text-sm mb-2 block">Support Center</span>
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 font-title mb-4 leading-tight">
-            Bagaimana kami bisa <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-teal-500">membantu?</span>
+            Bagaimana kami bisa <span class="text-transparent bg-clip-text bg-linear-to-r from-green-600 to-teal-500">membantu?</span>
         </h1>
         <p class="mt-4 text-lg text-gray-500 font-content max-w-2xl mx-auto">
             Temukan jawaban cepat untuk pertanyaan umum atau hubungi tim support kami jika masalah berlanjut.
@@ -39,7 +39,7 @@
 
     <!-- FAQ Container -->
     <div class="grid gap-6 md:gap-8 max-w-3xl mx-auto" id="faqContainer">
-        
+
         <!-- Masalah Akun -->
         <div class="faq-item group bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300 overflow-hidden">
             <button class="faq-toggle w-full text-left p-6 md:p-8 flex justify-between items-center focus:outline-none">
@@ -65,7 +65,7 @@
                             Pastikan email dan password benar. Jika lupa password, gunakan fitur "Lupa Password". Jika tetap tidak bisa, hubungi admin.
                         </div>
                     </div>
-                    
+
                     <div class="py-2">
                         <button class="faq-question w-full text-left font-medium text-gray-700 hover:text-green-600 flex items-center justify-between group/sub py-2 transition-colors">
                             <span>Email verifikasi tidak diterima</span>
@@ -173,9 +173,9 @@
         </div>
 
         <!-- Kontak Admin Card -->
-        <div class="faq-item mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-xl overflow-hidden text-white relative">
+        <div class="faq-item mt-8 bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl shadow-xl overflow-hidden text-white relative">
             <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-5"></div>
-            
+
             <button class="faq-toggle w-full text-left p-8 flex justify-between items-center focus:outline-none z-10 relative">
                 <div class="flex items-center gap-4">
                     <div class="p-3 bg-white/10 rounded-xl text-green-400 backdrop-blur-sm">
@@ -186,7 +186,7 @@
                         <span class="text-sm text-gray-400 font-light">Klik untuk melihat kontak admin</span>
                     </div>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-transform duration-300 icon-arrow text-white">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center transition-transform duration-300 icon-arrow text-gray-900">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
             </button>
@@ -254,10 +254,10 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', () => {
             const content = button.nextElementSibling;
             const iconArrow = button.querySelector('.icon-arrow');
-            
+
             // Toggle visibility
             content.classList.toggle('hidden');
-            
+
             // Rotate Arrow Animation
             if (content.classList.contains('hidden')) {
                 iconArrow.style.transform = 'rotate(0deg)';
@@ -278,11 +278,11 @@ document.addEventListener('DOMContentLoaded', function () {
         question.addEventListener('click', () => {
             const answer = question.nextElementSibling;
             const iconPlus = question.querySelector('span:last-child');
-            
+
             // Logic "Accordion": Tutup yang lain dalam kategori yang sama (Optional, based on original logic)
-            // Note: Kode asli menutup SEMUA jawaban di halaman, kita pertahankan logic itu tapi 
+            // Note: Kode asli menutup SEMUA jawaban di halaman, kita pertahankan logic itu tapi
             // di sini kita hanya manipulasi class hidden.
-            
+
             const isCurrentlyOpen = !answer.classList.contains('hidden');
 
             // Reset semua (tutup semua)
@@ -311,10 +311,10 @@ document.addEventListener('DOMContentLoaded', function () {
         faqItems.forEach(item => {
             // Cari text di dalam item (termasuk judul kategori dan pertanyaan didalamnya)
             const text = item.textContent.toLowerCase();
-            
+
             if (text.includes(searchTerm)) {
                 item.style.display = 'block';
-                
+
                 // Optional Enhancement: Jika user mencari sesuatu, otomatis buka accordionnya
                 if (searchTerm.length > 2) {
                     const content = item.querySelector('.faq-content');

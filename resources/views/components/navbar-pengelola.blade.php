@@ -9,15 +9,15 @@
 
             <div class="hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <div class="flex justify-center items-center space-x-1 lg:space-x-4">
-                    <a href="{{ route('pengelola.dashboard') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Home</a>
+                    <a href="{{ route('pengelola.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('pengelola.dashboard') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Home</a>
 
-                    <a href="{{ route('pengelola.penyewa.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Penyewa</a>
+                    <a href="{{ route('pengelola.penyewa.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*penyewa*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Penyewa</a>
 
-                    <a href="{{ route('pengelola.kamar.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Layanan</a>
+                    <a href="{{ route('pengelola.kamar.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*kamar*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Layanan</a>
 
-                    <a href="{{ route('pengelola.pemesanan.index') }}" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Daftar Pesanan</a>
+                    <a href="{{ route('pengelola.pemesanan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*pemesanan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Daftar Pesanan</a>
 
-                    <a href="#" class="text-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold border-transparent hover:bg-green-400 transition-colors duration-300">Laporan</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
                 </div>
             </div>
 
