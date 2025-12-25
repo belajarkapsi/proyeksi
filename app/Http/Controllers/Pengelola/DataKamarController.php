@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Pengelola;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
+use App\Models\PemesananItem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +28,25 @@ class DataKamarController extends Controller
     {
         $kamars = Kamar::where('id_cabang', $this->cabang()->id_cabang)
             ->orderBy('no_kamar', 'asc')
-            ->paginate(15);
+            ->get()
+            ->map(function ($kamar) {
+                $kamar->nama_penyewa = null;
+
+                if ($kamar->status === 'Dihuni') {
+                    $itemTerakhir = PemesananItem::where('id_kamar', $kamar->id_kamar)
+                        ->whereHas('pemesanan', function($q) {
+                            $q->where('status', 'Lunas');
+                        })
+                        ->latest('created_at')
+                        ->with('pemesanan.penyewa')
+                        ->first();
+
+                    if ($itemTerakhir && $itemTerakhir->pemesanan && $itemTerakhir->pemesanan->penyewa) {
+                        $kamar->nama_penyewa = $itemTerakhir->pemesanan->penyewa->nama_lengkap ?? $itemTerakhir->pemesanan->penyewa->username;
+                    }
+                }
+                return $kamar;
+            });
 
         return view('pengelola.data-kamar.index', compact('kamars'));
     }
@@ -66,6 +86,39 @@ class DataKamarController extends Controller
 
         Alert::success('Berhasil!', 'Data kamar berhasil ditambahkan.');
         return redirect()->route('pengelola.kamar.index');
+    }
+
+    public function show(Kamar $kamar)
+    {
+        Gate::authorize('view', $kamar);
+
+        // Inisiasi variabel
+        $penyewa = null;
+        $pemesanan = null;
+        $durasi = null;
+
+        if($kamar->status === 'Dihuni') {
+            $itemTerakhir = PemesananItem::where('id_kamar', $kamar->id_kamar)
+                ->whereHas('pemesanan', function($q) {
+                    $q->where('status', 'Lunas');
+                })
+                ->latest('created_at')
+                ->with('pemesanan.penyewa')
+                ->first();
+
+            if ($itemTerakhir && $itemTerakhir->pemesanan) {
+                $pemesanan = $itemTerakhir->pemesanan;
+                $penyewa = $itemTerakhir->pemesanan->penyewa;
+
+                // Hitung durasi sewa
+                $checkin = Carbon::parse($itemTerakhir->waktu_checkin);
+                $checkout = Carbon::parse($itemTerakhir->waktu_checkout);
+                $durasi = $checkin->format('d M') . ' - ' . $checkout->format('d M Y') .
+                            ' (' . $checkin->diffInDays($checkout) . ' Malam)';
+            }
+        }
+
+        return view('pengelola.data-kamar.show', compact('kamar', 'penyewa', 'pemesanan', 'durasi'));
     }
 
     /**

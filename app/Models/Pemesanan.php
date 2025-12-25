@@ -19,7 +19,8 @@ class Pemesanan extends Model
         'expired_at',
         'total_harga',
         'status',
-        'cancelled_at', // ditambahkan agar bisa diisi saat cancel
+        'cancelled_at',
+        'alasan_batal',
     ];
 
     protected $casts = [
@@ -49,7 +50,6 @@ class Pemesanan extends Model
         return $this->hasMany(PemesananService::class, 'id_pemesanan', 'id_pemesanan');
     }
 
-    // ---------------------- AVAILABILITY HELPERS ----------------------
     /**
      * Daftar status yang dianggap "aktif" dan memblokir ketersediaan.
      * Disesuaikan dengan nilai enum di migration: 'Belum Dibayar', 'Lunas', 'Dibatalkan'
@@ -71,11 +71,6 @@ class Pemesanan extends Model
      * Fungsi ini fleksibel: akan mencoba mencari tanggal pada tabel pemesanan terlebih dahulu,
      * jika tidak ditemukan, akan mencoba pada tabel pemesanan_item.
      *
-     * @param int|string $roomId         ID kamar (kolom di tabel pemesanan_item biasanya 'id_kamar' / 'room_id')
-     * @param string $start              tanggal mulai (format 'Y-m-d' atau datetime string)
-     * @param string $end                tanggal akhir (format 'Y-m-d' atau datetime string)
-     * @param \Illuminate\Database\Connection|null $dbconn (opsional) untuk testing
-     * @return bool                      true jika ada conflict
      */
     public static function roomHasConflict($roomId, string $start, string $end, $dbconn = null): bool
     {
@@ -130,5 +125,4 @@ class Pemesanan extends Model
         // 3) Jika tidak ketemu pola kolom mana pun, default: tidak conflict (kamu perlu menyesuaikan manual)
         return false;
     }
-    // -------------------- END AVAILABILITY HELPERS --------------------
 }
