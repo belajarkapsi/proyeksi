@@ -10,7 +10,7 @@ class KamarPolicy
 {
     public function before($user, string $ability)
     {
-        if ($user->role === 'admin') {
+        if ($user->role === 'admin' || $user instanceof \App\Models\Pemilik) {
             return true;
         }
 

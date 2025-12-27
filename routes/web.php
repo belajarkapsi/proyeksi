@@ -17,6 +17,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
 use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
 use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewaController;
+use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
 use App\Models\Pemesanan;
 
@@ -164,6 +165,9 @@ Route::middleware(['auth:pengelola'])->group(function() {
 
         // Data Kamar
         Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+        // Data Layanan
+        Route::resource('service', DataServiceController::class)
+            ->except(['index', 'show'])->names('pengelola.service');
 
         // Data Penyewa
         Route::resource('penyewa', PengelolaDataPenyewaController::class)->names('pengelola.penyewa');

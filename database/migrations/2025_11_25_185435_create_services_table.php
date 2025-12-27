@@ -16,6 +16,7 @@ class CreateServicesTable extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('price')->default(0);
+            $table->integer('stock')->default(0);
             $table->timestamps();
         });
     }

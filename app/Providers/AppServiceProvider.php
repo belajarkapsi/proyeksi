@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Kamar;
+use App\Models\Service;
 use App\Models\User;
 use App\Policies\KamarPolicy;
+use App\Policies\ServicePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
@@ -29,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(Kamar::class, KamarPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Service::class, ServicePolicy::class);
     }
 }

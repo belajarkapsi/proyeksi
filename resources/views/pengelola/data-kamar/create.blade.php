@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8 mb-6">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4 mb-6">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">

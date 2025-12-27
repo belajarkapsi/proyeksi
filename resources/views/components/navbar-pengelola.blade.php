@@ -15,7 +15,28 @@
 
                     <a href="{{ route('pengelola.kamar.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*kamar*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Layanan</a>
 
-                    <a href="{{ route('pengelola.pemesanan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*pemesanan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Daftar Pesanan</a>
+                    <div class="relative dropdown [--auto-close:inside]">
+                        <button type="button"
+                            class="dropdown-toggle px-3 py-2 rounded-md text-sm font-semibold border-transparent flex items-center gap-1 transition-colors duration-300 focus:outline-none
+                            {{ request()->routeIs('*pemesanan*') || request()->routeIs('*pembayaran*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">
+
+                            <span>Pesanan</span>
+                            <i class="dropdown-icon fas fa-chevron-down text-xs transition-transform duration-300 transform"></i>
+                        </button>
+
+                        <div class="dropdown-menu origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5
+                                    transition-all duration-300 ease-in-out transform opacity-0 invisible scale-95 -translate-y-2 z-50">
+                            <div class="py-1">
+                                <a href="{{ route('pengelola.pemesanan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
+                                    Daftar Pemesanan
+                                </a>
+
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
+                                    Pembayaran
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <a href="#" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
                 </div>
@@ -28,7 +49,7 @@
                         <i class="fas fa-bell"></i>
                     </button>
 
-                    <div class="relative dropdown">
+                    <div class="relative dropdown [--auto-close:inside]">
                         <button type="button" class="dropdown-toggle max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 p-1 pr-2 hover:bg-gray-50 transition">
                             <span class="sr-only">Open user menu</span>
                             <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="https://i.pravatar.cc/150?u=john" alt="User Avatar">

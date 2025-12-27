@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Pemesanan extends Model
 {
@@ -74,7 +75,7 @@ class Pemesanan extends Model
      */
     public static function roomHasConflict($roomId, string $start, string $end, $dbconn = null): bool
     {
-        $db = $dbconn ?? \DB::connection();
+        $db = $dbconn ?? DB::connection();
         $schema = $db->getSchemaBuilder();
 
         // 1) Cek apakah tabel pemesanan (pemesanan) punya kolom tanggal yang bisa dipakai
@@ -111,7 +112,7 @@ class Pemesanan extends Model
                 && $schema->hasColumn($itemTable, $cols['end'])) {
 
                 // join antara pemesanan_item dan pemesanan untuk filter status aktif
-                $q = \DB::table($itemTable . ' as pi')
+                $q = DB::table($itemTable . ' as pi')
                     ->join($pemesananTable . ' as p', 'pi.id_pemesanan', '=', 'p.id_pemesanan')
                     ->whereIn('p.status', self::$activeStatuses)
                     ->where('pi.' . $cols['room_col'], '=', $roomId)
