@@ -110,37 +110,46 @@
         </div>
 
         {{-- TABEL SECTION (Takes 1 column on large screens, side-by-side) --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
-            <div class="p-4 border-b bg-gray-50">
-                <h3 class="text-lg font-bold text-gray-800">Riwayat Transaksi</h3>
-            </div>
-            
-            <div class="overflow-y-auto max-h-[400px]"> {{-- Scrollable table if too long --}}
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Tanggal</th>
-                            <th scope="col" class="px-6 py-3">ID Order</th>
-                            <th scope="col" class="px-6 py-3 text-right">Total</th>
-                        </tr>
-                    </thead>
+        <div class="overflow-x-auto max-h-[400px]">
+            <table class="w-full min-w-[700px] text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Tanggal</th>
+                        <th scope="col" class="px-6 py-3">ID Order</th>
+                        <th scope="col" class="px-6 py-3 text-right">Total</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                    </tr>
+                </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($transaksi as $t)
-                        <tr class="bg-white hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $t->waktu_pemesanan->format('d/m/Y') }}
-                                <br>
-                                <span class="text-xs text-gray-400">{{ $t->waktu_pemesanan->format('H:i') }} WIB</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded border border-gray-200">
-                                    #{{ $t->id_pemesanan }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right font-bold text-gray-700">
-                                Rp {{ number_format($t->total_harga) }}
-                            </td>
-                        </tr>
+                            <tr class="bg-white hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $t->waktu_pemesanan->format('d/m/Y') }}
+                                    <br>
+                                    <span class="text-xs text-gray-400">{{ $t->waktu_pemesanan->format('H:i') }} WITA</span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded border border-gray-200">
+                                        #{{ $t->id_pemesanan }}
+                                    </span>
+                                </td>
+
+                                <td class="px-6 py-4 text-right font-bold text-gray-700">
+                                    Rp {{ number_format($t->total_harga) }}
+                                </td>
+
+                                {{-- Kolom Status --}}
+                                <td class="px-6 py-4">
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full
+                                        @if($t->status == 'paid') bg-green-100 text-green-700 border border-green-300
+                                        @elseif($t->status == 'pending') bg-yellow-100 text-yellow-700 border border-yellow-300
+                                        @else bg-gray-100 text-gray-700 border border-gray-300
+                                        @endif">
+                                        {{ ucfirst($t->status) }}
+                                    </span>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
