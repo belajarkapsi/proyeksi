@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Cabang;
 use App\Models\Kamar;
+use App\Models\Pemilik;
 use Illuminate\Database\Seeder;
 use Faker;
 
@@ -12,10 +13,12 @@ class CabangDanKamarSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker\Factory::create('id_ID');
+        $pemilik = Pemilik::first();
 
         // Buat cabang dengan Eloquent supaya dapat ID-nya
         $cabangs = collect([
             Cabang::create([
+                'id_pemilik' => $pemilik->id_pemilik,
                 'nama_cabang' => 'Pondok Siti Hajar',
                 'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => 30,
@@ -25,6 +28,7 @@ class CabangDanKamarSeeder extends Seeder
             ]),
 
             Cabang::create([
+                'id_pemilik' => $pemilik->id_pemilik,
                 'nama_cabang' => 'The Green Villa Parepare',
                 'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => 2,
@@ -34,6 +38,7 @@ class CabangDanKamarSeeder extends Seeder
             ]),
 
             Cabang::create([
+                'id_pemilik' => $pemilik->id_pemilik,
                 'nama_cabang' => 'Pondok Satu',
                 'deskripsi' => $faker->text(300),
                 'jumlah_kamar' => 14,

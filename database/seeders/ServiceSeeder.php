@@ -22,6 +22,7 @@ class ServiceSeeder extends Seeder
                 'name' => 'Kolam Renang',
                 'description' => 'Akses kolam renang privat selama menginap',
                 'price' => 150000,
+                'stock' => 1
             ]);
 
             Service::create([
@@ -29,6 +30,7 @@ class ServiceSeeder extends Seeder
                 'name' => 'Gazebo',
                 'description' => 'Sewa gazebo untuk acara keluarga',
                 'price' => 100000,
+                'stock' => 4
             ]);
 
             Service::create([
@@ -36,6 +38,7 @@ class ServiceSeeder extends Seeder
                 'name' => 'Sound System',
                 'description' => 'Sound system lengkap untuk acara',
                 'price' => 200000,
+                'stock' => 1
             ]);
         } else {
             // Info di console kalau Villa tidak ditemukan
