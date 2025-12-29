@@ -161,7 +161,9 @@ Route::middleware(['auth:pemilik'])->group(function() {
 Route::middleware(['auth:pengelola'])->group(function() {
     Route::prefix('pengelola')->group(function () {
         // Dashboard Pengelola
-        Route::get('/dashboard', [PengelolaController::class, 'index']) ->name('pengelola.dashboard');
+        Route::get('/dashboard', [PengelolaController::class, 'index'])->name('pengelola.dashboard');
+        // Khusus menampilkan chart data
+        Route::get('/dashboard/data', [PengelolaController::class, 'dashboardData'])->name('pengelola.dashboard.data');
 
         // Data Kamar
         Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
