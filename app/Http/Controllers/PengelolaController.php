@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kamar;
+use App\Models\Pemesanan;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 // use Illuminate\Http\Request;
@@ -17,6 +22,90 @@ class PengelolaController extends Controller
         $cabang = $pengelola->cabang;
 
         return view('pengelola.dashboard', compact('pengelola', 'cabang'));
+    }
+
+    public function dashboardData()
+    {
+        $pengelola = Auth::guard('pengelola')->user();
+        $id_cabang = $pengelola->id_cabang;
+        $kategori = Str::lower($pengelola->cabang->kategori_cabang);
+
+        // Data Statistik
+        $totalKamar = Kamar::where('id_cabang', $id_cabang)->count();
+
+        $totalPenyewa = Pemesanan::where('id_cabang', $id_cabang)
+            ->whereIn('status', ['Lunas', 'Checkin', 'Selesai'])
+            ->distinct('id_penyewa')
+            ->count('id_penyewa');
+
+        $totalPesanan = Pemesanan::where('id_cabang', $id_cabang)->count();
+
+        $pesananBelumDikonfirmasi = Pemesanan::where('id_cabang', $id_cabang)
+            ->where('status', 'Belum Dibayar')
+            ->count();
+
+        // Data Chart
+        $chartPenyewa = Pemesanan::select( //tren penyewa
+            DB::raw('MONTH(waktu_pemesanan) as bulan'),
+            DB::raw('COUNT(*) as total')
+        )
+        ->where('id_cabang', $id_cabang)
+        ->whereYear('waktu_pemesanan', date('Y'))
+        ->where('status', '!=', 'Dibatalkan')
+        ->groupBy('bulan')
+        ->orderBy('bulan')
+        ->pluck('total', 'bulan')
+        ->toArray();
+
+        $dataBulan = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $dataBulan[] = $chartPenyewa[$i] ?? 0;
+        }
+
+        $labelTipe = [];
+        $dataTipe = [];
+        if ($kategori === 'kost') {
+            $chartTipeKamar = Kamar::select('tipe_kamar', DB::raw('count(*) as total'))
+                ->where('id_cabang', $id_cabang)
+                ->groupBy('tipe_kamar')
+                ->get();
+            $labelTipe = $chartTipeKamar->pluck('tipe_kamar');
+            $dataTipe  = $chartTipeKamar->pluck('total');
+        }
+
+        // Bar chart
+        $kamarTerpakai = Kamar::where('id_cabang', $id_cabang)
+            ->where('status', 'Dihuni')
+            ->count();
+
+        $serviceTotalStok = 0;
+        $serviceTerpakai  = 0;
+        if ($kategori === 'villa') {
+            $serviceTotalStok = Service::where('id_cabang', $id_cabang)->sum('stock');
+
+            $services = Service::where('id_cabang', $id_cabang)
+                ->withSum(['pemesananService as used' => function($q) {
+                    $q->whereHas('pemesanan', function($q) {
+                        $q->whereIn('status', ['Lunas', 'Checkin']);
+                    });
+            }], 'quantity')->get();
+            $serviceTerpakai = $services->sum('used');
+        }
+        $barTotal    = [$totalKamar, $serviceTotalStok];
+        $barTerpakai = [$kamarTerpakai, $serviceTerpakai];
+
+
+        return response()->json([
+            'total_kamar'           => $totalKamar,
+            'total_penyewa'         => $totalPenyewa,
+            'total_pesanan'         => $totalPesanan,
+            'total_belum_konfirmasi'=> $pesananBelumDikonfirmasi,
+            'chart_line'            => $dataBulan,
+            'chart_doughnut_labels' => $labelTipe,
+            'chart_doughnut_data'   => $dataTipe,
+            'chart_bar_total'       => $barTotal,
+            'chart_bar_terpakai'    => $barTerpakai
+        ]);
     }
 
     public function edit()

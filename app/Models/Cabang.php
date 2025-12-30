@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ class Cabang extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'id_pemilik',
         'nama_cabang',
         'deskripsi',
         'jumlah_kamar',
@@ -33,6 +35,11 @@ class Cabang extends Model
     public function pengelola(): HasOne
     {
         return $this->hasOne(Pengelola::class, 'id_cabang', 'id_cabang');
+    }
+
+    public function pemilik(): BelongsTo
+    {
+        return $this->belongsTo(Pemilik::class, 'id_pemilik', 'id_pemilik');
     }
 
     public function getRouteParamsAttribute()

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
 class Pemilik extends Authenticatable
@@ -34,6 +35,11 @@ class Pemilik extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function cabangs(): HasMany
+    {
+        return $this->hasMany(Cabang::class, 'id_pemilik', 'id_pemilik');
     }
 
 }

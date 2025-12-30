@@ -7,36 +7,38 @@
 <nav class="bg-white sticky top-0 z-50 drop-shadow-xl">
     <div class="w-full flex items-center justify-between px-3 lg:px-6 py-3">
 
+        {{-- Logo (Kiri)--}}
         <a href="/dashboard" class="flex items-center space-x-3 shrink-0  lg:w-56">
             <img src="{{ asset('images/logo.png') }}" class="h-9" alt="SIPESTAR Logo" />
             <span class="self-center text-xl font-semibold whitespace-nowrap text-green-600">SIPESTAR</span>
         </a>
 
+        {{-- Menu (Tengah) --}}
         <div class="hidden lg:flex flex-1 justify-center">
             <div class="bg-white shadow-md rounded-full px-2 py-1">
                 <ul class="flex items-center space-x-2">
                     <li>
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-w-[120px] px-4 py-2 text-gray-800 hover:text-green-700 font-medium rounded-full transition-colors duration-300">Home</a>
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center min-w-[120px] px-4 py-2 rounded-full transition-colors duration-300 {{ request()->routeIs('dashboard') ? 'text-green-700 font-bold bg-green-100' : 'text-gray-800 hover:text-green-700 font-medium' }}">Home</a>
                     </li>
 
                     <li>
                         <div class="hs-dropdown relative [--placement:bottom] inline-flex">
-                            <button id="hs-dropdown-lokasi" type="button" class="hs-dropdown-toggle inline-flex items-center  justify-center gap-x-1 min-w-[120px] px-4 py-2 text-gray-800 font-medium hover:text-green-700 rounded-full transition-colors duration-300 focus:outline-none" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                            <button id="hs-dropdown-lokasi" type="button" class="hs-dropdown-toggle inline-flex items-center  justify-center gap-x-1 min-w-[120px] px-4 py-2 rounded-full transition-colors duration-300 focus:outline-none {{ request()->is('cabang*') ? 'text-green-700 font-bold bg-green-100' : 'text-gray-800 hover:text-green-700 font-medium' }}" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                                 <span>Lokasi</span>
-                                <svg class="hs-dropdown-open:rotate-180 size-4 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                <svg class="hs-dropdown-open:rotate-180 size-5 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                             </button>
                             <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 divide-y divide-gray-200 border border-gray-100 z-50" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-lokasi">
                                 <div class="p-1 space-y-0.5">
-                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 hover:text-green-700" href="/cabang/parepare/kost">Kost Parepare</a>
-                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 hover:text-green-700" href="/cabang/parepare/villa">Villa Parepare</a>
-                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 hover:text-green-700" href="/cabang/pangkep/kost">Kost Pangkep</a>
+                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm hover:bg-gray-100 hover:text-green-700 {{ request()->is('cabang/parepare/kost') ? 'text-green-700 font-semibold bg-green-100' : 'text-gray-800' }}" href="/cabang/parepare/kost">Kost Parepare</a>
+                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm hover:bg-gray-100 hover:text-green-700 {{ request()->is('cabang/parepare/villa') ? 'text-green-700 font-semibold bg-green-100' : 'text-gray-800' }}" href="/cabang/parepare/villa">Villa Parepare</a>
+                                    <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm hover:bg-gray-100 hover:text-green-700 {{ request()->is('cabang/pangkep/kost') ? 'text-green-700 font-semibold bg-green-100' : 'text-gray-800' }}" href="/cabang/pangkep/kost">Kost Pangkep</a>
                                 </div>
                             </div>
                         </div>
                     </li>
 
                     <li>
-                        <a href="{{ route('pusat-bantuan')}}" class="inline-flex items-center justify-center min-w-[120px] px-4 py-2 text-gray-800 hover:text-green-700 font-medium rounded-full transition-colors duration-300">Pusat Bantuan</a>
+                        <a href="{{ route('pusat-bantuan')}}" class="inline-flex items-center justify-center min-w-[120px] px-4 py-2 rounded-full transition-colors duration-300 {{ request()->routeIs('pusat-bantuan') ? 'text-green-700 font-bold bg-green-100' : 'text-gray-800 hover:text-green-700 font-medium' }}">Pusat Bantuan</a>
                     </li>
                 </ul>
             </div>

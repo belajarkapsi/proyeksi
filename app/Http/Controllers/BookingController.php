@@ -536,20 +536,21 @@ class BookingController extends Controller
         return view('kamar.riwayat-pesanan', compact('orders'));
     }
 
-    public function cancel($id_pemesanan)
+    public function cancel(Request $request,$id_pemesanan)
     {
+        // Validasi Input Alasan
+        $request->validate([
+            'alasan_batal' => 'required|string|max:500',
+        ]);
+
+        // Cari data pemesanan
         $pemesanan = Pemesanan::where('id_pemesanan', $id_pemesanan)
             ->where('id_penyewa', Auth::user()->id_penyewa)
             ->firstOrFail();
 
-        if ($pemesanan->status !== 'Belum Dibayar') {
-            Alert::error('Gagal', 'Pesanan tidak dapat dibatalkan.');
-            return back();
-        }
-
         try {
-            BookingService::cancelBooking($pemesanan->id_pemesanan);
-            $pemesanan->refresh();
+            $bookingService = new BookingService();
+            $bookingService->cancelBooking($id_pemesanan, $request->input('alasan_batal'));
 
             Alert::success('Dibatalkan', 'Pesanan berhasil dibatalkan.');
         } catch (\Exception $e) {

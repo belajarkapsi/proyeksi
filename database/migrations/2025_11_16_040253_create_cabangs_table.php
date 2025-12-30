@@ -19,7 +19,13 @@ return new class extends Migration
             $table->string('lokasi', 255);
             $table->enum('kategori_cabang', ['kost', 'villa']);
             $table->string('gambar_cabang', 255)->nullable();
+            $table->unsignedBigInteger('id_pemilik');
             $table->timestamps();
+
+            $table->foreign('id_pemilik')
+                  ->references('id_pemilik')
+                  ->on('pemilik')
+                  ->onDelete('cascade');
         });
     }
 

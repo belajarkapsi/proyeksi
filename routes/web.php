@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
 use App\Http\Controllers\Admin\InformasiCabangController;
 use App\Http\Controllers\Admin\LayananVillaController;
-use App\Http\Controllers\Admin\DaftarPemesananController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
@@ -17,9 +16,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Pengelola\DaftarPemesananController as PengelolaDaftarPemesananController;
 use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarController;
+use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewaController;
+use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\Admin\HunianController;
 use App\Http\Controllers\Admin\KeuanganController;
+use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
@@ -119,7 +121,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Route Dashboard Admin
         Route::get('/dashboard', [AdminController::class, 'index'])
                 ->name('admin.dashboard');
-            
+
         Route::get('/admin/chart', function () {
         return [
             'area' => Pemesanan::selectRaw('DATE(waktu_pemesanan) as tanggal, COUNT(*) as total')
@@ -134,7 +136,7 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ->get(),
             ];
         });
-        
+
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -174,10 +176,18 @@ Route::middleware(['auth:pemilik'])->group(function() {
 Route::middleware(['auth:pengelola'])->group(function() {
     Route::prefix('pengelola')->group(function () {
         // Dashboard Pengelola
-        Route::get('/dashboard', [PengelolaController::class, 'index']) ->name('pengelola.dashboard');
+        Route::get('/dashboard', [PengelolaController::class, 'index'])->name('pengelola.dashboard');
+        // Khusus menampilkan chart data
+        Route::get('/dashboard/data', [PengelolaController::class, 'dashboardData'])->name('pengelola.dashboard.data');
 
         // Data Kamar
         Route::resource('kamar', PengelolaDataKamarController::class)->names('pengelola.kamar');
+        // Data Layanan
+        Route::resource('service', DataServiceController::class)
+            ->except(['index', 'show'])->names('pengelola.service');
+
+        // Data Penyewa
+        Route::resource('penyewa', PengelolaDataPenyewaController::class)->names('pengelola.penyewa');
 
         // Daftar Pemesanan
         Route::resource('pemesanan', PengelolaDaftarPemesananController::class)->names('pengelola.pemesanan');

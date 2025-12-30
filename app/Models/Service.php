@@ -15,6 +15,7 @@ class Service extends Model
         'name',
         'description',
         'price',
+        'stock'
     ];
 
     // Relasi ke Cabang
@@ -23,8 +24,9 @@ class Service extends Model
         return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
     }
 
+    // Perbaikan: parameter ke-2 adalah FK di tabel tujuan, parameter ke-3 adalah PK di tabel ini
     public function pemesananService(): HasMany
     {
-        return $this->hasMany(\App\Models\PemesananService::class, 'id', 'id_service');
+        return $this->hasMany(PemesananService::class, 'id_service', 'id');
     }
 }

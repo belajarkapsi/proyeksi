@@ -9,7 +9,7 @@ class PemesananService extends Model
     protected $table = 'pemesanan_service';
 
     protected $fillable = [
-        'id_pemesanan',     // string PK of pemesanan (nullable until assigned)
+        'id_pemesanan',
         'service_id',
         'qty',
         'price_at_booking',

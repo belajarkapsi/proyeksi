@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengelola;
 use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\PemesananItem;
+use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -26,6 +27,8 @@ class DataKamarController extends Controller
      */
     public function index()
     {
+        $id_cabang = $this->cabang()->id_cabang;
+
         $kamars = Kamar::where('id_cabang', $this->cabang()->id_cabang)
             ->orderBy('no_kamar', 'asc')
             ->get()
@@ -46,9 +49,17 @@ class DataKamarController extends Controller
                     }
                 }
                 return $kamar;
-            });
+        });
 
-        return view('pengelola.data-kamar.index', compact('kamars'));
+        // Ambil data Service Villa (untuk cabang villa)
+        $services = Service::where('id_cabang', $id_cabang)
+            ->withSum(['pemesananService as sedang_dipakai' => function($query) {
+                $query->whereHas('pemesanan', function($q) {
+                    $q->whereIn('status', ['Lunas', 'Sheckin']);
+                });
+            }], 'quantity')->get();
+
+        return view('pengelola.data-kamar.index', compact('kamars', 'services'));
     }
 
     /**
