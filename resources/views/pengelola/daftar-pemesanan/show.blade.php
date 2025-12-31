@@ -231,12 +231,12 @@
                 <div class="p-6">
                     <div class="flex items-center gap-4 mb-6">
                         @if($pemesanan->penyewa->foto_profil)
-                             <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
-                                  src="{{ asset('storage/' . $pemesanan->penyewa->foto_profil) }}" alt="Avatar">
+                            <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
+                                src="{{ asset('storage/' . $pemesanan->penyewa->foto_profil) }}" alt="Avatar">
                         @else
-                             <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
-                                  src="https://ui-avatars.com/api/?name={{ urlencode($pemesanan->penyewa->username ?? 'Guest') }}&background=random"
-                                  alt="Avatar">
+                            <img class="h-16 w-16 rounded-full object-cover border-4 border-gray-100 shadow-sm"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($pemesanan->penyewa->username ?? 'Guest') }}&background=random"
+                                alt="Avatar">
                         @endif
 
                         <div>
@@ -262,17 +262,82 @@
                 </div>
             </div>
 
-            {{-- 2. RINGKASAN PEMBAYARAN --}}
+            {{-- 2. RINGKASAN PEMBAYARAN & BUKTI --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100">
-                    <h2 class="font-semibold text-gray-800">Ringkasan Tagihan</h2>
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="font-semibold text-gray-800">
+                        <i class="fas fa-file-invoice-dollar mr-2 text-green-600"></i> Tagihan & Pembayaran
+                    </h2>
                 </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-gray-900 text-lg">Total Bayar</span>
-                        <span class="font-bold text-green-600 text-xl">
+
+                <div class="p-6 space-y-6">
+                    {{-- Total Tagihan --}}
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-4">
+                        <span class="text-gray-600 text-sm font-medium">Total Tagihan</span>
+                        <span class="font-bold text-gray-900 text-xl">
                             Rp {{ number_format($pemesanan->total_harga, 0, ',', '.') }}
                         </span>
+                    </div>
+
+                    {{-- Bagian Bukti Pembayaran (Logika Gabungan) --}}
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase font-bold mb-3">Bukti Pembayaran:</p>
+
+                        @if($pemesanan->pembayaran)
+                            {{-- Jika Sudah Upload --}}
+                            <div class="flex gap-4">
+                                {{-- Thumbnail Gambar --}}
+                                <div class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-pointer group relative shrink-0"
+                                    onclick="lihatBukti('{{ asset('storage/' . $pemesanan->pembayaran->bukti_pembayaran) }}')">
+                                    <img src="{{ asset('storage/' . $pemesanan->pembayaran->bukti_pembayaran) }}"
+                                        class="w-full h-full object-cover transition group-hover:opacity-75">
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                        <i class="fas fa-search text-white drop-shadow-md"></i>
+                                    </div>
+                                </div>
+
+                                {{-- Detail Upload --}}
+                                <div class="text-sm space-y-1 grow">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Tgl Upload:</span>
+                                        <span class="font-medium text-gray-800">{{ \Carbon\Carbon::parse($pemesanan->pembayaran->waktu_pembayaran)->format('d/m/Y') }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Rekening:</span>
+                                        <span class="font-medium text-gray-800 truncate max-w-[120px]" title="{{ $pemesanan->pembayaran->kode_transaksi }}">{{ $pemesanan->pembayaran->kode_transaksi }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Nominal:</span>
+                                        <span class="font-bold text-green-600">Rp {{ number_format($pemesanan->pembayaran->total_pembayaran, 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Status Kecil --}}
+                            <div class="mt-3 text-right">
+                                @if($pemesanan->status == 'Belum Dibayar')
+                                    <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
+                                        <i class="fas fa-clock mr-1"></i> Perlu Verifikasi
+                                    </span>
+                                @else
+                                    <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
+                                        <i class="fas fa-check mr-1"></i> Terverifikasi
+                                    </span>
+                                @endif
+                            </div>
+
+                        @elseif($pemesanan->status == 'Belum Dibayar')
+                            {{-- Jika Belum Upload --}}
+                            <div class="bg-gray-50 border border-gray-200 border-dashed rounded-lg p-4 text-center">
+                                <i class="fas fa-image text-gray-300 text-2xl mb-2"></i>
+                                <p class="text-xs text-gray-500">Belum ada bukti pembayaran diupload.</p>
+                            </div>
+                        @else
+                            {{-- Jika Lunas/Selesai tapi tanpa bukti (misal manual) --}}
+                            <div class="bg-green-50 border border-green-100 rounded-lg p-3 text-center">
+                                <p class="text-xs text-green-700 font-medium">Pembayaran Manual / Cash</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -289,12 +354,22 @@
                             <i class="fas fa-times-circle mr-1"></i> Pesanan Dibatalkan
                         </p>
                     </div>
+                @elseif($pemesanan->status === 'Belum Dibayar' && $pemesanan->pembayaran)
+                    <div class="px-6 py-3 border-t border-gray-100 bg-gray-50">
+                        <form action="{{ route('pengelola.pemesanan.verifikasi', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('Nominal sesuai? Verifikasi sekarang?')">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none transition-all">
+                                <i class="fas fa-check mr-2"></i> Verifikasi Pembayaran Ini
+                            </button>
+                        </form>
+                    </div>
                 @endif
             </div>
 
             {{-- 3. HAPUS PESANAN (Hanya Admin/Pengelola Tertentu yg bisa hapus permanen) --}}
             <div class="mt-8 text-center">
-                 <form action="{{ route('pengelola.pemesanan.destroy', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('PERINGATAN: Menghapus data ini bersifat permanen. Lanjutkan?');">
+                <form action="{{ route('pengelola.pemesanan.destroy', $pemesanan->id_pemesanan) }}" method="POST" onsubmit="return confirm('PERINGATAN: Menghapus data ini bersifat permanen. Lanjutkan?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-medium hover:underline transition-all">
@@ -363,6 +438,19 @@
 
     function closeModal(modalID) {
         document.getElementById(modalID).classList.add('hidden');
+    }
+
+    function lihatBukti(url) {
+        Swal.fire({
+            imageUrl: url,
+            imageAlt: 'Bukti Pembayaran',
+            showConfirmButton: false, // Hanya close button
+            showCloseButton: true,
+            width: 'auto',
+            padding: '1em',
+            background: '#fff',
+            backdrop: `rgba(0,0,0,0.8)` // Background gelap
+        });
     }
 </script>
 

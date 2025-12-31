@@ -30,20 +30,25 @@ class DaftarPemesananController extends Controller
         $query = Pemesanan::query()
             ->where('id_cabang', $idCabang)
             ->orderBy('id_pemesanan', 'asc')
-            ->with(['penyewa', 'items.kamar', 'service.service', 'cabang']);
+            ->with(['penyewa', 'items.kamar', 'service.service', 'cabang', 'pembayaran']);
 
         if ($request->has('q') && $request->q != '') {
             $keyword = $request->q;
             $query->where(function($q) use ($keyword) {
                 $q->where('id_pemesanan', 'like', "%{$keyword}%")
                     ->orWhereHas('penyewa', function($subQ) use ($keyword) {
-                        $subQ->where('username', 'like', "%{$keyword}%");
+                        $subQ->where('username', 'like', "%{$keyword}%")
+                            ->orWhere('nama_lengkap', 'like', "%{$keyword}%");
                 });
             });
         }
 
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            if($request->status == 'perlu_verifikasi') {
+                $query->where('status', 'Belum Dibayar')->whereHas('pembayaran');
+            } else{
+                $query->where('status', $request->status);
+            }
         }
 
         $pemesanan = $query->latest()->paginate(10);
@@ -239,11 +244,35 @@ class DaftarPemesananController extends Controller
     public function destroy($id)
     {
         $pengelola = Auth::user();
+
         $pemesanan = Pemesanan::where('id_pemesanan', $id)
             ->where('id_cabang', $pengelola->cabang->id_cabang)
+            ->with(['items', 'service'])
             ->firstOrFail();
-        $pemesanan->delete();
-        return redirect()->back()->with('success', 'Pemesanan berhasil dihapus.');
+
+        DB::transaction(function () use ($pemesanan) {
+            // Kembalikan status kamar
+            if($pemesanan->status == 'Lunas' || $pemesanan->status == 'Belum Dibayar') {
+                foreach ($pemesanan->items as $item) {
+                    $kamar = Kamar::find($item->id_kamar);
+                    if($kamar) {
+                        $kamar->update(['status' => 'Tersedia']);
+                    }
+                }
+            }
+
+            // Kembalikan Stok Service
+            foreach ($pemesanan->service as $ps) {
+                $svc = Service::find($ps->id_service);
+                if($svc) $svc->increment('stock', $ps->quantity);
+            }
+
+            // Hapus data
+            $pemesanan->delete();
+        });
+
+        Alert::success('Berhasil', 'Pesanan berhasil dihapus.');
+        return redirect()->back();
     }
 
     public function verifikasi($id)
@@ -257,7 +286,10 @@ class DaftarPemesananController extends Controller
                 ->firstOrFail();
 
             // 1. Update Status Pemesanan ini menjadi Lunas
-            $pemesanan->update(['status' => 'Lunas']);
+            $pemesanan->update([
+                'status'     => 'Lunas',
+                'expired_at' => null
+            ]);
 
             // 2. Ambil semua ID Kamar dalam pemesanan ini
             $kamarIds = $pemesanan->items->pluck('id_kamar')->toArray();
@@ -279,7 +311,7 @@ class DaftarPemesananController extends Controller
                 ]);
         });
 
-        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi dan pesanan bentrok lainnya otomatis dibatalkan.');
+        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi.');
         return redirect()->back();
     }
 
@@ -311,6 +343,7 @@ class DaftarPemesananController extends Controller
             ->where('id_cabang', $pengelola->cabang->id_cabang)
             ->with(['items', 'service'])->firstOrFail();
 
+        // Validasi
         if($pemesanan->status == 'Lunas' && $pemesanan->expired_at != null) {
             return back()->with('error', 'Pesanan ini sudah diselesaikan sebelumnya.');
         }
@@ -330,7 +363,7 @@ class DaftarPemesananController extends Controller
             if ($pemesanan->service->isNotEmpty()) {
                 foreach ($pemesanan->service as $ps) {
                     // Cari service master
-                    $masterService = Service::find($ps->id_service); // Sesuaikan nama kolom (id_service)
+                    $masterService = Service::find($ps->id_service);
                     if ($masterService) {
                         // Kembalikan stok
                         $masterService->increment('stock', $ps->quantity);
@@ -338,14 +371,18 @@ class DaftarPemesananController extends Controller
                 }
             }
 
-            // C. TANDAI SELESAI TANPA UBAH STATUS
+            // C. TANDAI SELESAI
             // Kita isi expired_at dengan waktu sekarang sebagai penanda "Selesai"
             $pemesanan->update([
                 'expired_at' => now()
             ]);
         });
 
-        Alert::success('Check-out Berhasil', 'Status kamar berubah menjadi tersedia');
+        $msg = $pemesanan->items->isNotEmpty()
+        ? 'Check-out Berhasil. Kamar kembali tersedia.'
+        : 'Layanan Selesai. Stok layanan telah dikembalikan.';
+
+        Alert::success('Selesai', $msg);
         return back();
     }
 }

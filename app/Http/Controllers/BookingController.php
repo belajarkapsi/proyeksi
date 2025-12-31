@@ -7,14 +7,18 @@ use App\Models\Pemesanan;
 use App\Models\PemesananItem;
 use App\Models\Service;
 use App\Models\Cabang;
+use App\Models\Pembayaran;
 use App\Services\BookingService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class BookingController extends Controller
 {
@@ -468,7 +472,7 @@ class BookingController extends Controller
 
                 return $pemesanan;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
             return back()->withErrors(['booking' => $e->getMessage()]);
         }
@@ -553,10 +557,54 @@ class BookingController extends Controller
             $bookingService->cancelBooking($id_pemesanan, $request->input('alasan_batal'));
 
             Alert::success('Dibatalkan', 'Pesanan berhasil dibatalkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Alert::error('Gagal', 'Terjadi kesalahan.');
         }
 
         return back();
+    }
+
+    public function uploadBukti(Request $request, $id_pemesanan)
+    {
+        // Validasi bukti bayar
+        $request->validate([
+            'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:1024'
+        ]);
+
+        // Cari pesanan
+        $pemesanan = Pemesanan::where('id_pemesanan', $id_pemesanan)
+            ->where('id_penyewa', Auth::user()->id_penyewa ?? Auth::id())->firstOrFail();
+
+        try {
+            DB::beginTransaction();
+
+            // Upload bukti_bayar ke folder
+            if($request->hasFile('bukti_bayar')) {
+                $path = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+            }
+
+            // Simpan ke tabel
+            Pembayaran::updateOrCreate(
+                ['id_pemesanan' => $pemesanan->id_pemesanan],
+                [
+                    'id_penyewa'        => $pemesanan->id_penyewa,
+                    'total_pembayaran'  => $pemesanan->total_harga,
+                    'kode_transaksi'    => 'BCA - 1234567890',
+                    'waktu_pembayaran'  => now(),
+                    'bukti_pembayaran'  => $path
+                ]
+            );
+            DB::commit();
+
+            Alert::success('Berhasil', 'Bukti pembayaran berhasil diupload! Mohon tunggu verifikasi pengelola.');
+            return back();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            if(isset($path)) Storage::disk('public')->delete($path);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat upload: ' . $e->getMessage());
+            return back();
+        }
     }
 }

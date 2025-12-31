@@ -58,8 +58,9 @@
 
             {{-- Status Filter --}}
             <div class="w-full md:w-48">
-                <select name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
+                <select name="status" class="block w-full text-center py-2 border border-gray-300 rounded-md bg-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 sm:text-sm">
                     <option value="">— Semua Status —</option>
+                    <option value="perlu_verifikasi" {{ request('status') == 'perlu_verifikasi' ? 'selected' : '' }}>Perlu Verifikasi</option>
                     <option value="Belum Dibayar" {{ request('status') == 'Belum Dibayar' ? 'selected' : '' }}>Belum Dibayar</option>
                     <option value="Lunas" {{ request('status') == 'Lunas' ? 'selected' : '' }}>Lunas</option>
                     <option value="Dibatalkan" {{ request('status') == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
@@ -174,10 +175,10 @@
                         @endif
 
                         {{-- Tombol Checkout / Selesai --}}
-                        @if($p->status == 'Lunas' && $p->items->first() && $p->items->first()->kamar->status == 'Dihuni' && $p->expired_at == null)
+                        @if($p->status == 'Lunas' &&  $p->expired_at == null)
                             <form action="{{ route('pengelola.pemesanan.checkout', $p->id_pemesanan) }}" method="POST" class="flex-1 form-confirm"
                                 data-title="Selesaikan Pesanan?"
-                                data-text="Kamar akan dikosongkan dan status berubah menjadi Tersedia."
+                                data-text="Pesanan akan ditandai selesai. Status kamar akan menjadi Tersedia dan stok layanan akan dikembalikan."
                                 data-icon="warning"
                                 data-confirm-color="#2563eb">
                                 @csrf
@@ -186,12 +187,13 @@
                                     @if($p->items->count() > 0)
                                         Check-out
                                     @else
-                                        Selesai
+                                        Selesaikan
                                     @endif
                                 </button>
                             </form>
                         @endif
 
+                        {{-- Tanda selesai --}}
                         @if($p->status == 'Lunas' && $p->expired_at != null)
                             <button disabled class="flex-1 text-center px-3 py-2 border border-gray-200 bg-gray-100 text-gray-500 text-sm font-medium rounded-md cursor-not-allowed">
                                 <i class="fas fa-check-circle mr-1 text-green-500"></i> Selesai
@@ -203,7 +205,7 @@
                             data-title="Hapus Pesanan?"
                             data-text="Data pemesanan akan dihapus secara permanen!"
                             data-icon="error"
-                            data-confirm-color="#dc2626">
+                            data-confirm-color="#41bf24">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-flex justify-center items-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" title="Hapus">

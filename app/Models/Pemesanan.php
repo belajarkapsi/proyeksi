@@ -51,6 +51,11 @@ class Pemesanan extends Model
         return $this->hasMany(PemesananService::class, 'id_pemesanan', 'id_pemesanan');
     }
 
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'id_pemesanan', 'id_pemesanan');
+    }
+
     /**
      * Daftar status yang dianggap "aktif" dan memblokir ketersediaan.
      * Disesuaikan dengan nilai enum di migration: 'Belum Dibayar', 'Lunas', 'Dibatalkan'

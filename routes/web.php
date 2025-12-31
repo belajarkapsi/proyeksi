@@ -28,11 +28,6 @@ use App\Models\Pemesanan;
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
-
-// routes/web.php
-Route::view('/pusat-bantuan', 'pusat-bantuan')
-->name('pusat-bantuan');
-
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -59,6 +54,10 @@ Route::middleware('validasi.cabang')->group(function() {
 });
 
 
+// Route pusat bantuan
+Route::view('/pusat-bantuan', 'pusat-bantuan')
+->name('pusat-bantuan');
+
 // Route untuk Login / user belum login
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');
@@ -82,7 +81,7 @@ Route::post('logout', [LoginController::class, 'destroy'])
     ->name('logout');
 
 
-// Route Booking
+// Route Booking (untuk penyewa)
 Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
     // Halaman pilih kamar + checkout (GET dari card / POST dari form)
     Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])
@@ -108,6 +107,10 @@ Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
         // Route Batal Pesanan (dipanggil dari tombol "Batalkan Pesanan")
         Route::post('/booking/cancel/{id_pemesanan}', [BookingController::class, 'cancel'])
             ->name('booking.batal');
+
+        // Route upload bukti pembayaran
+        Route::post('/pesanan/pembayaran/{id_pemesanan}', [BookingController::class, 'uploadBukti'])
+            ->name('booking.upload_bukti');
     });
 });
 

@@ -59,49 +59,109 @@
         <div class="md:w-7/12 p-8 md:p-12 bg-white flex flex-col justify-center">
 
             @if($pemesanan->status == 'Belum Dibayar')
-                {{-- ----- JIKA BELUM DIBAYAR ----- --}}
-                <div class="mb-8">
-                    <h3 class="text-gray-800 font-bold text-xl mb-4">Metode Transfer Bank</h3>
-                    <div class="flex items-start gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-green-200 transition-colors">
-                        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200">
-                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+
+                @if($pemesanan->pembayaran)
+                    {{-- A. JIKA SUDAH UPLOAD BUKTI --}}
+                    <div class="text-center py-6">
+                        <div class="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                            <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm text-gray-500 font-medium">Bank Central Asia (BCA)</p>
-                            <div class="flex items-center gap-3 mt-1">
-                                <p class="text-2xl font-bold text-gray-900 tracking-wide" id="rek-number">123 456 7890</p>
-                                <button onclick="copyToClipboard('1234567890')" class="text-green-600 hover:text-green-800 text-sm font-bold bg-green-50 px-3 py-1 rounded-lg transition-colors">
-                                    Salin
-                                </button>
+                        <h3 class="text-xl font-bold text-gray-900">Bukti Pembayaran Terkirim</h3>
+                        <p class="text-gray-500 text-sm mt-2 mb-6">
+                            Terima kasih! Bukti pembayaran Anda sedang diverifikasi oleh pengelola. <br>
+                            Status pesanan akan berubah menjadi <b>LUNAS</b> setelah diverifikasi.
+                        </p>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-left mb-4">
+                            <p class="text-xs text-gray-400 uppercase font-bold mb-2">File Terlampir:</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden shrink-0 cursor-pointer hover:opacity-80 transition"
+                                    onclick="lihatBukti('{{ asset('storage/' . $pemesanan->pembayaran->bukti_pembayaran) }}')"
+                                    title="Klik untuk memperbesar">
+                                    <img src="{{ asset('storage/' . $pemesanan->pembayaran->bukti_pembayaran) }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="text-sm">
+                                    <p class="font-medium text-gray-700">Bukti Transfer</p>
+                                    <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($pemesanan->pembayaran->waktu_pembayaran)->format('d M Y H:i') }}</p>
+                                </div>
                             </div>
-                            <p class="text-sm text-gray-400 mt-1">a.n Pondok Siti Hajar</p>
+                        </div>
+
+                        <a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20sudah%20upload%20bukti%20pembayaran%20untuk%20Pesanan%20%23{{ $pemesanan->id_pemesanan }}.%20Mohon%20segera%20diverifikasi.%20Terima%20kasih." target="_blank"
+                            class="flex items-center justify-center gap-2 w-full py-3 px-6 bg-green-100 text-green-700 font-bold rounded-xl hover:bg-green-200 transition mb-4 border border-green-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                Hubungi Admin (WhatsApp)
+                        </a>
+
+                        {{-- Opsi Upload Ulang (Revisi) --}}
+                        <button onclick="document.getElementById('upload-section').classList.remove('hidden'); this.classList.add('hidden');"
+                            class="text-sm text-blue-600 hover:underline">
+                            Ada kesalahan? Upload ulang bukti
+                        </button>
+                    </div>
+                @endif
+
+                {{-- B. FORM UPLOAD (Muncul jika belum upload atau klik upload ulang) --}}
+                <div id="upload-section" class="{{ $pemesanan->pembayaran ? 'hidden' : '' }}">
+                    <div class="mb-8">
+                        <h3 class="text-gray-800 font-bold text-xl mb-4">Metode Transfer Bank</h3>
+                        <div class="flex items-start gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-green-200 transition-colors">
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200">
+                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-500 font-medium">Bank Central Asia (BCA)</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <p class="text-2xl font-bold text-gray-900 tracking-wide" id="rek-number">123 456 7890</p>
+                                    <button onclick="copyToClipboard('1234567890')" class="text-green-600 hover:text-green-800 text-sm font-bold bg-green-50 px-3 py-1 rounded-lg transition-colors">
+                                        Salin
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-1">a.n Pondok Siti Hajar</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="space-y-4">
-                    <div class="p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-800 text-sm flex gap-3">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <p>Pesanan akan otomatis hangus jika pembayaran tidak dilakukan sebelum waktu habis.</p>
+                    <div class="border-t border-gray-100 pt-6">
+                        <h3 class="text-gray-800 font-bold text-lg mb-2">Upload Bukti Pembayaran</h3>
+                        <p class="text-sm text-gray-500 mb-4">Silakan transfer sesuai nominal lalu upload struk/bukti transfer di bawah ini.</p>
+
+                        <form action="{{ route('booking.upload_bukti', $pemesanan->id_pemesanan) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            @csrf
+
+                            {{-- Input File Custom --}}
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 hover:border-green-400 transition cursor-pointer group">
+                                <input type="file" name="bukti_bayar" id="bukti_bayar" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(event)" required>
+
+                                <div id="upload-placeholder">
+                                    <svg class="mx-auto h-10 w-10 text-gray-400 group-hover:text-green-500 transition" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-600 group-hover:text-green-600">Klik untuk upload gambar</p>
+                                    <p class="mt-1 text-xs text-gray-400">PNG, JPG, JPEG (Max 2MB)</p>
+                                </div>
+
+                                {{-- Image Preview --}}
+                                <div id="image-preview-container" class="hidden mt-2">
+                                    <img id="image-preview" src="#" alt="Preview" class="mx-auto max-h-48 rounded-lg shadow-sm">
+                                    <p class="text-xs text-green-600 mt-2 font-bold">Ganti Gambar?</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full py-3 px-6 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-md hover:-translate-y-1 transform flex justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                Kirim Bukti Pembayaran
+                            </button>
+                        </form>
                     </div>
 
-                    <p class="text-center text-sm text-gray-500 pt-4">Sudah transfer? Konfirmasi ke admin:</p>
-                    <a href="https://wa.me/628123456789?text=Halo%20admin,%20saya%20sudah%20bayar%20pesanan%20{{ $pemesanan->id_pemesanan }}" target="_blank"
-                        class="flex items-center justify-center gap-2 w-full py-4 px-6 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-lg hover:-translate-y-1 transform">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                        Konfirmasi via WhatsApp
-                    </a>
-
-                    <div class="pt-4 border-t border-gray-100 mt-4">
-                        {{-- FORM PEMBATALAN DENGAN INPUT HIDDEN --}}
+                    {{-- Tombol Batal --}}
+                    <div class="mt-6 pt-4 border-t border-gray-100 text-center">
                         <form id="form-batal" action="{{ route('booking.batal', $pemesanan->id_pemesanan) }}" method="POST">
                             @csrf
-                            {{-- Input Hidden untuk menyimpan alasan dari SweetAlert --}}
                             <input type="hidden" name="alasan_batal" id="input_alasan_batal">
-
-                            <button type="button" onclick="konfirmasiBatal()"
-                                class="w-full py-3 px-6 text-red-600 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-xl transition border border-red-100 hover:border-red-200">
-                                Batalkan Pesanan
+                            <button type="button" onclick="konfirmasiBatal()" class="text-red-500 text-sm font-medium hover:text-red-700 hover:underline">
+                                Batalkan Pesanan Ini
                             </button>
                         </form>
                     </div>
@@ -139,6 +199,19 @@
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Pembayaran Berhasil!</h2>
                     <p class="text-gray-500 mb-6">Terima kasih, pesanan Anda telah dikonfirmasi.</p>
+
+                    {{-- Lihat Bukti Bayar --}}
+                    @if($pemesanan->pembayaran)
+                        <div class="mb-6">
+                            <button type="button"
+                                onclick="lihatBukti('{{ asset('storage/' . $pemesanan->pembayaran->bukti_pembayaran) }}')"
+                                class="text-sm text-green-600 font-medium hover:text-green-800 hover:underline flex items-center justify-center gap-2 mx-auto transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                Lihat Bukti Pembayaran
+                            </button>
+                        </div>
+                    @endif
+
                     <a href="{{ route('dashboard') }}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition">Kembali ke Dashboard</a>
                 </div>
             @endif
@@ -204,6 +277,24 @@
         });
     }
 
+    function lihatBukti(urlGambar) {
+        Swal.fire({
+            title: 'Bukti Pembayaran',
+            imageUrl: urlGambar,
+            imageAlt: 'Bukti Pembayaran',
+            imageWidth: '100%',
+            imageHeight: 'auto',
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: 600,
+            padding: '1em',
+            background: '#fff',
+            backdrop: `
+                rgba(0,0,0,0.8)
+            `
+        });
+    }
+
     @if($pemesanan->status == 'Belum Dibayar' && $pemesanan->expired_at)
         const expiredTimestamp = {{ \Carbon\Carbon::parse($pemesanan->expired_at)->timestamp * 1000 }};
 
@@ -245,6 +336,19 @@
                 .catch(error => { console.debug('checkStatus fetch error:', error); });
         }
         setInterval(checkStatus, 5000);
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('image-preview');
+                output.src = reader.result;
+
+                // Tampilkan container preview, sembunyikan placeholder
+                document.getElementById('image-preview-container').classList.remove('hidden');
+                document.getElementById('upload-placeholder').classList.add('hidden');
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
     @endif
 </script>
 @endpush
