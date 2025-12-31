@@ -497,7 +497,7 @@ class BookingController extends Controller
             ->where('id_pemesanan', $id_pemesanan)
             ->firstOrFail();
 
-        if (now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
+        if ($pemesanan->expired_at && now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
             $pemesanan->update(['status' => 'Dibatalkan']);
             $pemesanan->refresh();
         }
@@ -516,7 +516,7 @@ class BookingController extends Controller
             return response()->json(['status' => '404']);
         }
 
-        if ($pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
+        if ($pemesanan->expired_at && $pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
             $pemesanan->update(['status' => 'Dibatalkan']);
             $pemesanan->refresh();
         }

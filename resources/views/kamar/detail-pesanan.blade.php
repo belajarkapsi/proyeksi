@@ -204,7 +204,7 @@
         });
     }
 
-    @if($pemesanan->status == 'Belum Dibayar')
+    @if($pemesanan->status == 'Belum Dibayar' && $pemesanan->expired_at)
         const expiredTimestamp = {{ \Carbon\Carbon::parse($pemesanan->expired_at)->timestamp * 1000 }};
 
         const countdownFunction = setInterval(function() {
