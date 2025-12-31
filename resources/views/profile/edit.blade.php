@@ -117,7 +117,7 @@
                         <label for="asal" class="block text-sm font-bold text-gray-700 mb-2">Asal Kota/Daerah<span class="text-red-500">*</span></label>
                         <div class="relative">
                             <select name="asal" id="asal" class="py-3 px-4 pe-9 block w-full bg-gray-200 border-transparent rounded-lg text-sm focus:border-green-500 focus:ring-green-500 focus:bg-white transition-all" required>
-                                <option value="" disabled {{ !$penyewa->kota_asal ? 'selected' : '' }}>Pilih Asal Kotamu</option>
+                                <option value="" disabled {{ !$penyewa->asal ? 'selected' : '' }}>Pilih Asal Kotamu</option>
                                 @php
                                     $kotas = ['Jakarta', 'Makassar', 'Surabaya', 'Parepare', 'Pangkep', 'Sidrap', 'Pinrang', 'Barru', 'Maros'];
                                 @endphp

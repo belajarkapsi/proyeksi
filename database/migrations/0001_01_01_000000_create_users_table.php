@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('penyewa', function (Blueprint $table) {
             $table->id('id_penyewa');
-            $table->string('nama_lengkap', 255);
-            $table->string('no_telp', 20);
+            $table->text('nama_lengkap');
+            $table->text('no_telp');
             $table->string('email')->unique();
             $table->string('username', 255);
             $table->string('password');
-            $table->date('tanggal_lahir')->nullable();
+            $table->text('tanggal_lahir')->nullable();
             $table->integer('usia')->nullable();
-            $table->string('asal', 100)->nullable();
+            $table->text('asal')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
-            $table->string('alamat', 255)->nullable();
+            $table->text('alamat')->nullable();
             $table->string('foto_profil', 255)->nullable();
             $table->char('role', 10)->default('penyewa');
-            
+
             $table->rememberToken();
             $table->timestamps();
         });
