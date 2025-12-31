@@ -1,5 +1,4 @@
 @extends('layout.pengelola')
-
 @section('title', 'Daftar Pemesanan')
 
 @section('content')
@@ -9,8 +8,7 @@
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="{{ route('pengelola.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">
-                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                    </svg>
+                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
                     Dashboard
                 </a>
             </li>
@@ -89,7 +87,7 @@
                 <div class="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200 flex justify-between items-start">
                     <div>
                         <h3 class="text-lg leading-6 font-medium text-gray-900">
-                            {{ $p->penyewa->username ?? 'Guest' }}
+                            {{ $p->penyewa->nama_lengkap ?? $p->penyewa->username ?? 'Guest' }}
                         </h3>
                         <p class="mt-1 max-w-2xl text-sm text-gray-500">
                             ID: #{{ $p->id_pemesanan }}
@@ -138,7 +136,7 @@
                             <ul class="space-y-1">
                                 @foreach($p->service as $svc)
                                     <li class="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-1 last:border-0">
-                                        <span>{{ $svc->service->name ?? 'Layanan ?' }}</span>
+                                        <span>{{ $svc->name ?? 'Layanan ?' }}</span>
                                         <span class="font-medium">Rp {{ number_format($svc->price ?? 0, 0, ',', '.') }}</span>
                                     </li>
                                 @endforeach
@@ -155,14 +153,18 @@
                     </div>
 
                     <div class="flex space-x-2">
-                        {{-- Tombol View --}}
+                        {{-- Tombol Detail --}}
                         <a href="{{ route('pengelola.pemesanan.show', $p->id_pemesanan) }}" class="flex-1 text-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                             Detail
                         </a>
 
-                        {{-- Tombol Verifikasi (Hanya jika belum bayar) --}}
+                        {{-- Tombol Verifikasi --}}
                         @if($p->status === 'Belum Dibayar')
-                            <form action="{{ route('pengelola.pemesanan.verifikasi', $p->id_pemesanan) }}" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin memverifikasi pembayaran ini menjadi LUNAS?');">
+                            <form action="{{ route('pengelola.pemesanan.verifikasi', $p->id_pemesanan) }}" method="POST" class="flex-1 form-confirm"
+                                data-title="Verifikasi Pembayaran?"
+                                data-text="Apakah Anda yakin ingin mengubah status menjadi LUNAS?"
+                                data-icon="question"
+                                data-confirm-color="#059669">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="w-full inline-flex justify-center items-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -171,12 +173,41 @@
                             </form>
                         @endif
 
+                        {{-- Tombol Checkout / Selesai --}}
+                        @if($p->status == 'Lunas' && $p->items->first() && $p->items->first()->kamar->status == 'Dihuni' && $p->expired_at == null)
+                            <form action="{{ route('pengelola.pemesanan.checkout', $p->id_pemesanan) }}" method="POST" class="flex-1 form-confirm"
+                                data-title="Selesaikan Pesanan?"
+                                data-text="Kamar akan dikosongkan dan status berubah menjadi Tersedia."
+                                data-icon="warning"
+                                data-confirm-color="#2563eb">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-full text-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                                    @if($p->items->count() > 0)
+                                        Check-out
+                                    @else
+                                        Selesai
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($p->status == 'Lunas' && $p->expired_at != null)
+                            <button disabled class="flex-1 text-center px-3 py-2 border border-gray-200 bg-gray-100 text-gray-500 text-sm font-medium rounded-md cursor-not-allowed">
+                                <i class="fas fa-check-circle mr-1 text-green-500"></i> Selesai
+                            </button>
+                        @endif
+
                         {{-- Tombol Hapus --}}
-                        <form action="{{ route('pengelola.pemesanan.destroy', $p->id_pemesanan) }}" method="POST" class="flex-none" onsubmit="return confirm('Hapus data pemesanan ini secara permanen?');">
+                        <form action="{{ route('pengelola.pemesanan.destroy', $p->id_pemesanan) }}" method="POST" class="flex-none form-confirm"
+                            data-title="Hapus Pesanan?"
+                            data-text="Data pemesanan akan dihapus secara permanen!"
+                            data-icon="error"
+                            data-confirm-color="#dc2626">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-flex justify-center items-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" title="Hapus">
-                                <i class="fas fa-trash"></i>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </form>
                     </div>
@@ -207,4 +238,40 @@
         {{ $pemesanan->withQueryString()->links() }}
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Ambil semua form dengan class 'form-confirm'
+        const forms = document.querySelectorAll('.form-confirm');
+
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Mencegah submit form langsung
+
+                // Ambil data dari atribut form
+                const title = this.getAttribute('data-title') || 'Konfirmasi';
+                const text = this.getAttribute('data-text') || 'Apakah Anda yakin?';
+                const icon = this.getAttribute('data-icon') || 'warning';
+                const confirmColor = this.getAttribute('data-confirm-color') || '#3085d6';
+
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: icon,
+                    showCancelButton: true,
+                    confirmButtonColor: confirmColor,
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Lanjutkan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit(); // Submit form secara manual jika user klik Ya
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush
 @endsection

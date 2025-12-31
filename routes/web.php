@@ -198,6 +198,9 @@ Route::middleware(['auth:pengelola'])->group(function() {
         // Batalkan Pemesanan
         Route::patch('pemesanan/{id}/batalkan', [PengelolaDaftarPemesananController::class, 'batalkan'])
             ->name('pengelola.pemesanan.batalkan');
+        // Check-out Pemesanan
+        Route::patch('pemesanan/{id}/checkout', [PengelolaDaftarPemesananController::class, 'checkout'])
+            ->name('pengelola.pemesanan.checkout');
         // Check Penyewa
         Route::get('/check-penyewa', [DaftarPemesananController::class, 'checkPenyewa']);
 

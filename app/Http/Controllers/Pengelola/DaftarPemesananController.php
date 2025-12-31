@@ -29,6 +29,7 @@ class DaftarPemesananController extends Controller
         $idCabang = $pengelola->cabang->id_cabang;
         $query = Pemesanan::query()
             ->where('id_cabang', $idCabang)
+            ->orderBy('id_pemesanan', 'asc')
             ->with(['penyewa', 'items.kamar', 'service.service', 'cabang']);
 
         if ($request->has('q') && $request->q != '') {
@@ -299,5 +300,52 @@ class DaftarPemesananController extends Controller
 
         Alert::error('Dibatalkan', 'Pemesanan berhasil dibatalkan.');
         return redirect()->back();
+    }
+
+    public function checkout($id_pemesanan)
+    {
+        $pengelola = Auth::user();
+
+        // Temukan pemesanan
+        $pemesanan = Pemesanan::where('id_pemesanan', $id_pemesanan)
+            ->where('id_cabang', $pengelola->cabang->id_cabang)
+            ->with(['items', 'service'])->firstOrFail();
+
+        if($pemesanan->status == 'Lunas' && $pemesanan->expired_at != null) {
+            return back()->with('error', 'Pesanan ini sudah diselesaikan sebelumnya.');
+        }
+
+        DB::transaction(function () use ($pemesanan) {
+            // A. KEMBALIKAN STATUS KAMAR
+            if ($pemesanan->items->isNotEmpty()) {
+                foreach ($pemesanan->items as $item) {
+                    $kamar = Kamar::find($item->id_kamar);
+                    if ($kamar) {
+                        $kamar->update(['status' => 'Tersedia']);
+                    }
+                }
+            }
+
+            // B. KEMBALIKAN STOK SERVICE
+            if ($pemesanan->service->isNotEmpty()) {
+                foreach ($pemesanan->service as $ps) {
+                    // Cari service master
+                    $masterService = Service::find($ps->id_service); // Sesuaikan nama kolom (id_service)
+                    if ($masterService) {
+                        // Kembalikan stok
+                        $masterService->increment('stock', $ps->quantity);
+                    }
+                }
+            }
+
+            // C. TANDAI SELESAI TANPA UBAH STATUS
+            // Kita isi expired_at dengan waktu sekarang sebagai penanda "Selesai"
+            $pemesanan->update([
+                'expired_at' => now()
+            ]);
+        });
+
+        Alert::success('Check-out Berhasil', 'Status kamar berubah menjadi tersedia');
+        return back();
     }
 }

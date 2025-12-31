@@ -181,18 +181,14 @@
                             </div>
 
                             {{-- Actions Buttons --}}
-                            <div class="flex items-center gap-2 mt-auto pt-3 border-t border-gray-200">
+                            {{-- <div class="flex items-center gap-2 mt-auto pt-3 border-t border-gray-200">
                                 <a href="#" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-gray-700 bg-white rounded border border-gray-300 hover:bg-gray-50 hover:text-green-600 transition">
                                     <i class="far fa-eye"></i>
                                 </a>
                                 <a href="{{ route('pengelola.kamar.edit', $kamar->id_kamar) }}" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-amber-600 bg-white rounded border border-amber-200 hover:bg-amber-50 transition">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                {{-- Tombol Hapus Disabled untuk Kamar Dihuni (Opsional) --}}
-                                <button type="button" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-gray-400 bg-gray-100 rounded border border-gray-200 cursor-not-allowed" title="Tidak bisa menghapus kamar yang sedang dihuni">
-                                    <i class="far fa-trash-alt"></i>
-                                </button>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 @endforeach
