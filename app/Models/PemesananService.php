@@ -20,7 +20,7 @@ class PemesananService extends Model
     // Jika kamu ingin helper relation:
     public function service()
     {
-        return $this->belongsTo(\App\Models\Service::class, 'service_id', 'id_pemesanan');
+        return $this->belongsTo(\App\Models\Service::class, 'service_id', 'id');
     }
 
     public function pemesanan()
