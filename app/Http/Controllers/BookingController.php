@@ -323,9 +323,22 @@ class BookingController extends Controller
 
         $validated = $request->validate($rules);
 
-        $kamarIds = isset($validated['kamar_ids'])
-            ? array_values(array_unique($validated['kamar_ids']))
-            : [];
+        // --- Tambahkan Mulai Sini ---
+        $kamarIds = isset($validated['kamar_ids']) ? array_values(array_unique($validated['kamar_ids'])) : [];
+
+        if (!empty($kamarIds)) {
+                // --- START: Validasi Global (Satu user hanya boleh punya satu pesanan menggantung) ---
+            $existingBooking = Pemesanan::where('id_penyewa', Auth::user()->id_penyewa)
+                ->where('status', 'Belum Dibayar')
+                ->exists();
+
+            if ($existingBooking) {
+                Alert::warning('Peringatan', 'Anda masih memiliki pesanan yang belum dibayar. Silakan selesaikan pembayaran sebelumnya atau batalkan pesanan tersebut sebelum memesan kembali.');
+                return back();
+            }
+            // --- END: Validasi Global ---
+        }
+        // --- Sampai Sini ---
 
         $kamars = collect();
 

@@ -23,7 +23,6 @@
                 @yield('content')
             </div>
         </div>
-        <x-footer></x-footer>
     </main>
 
     @include('sweetalert::alert')
