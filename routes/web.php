@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\LayananVillaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\Pengelola\DaftarPemesananController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -154,10 +155,10 @@ Route::middleware(['auth:pemilik'])->group(function() {
         // Laporan Hunian
         Route::get('laporan-hunian', [HunianController::class, 'index'])
         ->name('laporan-hunian.index');
-        
+
         Route::get('laporan-keuangan', [KeuanganController::class, 'index'])
             ->name('laporan-keuangan.index');
-        
+
         Route::get('/admin/laporan-hunian/pdf', [HunianController::class,'pdf'])
             ->name('laporan-hunian.pdf');
 
@@ -197,6 +198,8 @@ Route::middleware(['auth:pengelola'])->group(function() {
         // Batalkan Pemesanan
         Route::patch('pemesanan/{id}/batalkan', [PengelolaDaftarPemesananController::class, 'batalkan'])
             ->name('pengelola.pemesanan.batalkan');
+        // Check Penyewa
+        Route::get('/check-penyewa', [DaftarPemesananController::class, 'checkPenyewa']);
 
         // Route Profil Pengelola
         Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');

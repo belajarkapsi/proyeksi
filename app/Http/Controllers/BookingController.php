@@ -376,8 +376,11 @@ class BookingController extends Controller
 
     public function payment($id_pemesanan)
     {
-        $pemesanan = Pemesanan::with(['items.kamar', 'cabang'])->where('id_pemesanan', $id_pemesanan)->firstOrFail();
-        if (now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
+        $pemesanan = Pemesanan::with(['items.kamar', 'cabang'])
+            ->where('id_pemesanan', $id_pemesanan)
+            ->firstOrFail();
+
+        if ($pemesanan->expired_at && now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
             $pemesanan->update(['status' => 'Dibatalkan']);
         }
         return view('kamar.detail-pesanan', ['pemesanan' => $pemesanan, 'cabang' => $pemesanan->cabang]);
@@ -386,8 +389,12 @@ class BookingController extends Controller
     public function checkStatus($id_pemesanan)
     {
         $pemesanan = Pemesanan::find($id_pemesanan);
-        if (!$pemesanan) return response()->json(['status' => '404']);
-        if ($pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
+
+        if (!$pemesanan) {
+            return response()->json(['status' => '404']);
+        }
+
+        if ($pemesanan->expired_at && $pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
             $pemesanan->update(['status' => 'Dibatalkan']);
         }
         return response()->json(['status' => $pemesanan->status]);

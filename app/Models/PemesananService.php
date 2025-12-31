@@ -10,9 +10,10 @@ class PemesananService extends Model
 
     protected $fillable = [
         'id_pemesanan',
-        'service_id',
-        'qty',
-        'price_at_booking',
+        'id_service',
+        'quantity',
+        'price',
+        'subtotal',
         'created_at',
         'updated_at',
     ];
