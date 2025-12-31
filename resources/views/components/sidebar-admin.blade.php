@@ -107,8 +107,8 @@
 
                 {{-- ... LAPORAN ... --}}
                 <div class="text-xs font-light text-gray-200 uppercase tracking-wider mt-4">Laporan</div>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:text-gray-800 hover:bg-white rounded-lg mb-1 {{ request()->routeIs('') ? $active : $inactive }}"><i class="fa-solid fa-chart-area w-6 text-center"></i><span class="font-medium">Hunian</span></a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:text-gray-800 hover:bg-white rounded-lg mb-1 {{ request()->routeIs('') ? $active : $inactive }}"><i class="fas fa-chart-line w-6 text-center"></i><span class="font-medium">Keuangan</span></a>
+                <a href="{{ route('laporan-hunian.index') }}" class="flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:text-gray-800 hover:bg-white rounded-lg mb-1 {{ request()->routeIs('') ? $active : $inactive }}"><i class="fa-solid fa-chart-area w-6 text-center"></i><span class="font-medium">Hunian</span></a>
+                <a href="{{ route('laporan-keuangan.index') }}" class="flex items-center gap-3 px-3 py-2.5 transition-all duration-200 hover:text-gray-800 hover:bg-white rounded-lg mb-1 {{ request()->routeIs('') ? $active : $inactive }}"><i class="fas fa-chart-line w-6 text-center"></i><span class="font-medium">Keuangan</span></a>
 
                 <div class="block border-b border-white"></div> {{-- Pemisah --}}
 

@@ -19,24 +19,18 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class DaftarPemesananController extends Controller
 {
-    /**
-     * Menampilkan daftar pemesanan berdasarkan cabang pengelola.
-     */
     public function index(Request $request)
     {
         $pengelola = Auth::user();
-
         if (!$pengelola->cabang) {
             abort(403, 'Akun Anda tidak terhubung dengan cabang manapun.');
         }
 
         $idCabang = $pengelola->cabang->id_cabang;
-
         $query = Pemesanan::query()
             ->where('id_cabang', $idCabang)
-            ->with(['penyewa', 'items.kamar', 'service.service', 'cabang']); // Eager loading untuk performa view
+            ->with(['penyewa', 'items.kamar', 'service.service', 'cabang']);
 
-        // Filter Pencarian (Search by ID atau Username Penyewa)
         if ($request->has('q') && $request->q != '') {
             $keyword = $request->q;
             $query->where(function($q) use ($keyword) {
@@ -53,7 +47,6 @@ class DaftarPemesananController extends Controller
 
         $pemesanan = $query->latest()->paginate(10);
 
-        // Kirim data ke View
         return view('pengelola.daftar-pemesanan.index', [
             'pemesanan' => $pemesanan,
             'q' => $request->q,
@@ -242,21 +235,13 @@ class DaftarPemesananController extends Controller
         return view('pengelola.daftar-pemesanan.show', compact('pemesanan'));
     }
 
-    /**
-     * Hapus Pemesanan.
-     */
     public function destroy($id)
     {
         $pengelola = Auth::user();
-
-        // Cari pemesanan & pastikan milik cabang pengelola ini
         $pemesanan = Pemesanan::where('id_pemesanan', $id)
             ->where('id_cabang', $pengelola->cabang->id_cabang)
             ->firstOrFail();
-
-        // Hapus (Jika ada relasi items/service, pastikan di Model sudah set cascade on delete atau handle manual disini)
         $pemesanan->delete();
-
         return redirect()->back()->with('success', 'Pemesanan berhasil dihapus.');
     }
 
@@ -265,48 +250,54 @@ class DaftarPemesananController extends Controller
         $pengelola = Auth::user();
 
         DB::transaction(function () use ($id, $pengelola) {
-            // Cari pemesanan & pastikan milik cabang pengelola ini (Security Check)
             $pemesanan = Pemesanan::where('id_pemesanan', $id)
                 ->where('id_cabang', $pengelola->cabang->id_cabang)
                 ->with('items')
                 ->firstOrFail();
 
-            // Update Status
+            // 1. Update Status Pemesanan ini menjadi Lunas
             $pemesanan->update(['status' => 'Lunas']);
 
-            // Ubah status kamar menjadi dihuni
-            foreach ($pemesanan->items as $item) {
-                Kamar::where('id_kamar', $item->id_kamar)
-                ->update(['status' => 'Dihuni']);
-            }
+            // 2. Ambil semua ID Kamar dalam pemesanan ini
+            $kamarIds = $pemesanan->items->pluck('id_kamar')->toArray();
+
+            // 3. Ubah status kamar menjadi Dihuni
+            Kamar::whereIn('id_kamar', $kamarIds)->update(['status' => 'Dihuni']);
+
+            // 4. LOGIKA AUTO-CANCEL:
+            // Batalkan semua pemesanan lain yang mengandung kamar yang sama dan masih berstatus 'Belum Dibayar'
+            Pemesanan::where('id_pemesanan', '!=', $id)
+                ->where('status', 'Belum Dibayar')
+                ->whereHas('items', function($query) use ($kamarIds) {
+                    $query->whereIn('id_kamar', $kamarIds);
+                })
+                ->update([
+                    'status' => 'Dibatalkan',
+                    'cancelled_at' => now(),
+                    'alasan_batal' => 'Kamar telah diverifikasi untuk pemesan lain.'
+                ]);
         });
 
-        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi');
+        Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi dan pesanan bentrok lainnya otomatis dibatalkan.');
         return redirect()->back();
     }
 
     public function batalkan(Request $request, $id)
     {
-        $request->validate([
-            'alasan_batal' => 'required|string|max:500', // Validasi alasan wajib diisi
-        ]);
-
+        $request->validate(['alasan_batal' => 'required|string|max:500']);
         $pengelola = Auth::user();
 
-        // Cari pemesanan sesuai cabang pengelola
         $pemesanan = Pemesanan::where('id_pemesanan', $id)
             ->where('id_cabang', $pengelola->cabang->id_cabang)
             ->firstOrFail();
 
-        // Update Data
         $pemesanan->update([
             'status' => 'Dibatalkan',
             'cancelled_at' => now(),
             'alasan_batal' => $request->alasan_batal
         ]);
 
-        Alert::error('Dibatalkan', 'Pemesanan dibatalkan dengan alasan tertentu.');
-        return redirect()->back()->with('success', 'Pemesanan berhasil dibatalkan.');
+        Alert::error('Dibatalkan', 'Pemesanan berhasil dibatalkan.');
+        return redirect()->back();
     }
-
 }
