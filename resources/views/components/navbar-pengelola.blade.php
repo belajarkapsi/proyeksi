@@ -17,7 +17,7 @@
 
                     <a href="{{ route('pengelola.pemesanan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*pemesanan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Pesanan</a>
 
-                    <a href="#" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
+                    <a href="{{ route('pengelola.laporan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
             <a href="{{ route('pengelola.penyewa.index') }}" class="{{ request()->routeIs('*penyewa*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Penyewa</a>
             <a href="{{ route('pengelola.kamar.index') }}" class="{{ request()->routeIs('*kamar*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Layanan</a>
             <a href="{{ route('pengelola.pemesanan.index') }}" class="{{ request()->routeIs('*pemesanan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Pesanan</a>
-            <a href="#" class="{{ request()->routeIs('*laporan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Laporan</a>
+            <a href="{{ route('pengelola.laporan.index') }}" class="{{ request()->routeIs('*laporan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Laporan</a>
         </div>
         <div class="pt-4 pb-3 border-t border-gray-200 bg-gray-50">
             <div class="flex items-center px-5">
