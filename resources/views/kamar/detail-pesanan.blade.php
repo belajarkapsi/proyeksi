@@ -211,8 +211,25 @@
                             </button>
                         </div>
                     @endif
+                    {{-- Tombol Cetak Invoice - Sekarang berwarna BIRU --}}
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
+                    {{-- Tombol Cetak Invoice - Sekarang berwarna BIRU --}}
+                    <a href="{{ route('booking.cetak_invoice', $pemesanan->id_pemesanan) }}" 
+                        class="w-full sm:w-52 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100 transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Cetak Invoice
+                    </a>
 
-                    <a href="{{ route('dashboard') }}" class="inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition">Kembali ke Dashboard</a>
+                    {{-- Tombol Dashboard - Warna HIJAU (Sesuai tema Anda) --}}
+                    <a href="{{ route('dashboard') }}" 
+                        class="w-full sm:w-52 inline-flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-green-700 transition shadow-lg shadow-green-100 transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Ke Dashboard
+                    </a>
                 </div>
             @endif
 

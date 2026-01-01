@@ -111,6 +111,10 @@ Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
         // Route upload bukti pembayaran
         Route::post('/pesanan/pembayaran/{id_pemesanan}', [BookingController::class, 'uploadBukti'])
             ->name('booking.upload_bukti');
+            
+        // Route Cetak Invoice
+        Route::get('/booking/invoice/{id}', [BookingController::class, 'cetakInvoice'])
+            ->name('booking.cetak_invoice');
     });
 });
 
