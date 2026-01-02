@@ -21,7 +21,7 @@ use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewa
 use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\Admin\LaporanController;
-use App\Http\Controllers\Pengelola\LaporanController;
+use App\Http\Controllers\Pengelola\LaporanController as PengelolaLaporanController;
 use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
@@ -111,7 +111,7 @@ Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
         // Route upload bukti pembayaran
         Route::post('/pesanan/pembayaran/{id_pemesanan}', [BookingController::class, 'uploadBukti'])
             ->name('booking.upload_bukti');
-            
+
         // Route Cetak Invoice
         Route::get('/booking/invoice/{id}', [BookingController::class, 'cetakInvoice'])
             ->name('booking.cetak_invoice');
@@ -212,8 +212,8 @@ Route::middleware(['auth:pengelola'])->group(function() {
         Route::get('/check-penyewa', [DaftarPemesananController::class, 'checkPenyewa']);
 
         // Data Laporan
-        Route::get('/laporan', [LaporanController::class, 'index'])->name('pengelola.laporan.index');
-        Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('pengelola.laporan.cetak');
+        Route::get('/laporan', [PengelolaLaporanController::class, 'index'])->name('pengelola.laporan.index');
+        Route::get('/laporan/cetak', [PengelolaLaporanController::class, 'cetak'])->name('pengelola.laporan.cetak');
 
         // Route Profil Pengelola
         Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');
