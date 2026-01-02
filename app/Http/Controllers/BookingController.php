@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class BookingController extends Controller
@@ -619,5 +620,27 @@ class BookingController extends Controller
             Alert::error('Gagal', 'Terjadi kesalahan saat upload: ' . $e->getMessage());
             return back();
         }
+    }
+
+    public function cetakInvoice($id)
+    {
+        // Memuat semua relasi: penyewa, cabang, item kamar, dan layanan tambahan
+        $pemesanan = \App\Models\Pemesanan::with([
+            'penyewa', 
+            'cabang', 
+            'items.kamar', 
+            'service.service', // Relasi ke detail nama service
+            'pembayaran'
+        ])->where('id_pemesanan', $id)->firstOrFail();
+
+        if ($pemesanan->status !== 'Lunas') {
+            return redirect()->back()->with('error', 'Invoice hanya tersedia untuk pesanan lunas.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kamar.invoice-pdf', compact('pemesanan'))
+                ->setPaper('a4', 'portrait');
+
+        // Mengubah download() menjadi stream() agar muncul di browser
+        return $pdf->stream('Invoice-' . $pemesanan->id_pemesanan . '.pdf');
     }
 }

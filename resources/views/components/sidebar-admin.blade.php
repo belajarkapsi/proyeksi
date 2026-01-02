@@ -119,14 +119,9 @@
                 {{-- ... LAPORAN ... --}}
                 <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Laporan & Analitik</div>
                 
-                <a href="{{ route('laporan-hunian.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
+                <a href="{{ route('admin.laporan.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-lg group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Laporan Hunian</span>
-                </a>
-                
-                <a href="{{ route('laporan-keuangan.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
-                    <i class="fas fa-chart-line w-5 text-center text-lg group-hover:scale-110 transition-transform"></i>
-                    <span class="text-sm font-medium">Laporan Keuangan</span>
+                    <span class="text-sm font-medium">Laporan Terpadu</span>
                 </a>
 
                 {{-- Setting --}}

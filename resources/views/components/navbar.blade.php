@@ -73,10 +73,30 @@
                 </div>
             @elseif (Auth::guard('web')->check())
                 <div class="hs-dropdown relative inline-flex">
-                    <button id="hs-dropdown-user" type="button" class="hs-dropdown-toggle py-1.5 px-3 pe-4 inline-flex items-center gap-x-3 text-sm font-medium rounded-full bg-green-600 text-white shadow-md hover:bg-green-700 focus:outline-none transition-all" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                        <img class="w-8 h-8 rounded-full border-2 border-white/30" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama_lengkap) }}&background=random&color=fff" alt="{{ Auth::user()->nama_lengkap }}">
-                        <span class="hidden sm:block max-w-[130px] truncate text-left">{{ Auth::user()->username }}</span>
-                        <svg class="w-6 h-6  mt-1 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                    <button id="hs-dropdown-user" type="button" 
+                        class="hs-dropdown-toggle py-1.5 ps-1.5 pe-4 inline-flex items-center gap-x-3 text-sm font-medium rounded-full bg-green-600 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all" 
+                        aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                        
+                        {{-- Avatar: Border dibuat lebih halus dengan opacity --}}
+                        <img class="w-8 h-8 rounded-full border-2 border-white/30 shadow-sm" 
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama_lengkap) }}&background=random&color=fff" 
+                            alt="{{ Auth::user()->nama_lengkap }}">
+
+                        {{-- Nama User: Penyesuaian font agar lebih clean --}}
+                        <span class="hidden sm:block max-w-[130px] truncate text-left font-semibold tracking-wide">
+                            {{ Auth::user()->username }}
+                        </span>
+
+                        {{-- Chevron Icon: Diperbaiki agar warna senada (putih) dan ukuran lebih proporsional --}}
+                        <svg class="w-4 h-4 text-white/80 transition-transform duration-200" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            stroke-width="2.5" 
+                            stroke-linecap="round" 
+                            stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
                         </svg>
                     </button>
 
