@@ -20,8 +20,7 @@ use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarCont
 use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewaController;
 use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
-use App\Http\Controllers\Admin\HunianController;
-use App\Http\Controllers\Admin\KeuanganController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
@@ -145,6 +144,9 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ];
         });
 
+        // Agar Chart Data bisa Real-Time
+        Route::get('/api/admin/dashboard-stats', [AdminController::class, 'getDashboardData'])
+        ->name('admin.dashboard.api');
         // Data Penyewa
         Route::resource('penyewa', DataPenyewaController::class);
         // Data Pengelola
@@ -160,18 +162,15 @@ Route::middleware(['auth:pemilik'])->group(function() {
         });
 
         // Laporan Hunian
-        Route::get('laporan-hunian', [HunianController::class, 'index'])
-        ->name('laporan-hunian.index');
+        Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('admin.laporan.index');
 
-        Route::get('laporan-keuangan', [KeuanganController::class, 'index'])
-            ->name('laporan-keuangan.index');
+        // Route PDF Terpadu (Fungsi Stream yang baru dibuat)
+        Route::get('/laporan/pdf-lengkap', [LaporanController::class, 'downloadPdf'])
+            ->name('admin.laporan.pdf');
 
-        Route::get('/admin/laporan-hunian/pdf', [HunianController::class,'pdf'])
-            ->name('laporan-hunian.pdf');
-
-        Route::get('/admin/laporan-keuangan/pdf', [KeuanganController::class,'pdf'])
-            ->name('laporan-keuangan.pdf');
-
+        Route::get('/admin/laporan/chart-data', [LaporanController::class, 'getChartData'])
+        ->name('admin.laporan.api');
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');

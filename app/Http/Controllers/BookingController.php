@@ -640,6 +640,7 @@ class BookingController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kamar.invoice-pdf', compact('pemesanan'))
                 ->setPaper('a4', 'portrait');
 
-        return $pdf->download('Invoice-' . $pemesanan->id_pemesanan . '.pdf');
+        // Mengubah download() menjadi stream() agar muncul di browser
+        return $pdf->stream('Invoice-' . $pemesanan->id_pemesanan . '.pdf');
     }
 }
