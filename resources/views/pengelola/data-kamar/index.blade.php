@@ -45,6 +45,7 @@
     @php
         $kamarTersedia = $kamars->where('status', 'Tersedia');
         $kamarDihuni = $kamars->where('status', 'Dihuni');
+        $kamarPerbaikan = $kamars->where('status', 'Perbaikan');
     @endphp
 
     {{-- SECTION 1: KAMAR TERSEDIA --}}
@@ -200,6 +201,61 @@
             </div>
         @endif
     </div>
+
+    {{-- SECTION 3: KAMAR PERBAIKAN --}}
+    @if($kamarPerbaikan->count() > 0)
+    <div class="mt-10">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="bg-orange-100 text-orange-700 p-2 rounded-lg">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800">Dalam Perbaikan / Maintenance <span class="text-sm font-normal text-gray-500">({{ $kamarPerbaikan->count() }})</span></h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($kamarPerbaikan as $kamar)
+                <div class="group bg-white rounded-xl border border-orange-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden ring-1 ring-orange-100 opacity-90">
+
+                    {{-- Gambar Gelap --}}
+                    <div class="relative h-48 bg-gray-100 overflow-hidden">
+                        <div class="absolute inset-0 bg-orange-900/40 z-10 flex flex-col items-center justify-center text-white">
+                            <i class="fas fa-wrench text-3xl mb-2 drop-shadow-md"></i>
+                            <span class="font-bold border-2 border-white px-3 py-1 rounded uppercase tracking-wider text-xs">Under Maintenance</span>
+                        </div>
+                        @if($kamar->gambar)
+                            <img src="{{ asset('storage/' . $kamar->gambar) }}" class="w-full h-full object-cover grayscale blur-[1px]">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image fa-2x"></i></div>
+                        @endif
+                    </div>
+
+                    {{-- Konten --}}
+                    <div class="p-4 flex flex-col grow bg-orange-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-900">No. {{ $kamar->no_kamar }}</h4>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-white text-orange-600 border border-orange-200">
+                                {{ $kamar->tipe_kamar }}
+                            </span>
+                        </div>
+
+                        <p class="text-sm text-gray-600 mb-4 grow">
+                            <i class="fas fa-info-circle mr-1"></i> Kamar sedang tidak bisa dipesan karena dalam perbaikan.
+                        </p>
+
+                        {{-- Action Buttons (Hanya Edit Status agar bisa diaktifkan lagi) --}}
+                        <div class="flex items-center gap-2 mt-auto pt-3 border-t border-orange-200">
+                            @can('update', $kamar)
+                            <a href="{{ route('pengelola.kamar.edit', $kamar->id_kamar) }}" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-bold text-green-700 bg-white rounded border border-green-200 hover:bg-green-50 transition shadow-sm">
+                                <i class="fas fa-check-circle mr-2"></i> Aktifkan
+                            </a>
+                            @endcan
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
     {{-- ========================================================= --}}
     {{-- BAGIAN DATA SERVICE / LAYANAN VILLA (HANYA UNTUK VILLA) --}}

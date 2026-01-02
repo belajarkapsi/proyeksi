@@ -67,7 +67,7 @@
                             {{ Auth::guard('pengelola')->user()->nama_lengkap }}
                         </span>
                     </div>
-                    <a href="{{ route('pengelola.dashboard') }}" class="bg-green-600 hover:bg-green-700 text-white text-sm px-2 py-2 rounded-full shadow-md transition flex items-center gap-2">
+                    <a href="{{ route('pengelola.dashboard') }}" class="bg-green-600 hover:bg-green-700 text-center text-white text-sm px-2 py-2 rounded-full shadow-md transition flex items-center gap-2">
                         <span>Panel Pengelola</span>
                     </a>
                 </div>

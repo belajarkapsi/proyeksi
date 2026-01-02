@@ -107,11 +107,16 @@
             </div>
         </div>
         @else
-        {{-- Placeholder Kost --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center justify-center text-center">
-            <div>
-                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-home text-green-600 text-2xl"></i></div>
-                <h3 class="font-bold text-gray-800">Analitik Kamar Kost</h3>
+        {{-- ANALITIK KAMAR KOST (PIE CHART) --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <h3 class="font-bold text-gray-800"><i class="fas fa-chart-pie text-purple-600 mr-2"></i> Analitik Tipe Kamar</h3>
+            </div>
+            <div class="p-6 flex-1 flex flex-col justify-center items-center">
+                <div class="relative h-64 w-full">
+                    <canvas id="tipeKamarChart"></canvas>
+                </div>
+                <p class="text-xs text-gray-400 mt-4 text-center">Proporsi penyewaan berdasarkan tipe kamar.</p>
             </div>
         </div>
         @endif
@@ -138,9 +143,41 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    const noDataPlugin = {
+        id: 'noData',
+        afterDraw: (chart) => {
+            const datasets = chart.data.datasets;
+            let hasData = false;
+
+            // Cek apakah ada setidaknya satu data yang nilainya > 0
+            for (let i = 0; i < datasets.length; i++) {
+                const data = datasets[i].data;
+                if (data.length > 0 && data.some(v => v > 0)) {
+                    hasData = true;
+                    break;
+                }
+            }
+
+            if (!hasData) {
+                const { ctx, width, height } = chart;
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = 'italic 14px "Inter", sans-serif'; // Sesuaikan font
+                ctx.fillStyle = '#9ca3af'; // Warna abu-abu (Tailwind gray-400)
+                ctx.fillText('Belum ada data pada periode ini', width / 2, height / 2);
+                ctx.restore();
+            }
+        }
+    };
+
+    // Daftarkan plugin secara global
+    Chart.register(noDataPlugin);
+
     // --- INIT CHART INSTANCES (Agar bisa di-update via AJAX) ---
     let trendChartInstance = null;
     let statusChartInstance = null;
+    let tipeChartInstance = null; // Khusus Kost
 
     // Fungsi Render Chart Trend
     function renderTrendChart(labels, data) {
@@ -197,9 +234,55 @@
         });
     }
 
+    // Fungsi Render Chart Tipe Kamar
+    function renderTipeChart(labels, data) {
+        const ctx = document.getElementById('tipeKamarChart');
+        if (!ctx) return; // Cek jika elemen tidak ada (misal di mode Villa)
+
+        if (tipeChartInstance) tipeChartInstance.destroy();
+
+        // Warna Pie Chart (Ungu & Kuning biar beda)
+        const bgColors = ['#8b5cf6', '#f59e0b', '#10b981'];
+
+        tipeChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: bgColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                let total = context.chart._metasets[context.datasetIndex].total;
+                                let percentage = Math.round((value / total) * 100) + '%';
+                                return label + ': ' + value + ' (' + percentage + ')';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     // --- RENDER AWAL SAAT PAGE LOAD ---
     renderTrendChart({!! json_encode($chartTrendLabels) !!}, {!! json_encode($chartTrendValues) !!});
     renderStatusChart({!! json_encode($chartStatusLabels) !!}, {!! json_encode($chartStatusValues) !!});
+    @if(!$isVilla)
+        renderTipeChart({!! json_encode($chartTipeLabels) !!}, {!! json_encode($chartTipeValues) !!});
+    @endif
 
     // --- LOGIKA AJAX FILTER ---
     const filterForm = document.getElementById('filterForm');
@@ -242,6 +325,10 @@
             // 2. Update Charts
             renderTrendChart(data.trendLabels, data.trendValues);
             renderStatusChart(data.statusLabels, data.statusValues);
+            // Update Chart Tipe (Jika elemen ada)
+            if (document.getElementById('tipeKamarChart')) {
+                renderTipeChart(data.tipeLabels, data.tipeValues);
+            }
 
             // 3. Update HTML Tables (Partials)
             document.getElementById('tbodyTopRooms').innerHTML = data.htmlTopRooms;

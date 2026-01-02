@@ -73,6 +73,7 @@
                 <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                     <option value="Tersedia" {{ old('status', $kamar->status) == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
                     <option value="Dihuni" {{ old('status', $kamar->status) == 'Dihuni' ? 'selected' : '' }}>Dihuni</option>
+                    <option value="Perbaikan" {{ old('status', $kamar->status) == 'Perbaikan' ? 'selected' : '' }}>Perbaikan</option>
                 </select>
                 @error('status') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>

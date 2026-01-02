@@ -74,6 +74,21 @@ class LaporanController extends Controller
         $totalTransaksiKamar = PemesananItem::whereIn('id_pemesanan', $pemesananIds)->count();
         $okupansiRate = $totalKamar > 0 ? ($totalTransaksiKamar / ($totalKamar * 30)) * 100 : 0;
 
+        // Chart tren tipe kamar yang dipesan (kost)
+        $chartTipeLabels = [];
+        $chartTipeValues = [];
+
+        if (!$isVilla) {
+            $tipeStats = PemesananItem::whereIn('id_pemesanan', $pemesananIds)
+                ->join('kamar', 'pemesanan_item.id_kamar', '=', 'kamar.id_kamar')
+                ->select('kamar.tipe_kamar', DB::raw('count(*) as total'))
+                ->groupBy('kamar.tipe_kamar')
+                ->pluck('total', 'kamar.tipe_kamar');
+
+            $chartTipeLabels = $tipeStats->keys();
+            $chartTipeValues = $tipeStats->values();
+        }
+
         // Service Analitis untuk villa
         $topServices = collect();
         if($isVilla) {
@@ -106,7 +121,8 @@ class LaporanController extends Controller
             'cabang', 'isVilla', 'tgglMulai', 'tgglSelesai',
             'totalPendapatan', 'transaksiList', 'chartTrendLabels', 'chartTrendValues',
             'pendapatanKamar', 'pendapatanService', 'topKamar', 'okupansiRate',
-            'topServices', 'chartStatusLabels', 'chartStatusValues', 'alasanBatal'
+            'topServices', 'chartStatusLabels', 'chartStatusValues', 'alasanBatal',
+            'chartTipeLabels', 'chartTipeValues'
         );
     }
 
@@ -131,6 +147,8 @@ class LaporanController extends Controller
                 'trendValues'       => $data['chartTrendValues'],
                 'statusLabels'      => $data['chartStatusLabels'],
                 'statusValues'      => $data['chartStatusValues'],
+                'tipeLabels'        => $data['chartTipeLabels'],
+                'tipeValues'        => $data['chartTipeValues'],
 
                 'htmlTopRooms'      => view('pengelola.laporan.partials.tabel-kamar', ['topKamar' => $data['topKamar']])->render(),
                 'htmlTopServices'   => $data['isVilla'] ? view('pengelola.laporan.partials.tabel-service', ['topServices' => $data['topServices']])->render() : '',

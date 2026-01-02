@@ -27,7 +27,7 @@
             <h2 class="text-2xl font-bold text-gray-800">Data Kamar {{ Str::ucfirst($lokasi) }}</h2>
             <p class="text-sm text-gray-500">Kelola informasi seluruh unit kamar di cabang ini.</p>
         </div>
-        
+
         <a href="{{ route('admin.cabangkamar.create', ['lokasi' => $lokasi]) }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm font-semibold text-sm uppercase">
             <i class="fa-solid fa-plus mr-2"></i> Tambah Kamar
         </a>
@@ -37,7 +37,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
         @forelse ($kamars as $kamar)
             <div class="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden">
-                
+
                 {{-- Bagian Gambar & Badge Status --}}
                 <div class="relative h-48 bg-gray-100 overflow-hidden">
                     @if($kamar->gambar)
@@ -60,8 +60,8 @@
                     <div class="absolute bottom-3 left-3">
                         @php
                             $kategori = Str::lower($kamar->cabang->kategori_cabang ?? '');
-                            $badgeClass = ($kategori === 'villa') 
-                                ? 'bg-yellow-500 text-white' 
+                            $badgeClass = ($kategori === 'villa')
+                                ? 'bg-yellow-500 text-white'
                                 : 'bg-purple-600 text-white';
                         @endphp
                         <span class="{{ $badgeClass }} text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded shadow-lg">
@@ -76,7 +76,7 @@
                         <h3 class="text-lg font-bold text-gray-900 leading-tight">No. {{ $kamar->no_kamar }}</h3>
                         <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ $kamar->tipe_kamar }}</span>
                     </div>
-                    
+
                     <p class="text-sm text-gray-500 mb-3 flex items-center gap-1">
                         <i class="fa-solid fa-location-dot text-xs"></i>
                         Cabang: {{ $kamar->cabang->lokasi ?? '-' }}
@@ -90,15 +90,15 @@
 
                         {{-- Action Buttons --}}
                         <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-50">
-                            <a href="{{ route('admin.cabangkamar.edit', ['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" 
-                               class="flex-1 inline-flex justify-center items-center py-2 text-sm font-bold text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition">
+                            <a href="{{ route('admin.cabangkamar.edit', ['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}"
+                                class="flex-1 inline-flex justify-center items-center py-2 text-sm font-bold text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition">
                                 <i class="far fa-edit mr-2"></i> Edit
                             </a>
 
                             <form id="delete-form-{{ $kamar->id_kamar }}" action="{{ route('admin.cabangkamar.destroy',['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" method="POST" class="flex-1">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" onclick="confirmDelete('{{ $kamar->id_kamar }}', '{{ $kamar->no_kamar }}')" 
+                                <button type="button" onclick="confirmDelete('{{ $kamar->id_kamar }}', '{{ $kamar->no_kamar }}')"
                                         class="w-full inline-flex justify-center items-center py-2 text-sm font-bold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
                                     <i class="far fa-trash-alt mr-2"></i> Hapus
                                 </button>
@@ -120,8 +120,8 @@
         {{-- Info Status Data --}}
         <div class="order-2 md:order-1 text-center md:text-left">
             <p class="text-sm text-gray-500">
-                Menampilkan <span class="font-semibold text-gray-800">{{ $kamars->firstItem() ?? 0 }}</span> 
-                sampai <span class="font-semibold text-gray-800">{{ $kamars->lastItem() ?? 0 }}</span> 
+                Menampilkan <span class="font-semibold text-gray-800">{{ $kamars->firstItem() ?? 0 }}</span>
+                sampai <span class="font-semibold text-gray-800">{{ $kamars->lastItem() ?? 0 }}</span>
                 dari <span class="font-semibold text-gray-800">{{ $kamars->total() }}</span> unit kamar
             </p>
         </div>

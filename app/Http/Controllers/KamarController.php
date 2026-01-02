@@ -27,11 +27,11 @@ class KamarController extends Controller
 
         // --- tambahan: kirim daftar layanan ke view hanya jika cabang adalah villa
         if ($cabang && strtolower(trim($cabang->kategori_cabang ?? '')) === 'villa') {
-        if (class_exists(Service::class) && Schema::hasTable('services')) {
-        $services = Service::all();
-        } else {
-            $services = collect();
-         }
+            if (class_exists(Service::class) && Schema::hasTable('services')) {
+                $services = Service::all();
+            } else {
+                $services = collect();
+            }
         } else {
             $services = collect();
         }

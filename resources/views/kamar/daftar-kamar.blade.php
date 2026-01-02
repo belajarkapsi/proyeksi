@@ -11,19 +11,19 @@
     // Deteksi Mode Villa
     $isVilla = isset($cabang) && strtolower(trim($cabang->kategori_cabang ?? '')) === 'villa';
 
-    // FILTER DATA KHUSUS NON-VILLA (HOTEL/KOST)
+    // FILTER DATA KHUSUS KOST
     if (!$isVilla) {
         $ekonomis = $allRooms->filter(function($r) {
-            $status = strtolower(trim($r->status_kamar ?? $r->status ?? ''));
-            return (stripos($status, 'sedia') !== false) && (stripos($r->tipe_kamar ?? '', 'Ekonomis') !== false);
+            return $r->status === 'Tersedia' && stripos($r->tipe_kamar ?? '', 'Ekonomis') !== false;
         });
         $standard = $allRooms->filter(function($r) {
-            $status = strtolower(trim($r->status_kamar ?? $r->status ?? ''));
-            return (stripos($status, 'sedia') !== false) && (stripos($r->tipe_kamar ?? '', 'Standar') !== false);
+            return $r->status === 'Tersedia' && stripos($r->tipe_kamar ?? '', 'Standar') !== false;
         });
         $occupied = $allRooms->filter(function($r) {
-            $status = strtolower(trim($r->status_kamar ?? $r->status ?? ''));
-            return stripos($status, 'sedia') === false;
+            return $r->status === 'Dihuni';
+        });
+        $maintenance = $allRooms->filter(function($r) {
+            return $r->status === 'Perbaikan';
         });
     }
 @endphp
@@ -53,6 +53,7 @@
                 @if($ekonomis->count() > 0) <a href="#ekonomis" class="px-4 py-2 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition">Ekonomis ({{ $ekonomis->count() }})</a> @endif
                 @if($standard->count() > 0) <a href="#standard" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition">Standard ({{ $standard->count() }})</a> @endif
                 @if($occupied->count() > 0) <a href="#occupied" class="px-4 py-2 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 transition">Terisi ({{ $occupied->count() }})</a> @endif
+                @if($maintenance->count() > 0) <a href="#maintenance" class="px-4 py-2 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 transition">Perbaikan ({{ $maintenance->count() }})</a> @endif
             </div>
         </div>
     @endif
@@ -68,7 +69,6 @@
     @csrf
 
         <div class="space-y-12">
-
             {{-- VILLA MODE --}}
             @if($isVilla)
                 @php
@@ -77,7 +77,6 @@
                     }
                 @endphp
 
-                {{-- Hidden --}}
                 <input type="hidden" name="cabang_id" value="{{ $cabang->id_cabang }}" form="bookingForm">
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -93,18 +92,38 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 select-none">
                                     @foreach($allRooms as $room)
                                         @php
-                                            $status = strtolower(trim($room->status_kamar ?? $room->status ?? ''));
-                                            $isAvailable = stripos($status, 'sedia') !== false;
+                                            $status = $room->status;
+                                            $isAvailable = $status === 'Tersedia';
+                                            $isMaintenance = $status === 'Perbaikan';
                                         @endphp
 
                                         <div class="relative w-full {{ !$isAvailable ? 'opacity-60 grayscale-80 pointer-events-none' : '' }}">
-                                            {{-- room-card-item harus menyertakan elemen input[name="selected_rooms[]"] dengan id "check-{id}" dan data-price --}}
                                             @include('components.room-card-item', [
                                                 'room' => $room,
                                                 'isAvailable' => $isAvailable
                                             ])
                                             @if(!$isAvailable)
-                                                <div class="absolute inset-0 z-10 bg-gray-100/10 cursor-not-allowed"></div>
+                                                <div class="absolute inset-0 z-10 rounded-xl flex flex-col items-center justify-center backdrop-blur-[1px]
+                                                    {{ $isMaintenance ? 'bg-orange-100/50 border-2 border-orange-300' : 'bg-red-50/40' }}">
+
+                                                    @if($isMaintenance)
+                                                        <div class="bg-orange-500 text-white p-3 rounded-full shadow-lg mb-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            </svg>
+                                                        </div>
+                                                        <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                                                            Sedang Perbaikan
+                                                        </span>
+                                                    @else
+                                                        <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                                                            Dihuni
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             @endif
                                         </div>
                                     @endforeach
@@ -135,18 +154,18 @@
                                         <div class="service-card p-3 border rounded-xl hover:border-green-400 transition-all bg-white relative group">
                                             {{-- Hidden inputs for form (kirim) --}}
                                             <input type="checkbox"
-                                                   class="service-checkbox hidden"
-                                                   id="srv-check-{{ $service->id }}"
-                                                   name="services[]"
-                                                   value="{{ $service->id }}"
-                                                   data-price="{{ $service->price }}"
-                                                   form="bookingForm">
+                                                class="service-checkbox hidden"
+                                                id="srv-check-{{ $service->id }}"
+                                                name="services[]"
+                                                value="{{ $service->id }}"
+                                                data-price="{{ $service->price }}"
+                                                form="bookingForm">
 
                                             <input type="hidden"
-                                                   id="srv-qty-{{ $service->id }}"
-                                                   name="service_quantity[{{ $service->id }}]"
-                                                   value="0"
-                                                   form="bookingForm">
+                                                id="srv-qty-{{ $service->id }}"
+                                                name="service_quantity[{{ $service->id }}]"
+                                                value="0"
+                                                form="bookingForm">
 
                                             <div class="flex justify-between items-start mb-2">
                                                 <div class="flex-1">
@@ -201,7 +220,7 @@
                     </div>
                 </div>
 
-            {{-- HOTEL / KOS MODE --}}
+            {{-- UNTUK KOST --}}
             @else
                 @if($ekonomis->isNotEmpty())
                     <section id="ekonomis" class="scroll-mt-40">
@@ -229,15 +248,46 @@
                     </section>
                 @endif
 
+                @if($maintenance->isNotEmpty())
+                    <section id="maintenance" class="scroll-mt-40 bg-orange-50 rounded-3xl p-6 border border-orange-200">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-8 bg-orange-500 rounded-full"></div>
+                            <h2 class="text-xl font-bold text-gray-800">Sedang Perbaikan / Maintenance</h2>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach($maintenance as $room)
+                                <div class="relative pointer-events-none opacity-80 grayscale-30">
+                                    @include('components.room-card-item', ['room' => $room, 'isAvailable' => false])
+
+                                    <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-orange-100/40 rounded-xl border-2 border-orange-300 border-dashed">
+                                        <div class="bg-white p-2 rounded-full shadow-sm mb-2">
+                                            <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="text-orange-800 font-bold text-xs uppercase tracking-wider bg-orange-100 px-2 py-1 rounded">Perbaikan</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </section>
+                @endif
+
                 @if($occupied->isNotEmpty())
                     <section id="occupied" class="scroll-mt-40 bg-gray-50 rounded-3xl p-6 border border-gray-200">
                         <div class="flex items-center gap-3 mb-6 opacity-60">
                             <div class="w-1.5 h-8 bg-gray-500 rounded-full"></div>
-                            <h2 class="text-xl font-bold text-gray-700">Terisi / Maintenance</h2>
+                            <h2 class="text-xl font-bold text-gray-700">Sedang Dihuni / Terisi</h2>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
                             @foreach($occupied as $room)
-                                @include('components.room-card-item', ['room' => $room, 'isAvailable' => false])
+                                <div class="relative pointer-events-none">
+                                    @include('components.room-card-item', ['room' => $room, 'isAvailable' => false])
+                                    <div class="absolute inset-0 z-10 flex items-center justify-center bg-gray-200/30 rounded-xl">
+                                        <span class="bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded-full">TERISI</span>
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
                     </section>
@@ -245,7 +295,7 @@
             @endif
 
             {{-- EMPTY --}}
-            @if(!$isVilla && $ekonomis->isEmpty() && $standard->isEmpty() && $occupied->isEmpty())
+            @if(!$isVilla && $ekonomis->isEmpty() && $standard->isEmpty() && $occupied->isEmpty() && $maintenance->isEmpty())
                 <div class="text-center py-20">
                     <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
