@@ -21,6 +21,7 @@ use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewa
 use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Pengelola\LaporanController;
 use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
@@ -209,6 +210,10 @@ Route::middleware(['auth:pengelola'])->group(function() {
             ->name('pengelola.pemesanan.checkout');
         // Check Penyewa
         Route::get('/check-penyewa', [DaftarPemesananController::class, 'checkPenyewa']);
+
+        // Data Laporan
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('pengelola.laporan.index');
+        Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('pengelola.laporan.cetak');
 
         // Route Profil Pengelola
         Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');

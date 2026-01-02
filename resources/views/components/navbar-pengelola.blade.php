@@ -17,7 +17,7 @@
 
                     <a href="{{ route('pengelola.pemesanan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*pemesanan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Pesanan</a>
 
-                    <a href="#" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
+                    <a href="{{ route('pengelola.laporan.index') }}" class="px-3 py-2 rounded-md text-sm font-semibold border-transparent transition-colors duration-300 {{ request()->routeIs('*laporan*') ? 'text-white bg-green-400' : 'text-gray-700 hover:text-white hover:bg-green-400' }}">Laporan</a>
                 </div>
             </div>
 
@@ -39,10 +39,19 @@
                             <i class="dropdown-icon fas fa-chevron-down ml-3 text-xs text-gray-500 hidden lg:block transition-transform duration-300 transform"></i>
                         </button>
 
-                        <div class="dropdown-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5
+                        <div class="dropdown-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white
                                     transition-all duration-300 ease-in-out transform
                                     opacity-0 invisible scale-95 -translate-y-2">
                             <div class="py-1">
+                                <a href="{{ route('dashboard') }}" class="flex justify-start gap-1 px-2 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                    </svg>
+                                    Ke Dashboard Utama
+                                </a>
+
+                                <div class="border-t border-gray-100 my-1"></div>
+
                                 <a href="{{ route('pengelola.profile.edit') }}" class="flex justify-start gap-1 px-2 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -79,7 +88,7 @@
             <a href="{{ route('pengelola.penyewa.index') }}" class="{{ request()->routeIs('*penyewa*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Penyewa</a>
             <a href="{{ route('pengelola.kamar.index') }}" class="{{ request()->routeIs('*kamar*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Layanan</a>
             <a href="{{ route('pengelola.pemesanan.index') }}" class="{{ request()->routeIs('*pemesanan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Pesanan</a>
-            <a href="#" class="{{ request()->routeIs('*laporan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Laporan</a>
+            <a href="{{ route('pengelola.laporan.index') }}" class="{{ request()->routeIs('*laporan*') ? 'bg-green-50 text-green-700' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900' }} block px-3 py-2 rounded-md text-base font-medium">Laporan</a>
         </div>
         <div class="pt-4 pb-3 border-t border-gray-200 bg-gray-50">
             <div class="flex items-center px-5">
@@ -92,6 +101,7 @@
                 </div>
             </div>
             <div class="mt-3 px-2 space-y-1">
+                <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-white hover:shadow-sm">Ke Dashboard Utama</a>
                 <a href="{{ route('pengelola.profile.edit') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-white hover:shadow-sm">Profil Saya</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

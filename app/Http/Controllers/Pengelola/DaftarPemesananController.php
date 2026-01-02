@@ -278,11 +278,12 @@ class DaftarPemesananController extends Controller
     public function verifikasi($id)
     {
         $pengelola = Auth::user();
+        $redirectUrl = null;
 
-        DB::transaction(function () use ($id, $pengelola) {
+        DB::transaction(function () use ($id, $pengelola, &$redirectUrl) {
             $pemesanan = Pemesanan::where('id_pemesanan', $id)
                 ->where('id_cabang', $pengelola->cabang->id_cabang)
-                ->with('items')
+                ->with(['items.kamar', 'penyewa'])
                 ->firstOrFail();
 
             // 1. Update Status Pemesanan ini menjadi Lunas
@@ -293,7 +294,6 @@ class DaftarPemesananController extends Controller
 
             // 2. Ambil semua ID Kamar dalam pemesanan ini
             $kamarIds = $pemesanan->items->pluck('id_kamar')->toArray();
-
             // 3. Ubah status kamar menjadi Dihuni
             Kamar::whereIn('id_kamar', $kamarIds)->update(['status' => 'Dihuni']);
 
@@ -309,9 +309,33 @@ class DaftarPemesananController extends Controller
                     'cancelled_at' => now(),
                     'alasan_batal' => 'Kamar telah diverifikasi untuk pemesan lain.'
                 ]);
+
+            // Siapkan Pesan WA
+            if ($pemesanan->penyewa && $pemesanan->penyewa->no_telp) {
+                $noHp = $pemesanan->penyewa->no_telp;
+                if (substr($noHp, 0, 1) == '0') {
+                    $noHp = '62' . substr($noHp, 1);
+                }
+
+                $namaPenyewa = $pemesanan->penyewa->nama_lengkap ?? 'Kak';
+                $namaCabang  = $pengelola->cabang->nama_cabang;
+                $listKamar   = $pemesanan->items->map(fn($i) => $i->kamar->no_kamar)->join(', ');
+
+                $pesan = "Halo *{$namaPenyewa}*!\n\n";
+                $pesan .= "Pembayaran Anda untuk pesanan *#{$pemesanan->id_pemesanan}* di *{$namaCabang}* telah BERHASIL diverifikasi.\n\n";
+                $pesan .= "Detail Kamar: *{$listKamar}*\n";
+                $pesan .= "Silakan datang ke lokasi untuk check-in. Terima kasih!";
+
+                $redirectUrl = "https://wa.me/{$noHp}?text=" . urlencode($pesan);
+            }
         });
 
         Alert::success('Berhasil', 'Pemesanan berhasil diverifikasi.');
+
+        // Redirect kembali dengan membawa URL WA (jika ada)
+        if ($redirectUrl) {
+            return redirect()->back()->with('open_wa', $redirectUrl);
+        }
         return redirect()->back();
     }
 

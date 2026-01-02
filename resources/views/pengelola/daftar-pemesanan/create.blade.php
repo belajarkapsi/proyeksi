@@ -97,9 +97,9 @@
 
                 <div>
                     <label class="text-sm font-medium">Status Pembayaran</label>
-                    <select name="status_bayar" class="w-full rounded border-gray-300 mb-4">
-                        <option value="Lunas">Bayar Lunas (Sekarang)</option>
-                        <option value="Belum Dibayar">Booking Dulu (Bayar Nanti)</option>
+                    <select name="status_bayar" class="w-full rounded border-gray-300 bg-blue-100 py-2 mb-4">
+                        <option value="Lunas" class="bg-gray-100">Bayar Lunas (Sekarang)</option>
+                        <option value="Belum Dibayar" class="bg-gray-100">Booking Dulu (Bayar Nanti)</option>
                     </select>
 
                     <div class="bg-green-50 border border-green-200 p-4 rounded-lg text-center shadow-sm">

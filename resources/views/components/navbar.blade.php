@@ -44,24 +44,34 @@
             </div>
         </div>
 
+        {{-- Menu Profil (Kanan) --}}
         <div class="flex items-center lg:order-2 space-x-2 shrink-0 justify-end lg:w-56">
 
             @if (Auth::guard('pemilik')->check())
                 <div class="flex items-center gap-3">
-                    <span class="text-red-600 font-bold">
-                        Hi, Bos {{ Auth::guard('pemilik')->user()->nama_lengkap }}
-                    </span>
-                    <a href="{{ route('admin.dashboard') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg">
-                    Ke Panel Admin
+                    <div class="hidden md:flex flex-col text-right">
+                        <span class="text-xs text-gray-500">Login sebagai</span>
+                        <span class="text-sm font-bold text-red-600 truncate max-w-[120px]">
+                            Bos {{ Auth::guard('pemilik')->user()->nama_lengkap }}
+                        </span>
+                    </div>
+                    <a href="{{ route('admin.dashboard') }}" class="bg-red-600 hover:bg-red-700 text-white text-sm px-2 py-2 rounded-full shadow-md transition flex items-center gap-2">
+                        <span>Panel Admin</span>
                     </a>
-                    {{-- Form Logout Admin --}}
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit">Logout</button>
-                    </form>
+                </div>
+            @elseif (Auth::guard('pengelola')->check())
+                <div class="flex items-center gap-3">
+                    <div class="hidden md:flex flex-col text-right">
+                        <span class="text-xs text-gray-500">Login sebagai</span>
+                        <span class="text-sm font-bold text-green-700 truncate max-w-[120px]">
+                            {{ Auth::guard('pengelola')->user()->nama_lengkap }}
+                        </span>
+                    </div>
+                    <a href="{{ route('pengelola.dashboard') }}" class="bg-green-600 hover:bg-green-700 text-center text-white text-sm px-2 py-2 rounded-full shadow-md transition flex items-center gap-2">
+                        <span>Panel Pengelola</span>
+                    </a>
                 </div>
             @elseif (Auth::guard('web')->check())
-                {{-- TAMPILAN JIKA SUDAH LOGIN (USER DROPDOWN) --}}
                 <div class="hs-dropdown relative inline-flex">
                     <button id="hs-dropdown-user" type="button" 
                         class="hs-dropdown-toggle py-1.5 ps-1.5 pe-4 inline-flex items-center gap-x-3 text-sm font-medium rounded-full bg-green-600 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all" 
@@ -93,7 +103,7 @@
                     {{-- Isi Menu Dropdown User --}}
                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-lg rounded-lg mt-2 border border-gray-100 z-50" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-user">
                         <div class="py-3 px-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                            <p class="text-sm text-gray-500">Login Sebagai: </p>
+                            <p class="text-sm text-gray-500">Halo, </p>
                             <p class="text-sm font-medium text-gray-800 truncate">{{ Auth::user()->nama_lengkap }}</p>
                         </div>
                         <div class="p-1 space-y-0.5">
@@ -130,7 +140,6 @@
                 <svg class="icon-close w-6 h-6 text-gray-800 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                 </svg>
-
             </button>
         </div>
     </div>

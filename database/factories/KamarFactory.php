@@ -31,7 +31,7 @@ class KamarFactory extends Factory
             'tipe_kamar' => $tipe_kamar,
             'harga_kamar' => $faker->numberBetween('50000', '30000'),
             'deskripsi' => $faker->text(200),
-            'status' => $faker->randomElement(['Tersedia', 'Dihuni']),
+            'status' => $faker->randomElement(['Tersedia', 'Dihuni', 'Perbaikan']),
             'gambar' => null,
         ];
     }
