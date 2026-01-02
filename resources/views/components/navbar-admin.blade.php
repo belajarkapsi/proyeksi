@@ -9,7 +9,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                
+
                 {{-- Label halaman (Opsional, menambah kesan profesional) --}}
                 <div class="hidden lg:block">
                     <h1 class="text-xl font-bold text-gray-800 tracking-tight">Overview Panel</h1>
@@ -18,7 +18,7 @@
 
             {{-- RIGHT: Icons + User Dropdown --}}
             <div id="navbar-right" class="flex items-center gap-2 md:gap-5">
-                
+
                 {{-- Notifikasi dengan Badge --}}
                 <div class="relative">
                     <button class="p-2.5 rounded-xl text-gray-500 hover:bg-gray-100 hover:text-green-700 transition-all focus:outline-none group">
@@ -40,9 +40,9 @@
                     {{-- Tombol Profil --}}
                     <button id="user-menu-button" type="button" class="flex items-center gap-3 p-1.5 pr-3 rounded-2xl hover:bg-gray-50 transition-all duration-200 group focus:outline-none">
                         <div class="relative shrink-0">
-                            <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->nama_lengkap) . '&background=10b981&color=fff&size=128' }}" 
-                                 alt="{{ Auth::user()->nama_lengkap ?? 'User' }}" 
-                                 class="size-11 rounded-xl object-cover border-2 border-white shadow-sm ring-1 ring-gray-200">
+                            <img src="{{ Auth::user()->foto_profil ? asset('storage/' . Auth::user()->foto_profil) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->nama_lengkap) . '&background=10b981&color=fff&size=128' }}"
+                                alt="{{ Auth::user()->nama_lengkap ?? 'User' }}"
+                                class="size-11 rounded-xl object-cover border-2 border-white shadow-sm ring-1 ring-gray-200">
                         </div>
 
                         <div class="hidden sm:flex flex-col items-start leading-tight">
@@ -63,6 +63,15 @@
                                 <p class="text-sm font-bold text-gray-800">{{ Auth::user()->nama_lengkap }}</p>
                                 <p class="text-xs text-green-600 font-medium">Pemilik</p>
                             </div>
+
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-gray-600 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all group">
+                                <div class="p-2 bg-gray-50 rounded-lg group-hover:bg-white transition-colors">
+                                    <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                    </svg>
+                                </div>
+                                <span>Ke Dashboard Utama</span>
+                            </a>
 
                             <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 px-4 py-3 text-[15px] font-medium text-gray-600 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all group">
                                 <div class="p-2 bg-gray-50 rounded-lg group-hover:bg-white transition-colors">
