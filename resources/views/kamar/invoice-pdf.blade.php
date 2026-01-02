@@ -95,7 +95,7 @@
             <tbody>
                 @foreach($pemesanan->service as $svc)
                 <tr>
-                    <td>{{ $svc->service->nama_service ?? 'Extra Service' }}</td>
+                    <td>{{ $svc->service->name ?? 'Extra Service' }}</td>
                     <td>{{ $svc->quantity }}</td>
                     <td>Rp {{ number_format($svc->price, 0, ',', '.') }}</td>
                     <td align="right">Rp {{ number_format($svc->subtotal, 0, ',', '.') }}</td>

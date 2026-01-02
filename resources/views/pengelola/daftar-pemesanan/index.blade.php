@@ -137,7 +137,7 @@
                             <ul class="space-y-1">
                                 @foreach($p->service as $svc)
                                     <li class="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-1 last:border-0">
-                                        <span>{{ $svc->name ?? 'Layanan ?' }}</span>
+                                        <span>{{ $svc->service->name ?? 'Layanan ?' }}</span>
                                         <span class="font-medium">Rp {{ number_format($svc->price ?? 0, 0, ',', '.') }}</span>
                                     </li>
                                 @endforeach
