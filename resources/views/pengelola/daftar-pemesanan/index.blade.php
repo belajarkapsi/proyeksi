@@ -273,6 +273,26 @@
                 });
             });
         });
+
+        @if(session('open_wa'))
+            setTimeout(function() {
+                // Tanya user dulu biar tidak dikira pop-up spam
+                Swal.fire({
+                    title: 'Buka WhatsApp?',
+                    text: "Pembayaran terverifikasi. Ingin kirim notifikasi ke penyewa sekarang?",
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonColor: '#25D366', // Warna WA
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: '<i class="fab fa-whatsapp"></i> Ya, Kirim WA',
+                    cancelButtonText: 'Tutup'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.open("{{ session('open_wa') }}", '_blank');
+                    }
+                });
+            }, 500); // Delay dikit biar smooth
+        @endif
     });
 </script>
 @endpush

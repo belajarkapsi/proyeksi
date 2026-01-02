@@ -20,8 +20,13 @@
         .text-center { text-align: center; }
 
         .summary-box { width: 100%; margin-bottom: 20px; }
-        .summary-item { display: inline-block; width: 32%; background: #f0fdf4; border: 1px solid #16a34a; padding: 10px; text-align: center; border-radius: 5px; }
+        .summary-item { display: inline-block; width: 32%; background: #f0fdf4; border: 1px solid #16a34a; padding: 10px; text-align: center; border-radius: 5px; vertical-align: top; }
         .summary-value { font-size: 16px; font-weight: bold; color: #16a34a; display: block; margin-top: 5px; }
+
+        /* Helper khusus kost */
+        .kost-stat-item { margin-bottom: 5px; font-size: 11px; text-align: left; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
+        .kost-stat-label { float: left; color: #555; }
+        .kost-stat-val { float: right; font-weight: bold; color: #333; }
 
         .footer { margin-top: 50px; text-align: right; font-size: 11px; }
         .ttd-area { margin-top: 60px; margin-right: 20px; display: inline-block; text-align: center; }
@@ -31,7 +36,6 @@
 <body>
 
     <div class="header">
-        {{-- Gunakan public_path agar dompdf bisa baca gambar --}}
         <img src="{{ public_path('images/logo.png') }}" height="40" style="margin-bottom: 5px;">
         <h1>SIPESTAR</h1>
         <p>Sistem Penginapan Pondok Siti Hajar</p>
@@ -75,7 +79,23 @@
                 <span class="summary-value">Rp {{ number_format($pendapatanService, 0, ',', '.') }}</span>
             </div>
         @else
-            {{-- Placeholder layouting kost --}}
+            {{-- DATA ANALITIK KOST --}}
+            <div class="summary-item" style="background: #fff; border: 1px solid #ddd;">
+                <span style="display:block; margin-bottom:8px; font-weight:bold; color:#555;">Distribusi Tipe Kamar</span>
+
+                @if(isset($chartTipeLabels) && count($chartTipeLabels) > 0)
+                    @foreach($chartTipeLabels as $index => $label)
+                    <div class="kost-stat-item">
+                        <span class="kost-stat-label">{{ $label }}</span>
+                        <span class="kost-stat-val">{{ $chartTipeValues[$index] }}x Sewa</span>
+                        <div style="clear:both;"></div>
+                    </div>
+                    @endforeach
+                @else
+                    <span style="font-size:10px; color:#999; font-style:italic;">Belum ada data sewa</span>
+                @endif
+            </div>
+
             <div class="summary-item" style="border: 1px solid #ddd; background: #fff; color: #888;">
                 <span>Total Transaksi</span>
                 <span class="summary-value" style="color: #555;">{{ $transaksiList->count() }} Trx</span>
