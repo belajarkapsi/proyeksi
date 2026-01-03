@@ -62,23 +62,23 @@
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center gap-2">
                                 {{-- Detail --}}
-                                <a href="{{ route('penyewa.show', $user->id_penyewa) }}" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-200" title="Detail">
+                                <a href="{{ route('admin.penyewa.show', $user->id_penyewa) }}" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-200" title="Detail">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </a>
-                                
+
                                 {{-- Edit --}}
-                                <a href="{{ route('penyewa.edit', $user->id_penyewa) }}" class="p-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-500 hover:text-white transition-all duration-200" title="Edit">
+                                <a href="{{ route('admin.penyewa.edit', $user->id_penyewa) }}" class="p-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-500 hover:text-white transition-all duration-200" title="Edit">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
 
                                 {{-- Hapus --}}
-                                <form id="delete-form-{{ $user->id_penyewa }}" action="{{ route('penyewa.destroy', $user->id_penyewa) }}" method="POST" class="inline">
+                                <form id="delete-form-{{ $user->id_penyewa }}" action="{{ route('admin.penyewa.destroy', $user->id_penyewa) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
 
-                                    <a href="{{ route('penyewa.show', $user->id_penyewa) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
+                                    <a href="{{ route('admin.penyewa.show', $user->id_penyewa) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
                                     <span class="text-gray-300">|</span>
-                                    <a href="{{ route('penyewa.edit', $user->id_penyewa) }}" class="text-green-600 hover:text-green-800 uppercase text-xs font-bold transition">Edit</a>
+                                    <a href="{{ route('admin.penyewa.edit', $user->id_penyewa) }}" class="text-green-600 hover:text-green-800 uppercase text-xs font-bold transition">Edit</a>
                                     <span class="text-gray-300">|</span>
                                     <button type="button" onclick="confirmDelete('{{ $user->id_penyewa }}', '{{ $user->nama_lengkap }}')" class="text-red-500 hover:text-red-800 uppercase text-xs font-bold transition cursor-pointer">
                                         Hapus

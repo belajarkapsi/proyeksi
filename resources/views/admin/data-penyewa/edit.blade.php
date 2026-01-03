@@ -15,7 +15,7 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
+                <a href="{{ route('admin.penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
@@ -30,7 +30,7 @@
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square"></i> Edit Data Penyewa
         </h3>
-        <a href="{{ route('penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('admin.penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -38,7 +38,7 @@
     {{-- Form Start --}}
     {{-- PENTING: enctype="multipart/form-data" wajib ada untuk upload foto --}}
     {{-- Route menggunakan parameter $user->id_penyewa karena primary key custom --}}
-    <form action="{{ route('penyewa.update', $user->id_penyewa) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+    <form action="{{ route('admin.penyewa.update', $user->id_penyewa) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
         @csrf
         @method('PUT')
 
