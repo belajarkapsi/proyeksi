@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-4 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -14,22 +14,18 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <span class="text-green-600 text-sm font-medium">Data Kamar & Layanan</span>
+                <span class="text-green-600 text-sm font-medium">Data Layanan</span>
             </li>
         </ol>
     </nav>
 </div>
 
 {{-- Main Content --}}
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto pb-10">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0">
 
     {{-- Header & Tombol Tambah Kamar --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-5 mb-6 gap-4">
         <div>
-            <a href="{{ route('pengelola.dashboard') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-green-600 text-sm transition-colors mb-2">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali</span>
-            </a>
             <h2 class="text-2xl font-bold text-gray-800">Data Kamar</h2>
             <p class="text-sm text-gray-500">Kelola ketersediaan kamar dan informasi hunian.</p>
         </div>
@@ -257,10 +253,7 @@
     </div>
     @endif
 
-    {{-- ========================================================= --}}
-    {{-- BAGIAN DATA SERVICE / LAYANAN VILLA (HANYA UNTUK VILLA) --}}
-    {{-- ========================================================= --}}
-
+    {{-- Jika Villa --}}
     @if(isset($services) && Str::lower(auth('pengelola')->user()->cabang->kategori_cabang) === 'villa')
 
         {{-- PEMISAH --}}
@@ -273,11 +266,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Layanan Villa</h2>
-                <p class="text-sm text-gray-500">Kelola item tambahan seperti Extra Bed, Gazebo, dll.</p>
+                <p class="text-sm text-gray-500">Kelola layanan seperti Kolam Renang, Gazebo, dll.</p>
             </div>
 
             @can('create', App\Models\Service::class)
-            <a href="{{ route('pengelola.service.create') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-semibold text-sm">
+            <a href="{{ route('pengelola.service.create') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-800 transition shadow-sm font-semibold text-sm">
                 <i class="fa-solid fa-plus mr-2"></i> Tambah Layanan
             </a>
             @endcan

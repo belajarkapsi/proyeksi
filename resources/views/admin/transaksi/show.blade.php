@@ -1,28 +1,33 @@
 @extends('layout.admin')
-@section('title', 'Detail Transaksi #' . $transaksi->id_pemesanan)
+@section('title', 'Detail Transaksi')
 
 @section('content')
-<div class="container-fluid py-4 px-3 px-md-5">
-    {{-- Header & Breadcrumb Section --}}
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600">
+                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <span class="text-gray-400">/</span>
+                <a class="text-sm font-medium text-gray-400 hover:text-green-600">Data Transaksi</a>
+            </li>
+            <li>
+                <span class="text-gray-400">/</span>
+                <span class="text-green-600 text-sm font-medium">Detail Transaksi</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid mx-auto px-3 sm:px-2 md:px-4 lg:px-5 xl:px-5 py-3 lg:py-8">
+    {{-- Header --}}
     <div class="flex flex-col md:flex-row justify-between align-items-start align-items-md-center mb-6 gap-3">
         <div>
-            <nav class="flex mb-2" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-2 text-xs">
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-emerald-600 transition-colors">
-                            <i class="fas fa-home mr-1"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="flex items-center text-gray-400">
-                        <i class="fas fa-chevron-right text-[8px] mx-1"></i>
-                        <a href="{{ route('transaksi.index') }}" class="text-gray-400 hover:text-emerald-600 transition-colors">Riwayat Transaksi</a>
-                    </li>
-                    <li class="flex items-center text-gray-400">
-                        <i class="fas fa-chevron-right text-[8px] mx-1"></i>
-                        <span class="font-medium text-emerald-600">Detail #{{ $transaksi->id_pemesanan }}</span>
-                    </li>
-                </ol>
-            </nav>
             <div class="flex items-center gap-3">
                 <a href="{{ route('transaksi.index') }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
                     <i class="fas fa-arrow-left text-xs"></i>
@@ -49,11 +54,11 @@
                 <div class="p-6">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xl border border-emerald-200 shadow-sm">
-                            {{ strtoupper(substr($transaksi->penyewa->name ?? 'U', 0, 1)) }}
+                            {{ strtoupper(substr($transaksi->penyewa->nama_lengkap ?? 'U', 0, 1)) }}
                         </div>
                         <div>
                             <div class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Nama Penyewa</div>
-                            <div class="text-lg font-black text-gray-800 leading-tight">{{ $transaksi->penyewa->name }}</div>
+                            <div class="text-lg font-black text-gray-800 leading-tight">{{ $transaksi->penyewa->nama_lengkap }}</div>
                         </div>
                     </div>
 
@@ -68,7 +73,7 @@
                         <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
                             <small class="text-[10px] font-bold text-gray-400 uppercase d-block mb-1">Waktu Transaksi</small>
                             <div class="text-sm font-bold text-gray-700 flex items-center">
-                                <i class="far fa-calendar-check text-emerald-500 mr-2"></i> 
+                                <i class="far fa-calendar-check text-emerald-500 mr-2"></i>
                                 {{ \Carbon\Carbon::parse($transaksi->waktu_pemesanan)->translatedFormat('d M Y, H:i') }} WIB
                             </div>
                         </div>
@@ -117,13 +122,13 @@
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @foreach($transaksi->items as $item)
-                            <tr class="text-sm font-bold text-gray-700">
+                            <tr class="text-md font-bold text-gray-700">
                                 <td class="px-6 py-4"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded text-xs">#{{ $item->kamar->no_kamar }}</span></td>
                                 <td class="px-6 py-4 text-gray-500 font-medium">{{ $item->kamar->tipe_kamar }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="text-[11px] leading-tight">
+                                <td class="px-6 py-4 flex flex-wrap">
+                                    <div class="text-sm">
                                         {{ $item->waktu_checkin->format('d/m/Y') }} - {{ $item->waktu_checkout->format('d/m/Y') }}
-                                        <div class="text-emerald-500 font-black mt-1 uppercase text-[9px]">
+                                        <div class="text-emerald-500 font-black uppercase text-xs text-center">
                                             {{ $item->waktu_checkin->diffInDays($item->waktu_checkout) }} Malam
                                         </div>
                                     </div>
@@ -186,10 +191,10 @@
     body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
     .font-black { font-weight: 900; }
     .font-extrabold { font-weight: 800; }
-    
+
     /* Table Fixes */
     .table-responsive { width: 100%; overflow-x: auto; }
-    
+
     /* Print Layout Optimization */
     @media print {
         .btn, nav, .sidebar, .w-9.h-9, footer { display: none !important; }

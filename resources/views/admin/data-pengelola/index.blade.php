@@ -2,10 +2,10 @@
 @section('title', 'Data Pengelola')
 
 @section('content')
-<div class="p-4 sm:p-6 lg:p-8 mt-[-2rem]">
-    {{-- Navbar Breadcrumb --}}
-    <nav class="flex mb-6" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-green-600 transition-colors">
                     <svg class="w-4 h-4 me-2" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
@@ -21,62 +21,49 @@
         </ol>
     </nav>
 
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 grid">
     {{-- Header Section --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">
-                Data Pengelola
-            </h2>
-            <p class="text-sm text-gray-500 mt-1">Daftar akun pengelola yang memiliki akses ke sistem admin.</p>
-        </div>
-        
-        <a href="{{ route('pengelola.create') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 font-bold shadow-lg shadow-green-200 group">
-            <svg class="w-5 h-5 mr-2 transform group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            TAMBAH PENGELOLA
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between md:mt-6 mb-3 gap-4">
+        <h2 class="text-2xl font-semibold text-gray-700">
+            Data Pengelola
+        </h2>
+
+        <a href="{{ route('admin.pengelola.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold shadow-sm">
+            + Tambah
         </a>
     </div>
 
-    {{-- Table Card --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="bg-gray-50 text-gray-700 uppercase font-bold border-b border-gray-200">
-                    <tr>
-                        <th class="px-6 py-4 tracking-wider">Username</th>
-                        <th class="px-6 py-4 tracking-wider">Nama Lengkap</th>
-                        <th class="px-6 py-4 tracking-wider text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($pengelolas as $pengelola)
-                    <tr class="hover:bg-gray-50/80 transition-colors group">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200 uppercase">
-                                {{ $pengelola->username }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-bold text-gray-900">{{ $pengelola->nama_lengkap }}</span>
-                                <span class="text-xs text-gray-400 flex items-center mt-1">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                    {{ $pengelola->email }}
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center gap-3">
-                                {{-- View --}}
-                                <a href="{{ route('pengelola.show', $pengelola->id_pengelola) }}" class="text-blue-500 hover:text-blue-700 transition-colors p-2 hover:bg-blue-50 rounded-lg" title="Lihat Detail">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                </a>
+    {{-- Tabel Container --}}
+    <div class="flex flex-col w-full min-w-0 mb-6">
+        <div class="w-full overflow-x-auto rounded-lg border border-neutral-700 bg-white">
+            <div class="inline-block min-w-full align-middle">
+                <table class="min-w-full divide-y divide-neutral-700">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Username</th>
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Nama Lengkap</th>
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Email</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-700 bg-white">
+                        @forelse ($pengelolas as $pengelola)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">{{ $pengelola->username }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{{ $pengelola->nama_lengkap }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{{ $pengelola->email }}</td>
+                            <td class="px-6 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                <form id="delete-form-{{ $pengelola->id_pengelola }}" action="{{ route('admin.pengelola.destroy', $pengelola->id_pengelola) }}" method="POST" class="flex items-center justify-center gap-2">
+                                    @csrf
+                                    @method('DELETE')
 
-                                {{-- Edit --}}
-                                <a href="{{ route('pengelola.edit', $pengelola->id_pengelola) }}" class="text-amber-500 hover:text-amber-700 transition-colors p-2 hover:bg-amber-50 rounded-lg" title="Edit Data">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                </a>
+                                    <a href="{{ route('admin.pengelola.show', $pengelola->id_pengelola) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
+
+                                    <span class="text-gray-300">|</span>
+
+                                    <a href="{{ route('admin.pengelola.edit', $pengelola->id_pengelola) }}" class="text-amber-600 hover:text-amber-800 uppercase text-xs font-bold">Edit</a>
+
+                                    <span class="text-gray-300">|</span>
 
                                 {{-- Delete --}}
                                 <form id="delete-form-{{ $pengelola->id_pengelola }}" action="{{ route('pengelola.destroy', $pengelola->id_pengelola) }}" method="POST" class="inline">

@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-4 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -21,7 +21,7 @@
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 grid">
     <h2 class="py-4 text-2xl font-semibold text-gray-700">
         Data Penyewa
     </h2>
@@ -35,19 +35,19 @@
                         <tr>
                             {{-- Gunakan whitespace-nowrap agar teks tidak turun ke bawah --}}
                             <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Nama Lengkap</th>
-                            <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Foto Profil</th>
+                            <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Foto Profil</th>
                             <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">No. Telp</th>
                             <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Email</th>
-                            <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Jenis Kelamin</th>
+                            <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Jenis Kelamin</th>
                             <th class="px-4 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Total Pesanan</th>
-                            <th class="pl-6 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Aksi</th>
+                            <th class="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap md:pl-8 md:px-0">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-700 bg-white">
                         @forelse ($users as $user)
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 text-sm font-medium text-gray-800 whitespace-nowrap">{{ $user->nama_lengkap }}</td>
-                            <td class="px-4 py-3 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-800 whitespace-nowrap hidden md:table-cell">
                                 @if($user->foto_profil)
                                     <img src="{{ asset('storage/' . $user->foto_profil) }}" class="w-8 h-8 rounded-full object-cover">
                                 @else
@@ -57,8 +57,8 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap">{{ $user->no_telp }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap">{{ $user->email }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap">{{ $user->jenis_kelamin }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap hidden md:table-cell">{{ $user->email }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap hidden md:table-cell">{{ $user->jenis_kelamin }}</td>
                             <td class="px-4 py-3 text-sm font-bold text-green-700 whitespace-nowrap">
                                 <span class="bg-green-100 px-10 py-2 text-xs border-transparent">
                                     {{ $user->total_pesanan_cabang }}x

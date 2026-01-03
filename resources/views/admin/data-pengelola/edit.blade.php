@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8 mb-6">
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -15,7 +15,7 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('pengelola.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Pengelola</a>
+                <a href="{{ route('admin.pengelola.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Pengelola</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
@@ -25,20 +25,18 @@
     </nav>
 </div>
 
-<div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
+<div class="max-w-5xl mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 mt-5 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
     <div class="bg-green-700 px-6 py-4 flex justify-between items-center">
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square"></i> Edit Data Pengelola
         </h3>
-        <a href="{{ route('pengelola.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('admin.pengelola.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
 
     {{-- Form Start --}}
-    {{-- PENTING: enctype="multipart/form-data" wajib ada untuk upload foto --}}
-    {{-- Route menggunakan parameter $pengelola->id_penyewa karena primary key custom --}}
-    <form action="{{ route('pengelola.update', $pengelola->id_pengelola) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+    <form action="{{ route('admin.pengelola.update', $pengelola->id_pengelola) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
         @csrf
         @method('PUT')
 

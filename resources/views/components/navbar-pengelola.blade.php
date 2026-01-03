@@ -23,10 +23,6 @@
 
             <div>
                 <div class="hidden md:flex items-center space-x-4">
-                    <button type="button" class="p-1 rounded-full text-gray-500 hover:text-gray-800 focus:outline-none hover:bg-gray-100 transition">
-                        <span class="sr-only">View notifications</span>
-                        <i class="fas fa-bell"></i>
-                    </button>
 
                     <div class="relative dropdown [--auto-close:inside]">
                         <button type="button" class="dropdown-toggle max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 p-1 pr-2 hover:bg-gray-50 transition">

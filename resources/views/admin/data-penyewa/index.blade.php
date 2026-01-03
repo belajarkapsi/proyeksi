@@ -2,10 +2,10 @@
 @section('title', 'Data Penyewa')
 
 @section('content')
-<div class="p-4 sm:p-6 lg:p-8 mt-[-2rem]">
-    {{-- Navbar Breadcrumb --}}
-    <nav class="flex mb-6" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-green-600 transition-colors">
                     <svg class="w-4 h-4 me-2" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
@@ -21,46 +21,35 @@
         </ol>
     </nav>
 
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 grid">
     {{-- Header Section --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">
-                Data Penyewa
-            </h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola informasi seluruh pelanggan atau penyewa Anda di sini.</p>
-        </div>
-        {{-- Jika ada tombol tambah, bisa diletakkan di sini --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between md:mt-6 mb-3 gap-4">
+        <h2 class="text-2xl font-bold text-gray-800">
+            Data Penyewa
+        </h2>
     </div>
 
-    {{-- Table Card --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider">Nama Lengkap</th>
-                        <th class="px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider">Kontak</th>
-                        <th class="px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-4 font-semibold text-center text-gray-700 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($users as $user)
-                    <tr class="hover:bg-green-50/50 transition-colors group">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="h-10 w-10 flex-shrink-0 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold border border-green-200">
-                                    {{ strtoupper(substr($user->nama_lengkap, 0, 1)) }}
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-bold text-gray-900">{{ $user->nama_lengkap }}</div>
-                                    <div class="text-xs text-gray-400 md:hidden">{{ $user->no_telp }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+    {{-- Tabel Container --}}
+    <div class="flex flex-col w-full min-w-0 mb-6">
+        <div class="w-full overflow-x-auto rounded-lg border border-neutral-700 bg-white shadow-sm">
+            <div class="inline-block min-w-full align-middle">
+                <table class="min-w-full divide-y divide-neutral-700">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            {{-- Hanya 4 Kolom Utama Sesuai Permintaan --}}
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">Nama Lengkap</th>
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">No. Telp</th>
+                            <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider md:pl-8 md:px-0">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-700 bg-white">
+                        @forelse ($users as $user)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                                {{ $user->nama_lengkap }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                                 {{ $user->no_telp }}
                             </div>
                         </td>
@@ -86,8 +75,13 @@
                                 <form id="delete-form-{{ $user->id_penyewa }}" action="{{ route('penyewa.destroy', $user->id_penyewa) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('{{ $user->id_penyewa }}', '{{ $user->nama_lengkap }}')" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-200" title="Hapus">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+
+                                    <a href="{{ route('penyewa.show', $user->id_penyewa) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
+                                    <span class="text-gray-300">|</span>
+                                    <a href="{{ route('penyewa.edit', $user->id_penyewa) }}" class="text-green-600 hover:text-green-800 uppercase text-xs font-bold transition">Edit</a>
+                                    <span class="text-gray-300">|</span>
+                                    <button type="button" onclick="confirmDelete('{{ $user->id_penyewa }}', '{{ $user->nama_lengkap }}')" class="text-red-500 hover:text-red-800 uppercase text-xs font-bold transition cursor-pointer">
+                                        Hapus
                                     </button>
                                 </form>
                             </div>

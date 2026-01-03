@@ -84,7 +84,7 @@ class DataPenyewaController extends Controller
         $user->update($validasiData);
 
         Alert::success('Berhasil!', 'Data Penyewa Berhasil Diperbarui!');
-        return redirect()->route('penyewa.index');
+        return redirect()->route('admin.penyewa.index');
     }
 
     public function destroy(string $id)
@@ -98,6 +98,6 @@ class DataPenyewaController extends Controller
         $user->delete();
 
         Alert::success('Berhasil!', 'Data Penyewa Berhasil Dihapus!');
-        return redirect()->route('penyewa.index');
+        return redirect()->route('admin.penyewa.index');
     }
 }

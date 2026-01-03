@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-4 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -20,7 +20,7 @@
     </nav>
 </div>
 
-<div class="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 mt-5">
     {{-- Header Section --}}
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div>

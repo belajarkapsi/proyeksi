@@ -1,7 +1,7 @@
 @php
     $dashboard = request()->routeIs('admin.dashboard');
-    $penyewa = request()->routeIs('penyewa.*');
-    $pengelola = request()->routeIs('pengelola.*');
+    $penyewa = request()->routeIs('admin.penyewa.*');
+    $pengelola = request()->routeIs('admin.pengelola.*');
     $parepare = request()->fullUrlIs('*parepare*');
     $pangkep = request()->fullUrlIs('*pangkep*');
 
@@ -15,7 +15,7 @@
     <aside id="sidebar" class="bg-green-700 w-72 fixed top-0 left-0 bottom-0 z-50 transform -translate-x-full transition-all duration-300 ease-in-out flex flex-col h-full shadow-2xl border-r border-green-600/30">
 
         <div class="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-green-500/50 [&::-webkit-scrollbar-thumb]:rounded-full">
-            
+
             {{-- LOGO SECTION --}}
             <div class="px-2 mb-10">
                 <div class="flex items-center gap-3 px-2">
@@ -38,13 +38,13 @@
 
                 {{-- ... DATA PENGGUNA ... --}}
                 <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Data Pengguna</div>
-                
-                <a href="{{ route('penyewa.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $penyewa ? $active : $inactive }}">
+
+                <a href="{{ route('admin.penyewa.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $penyewa ? $active : $inactive }}">
                     <i class="fas fa-users w-5 text-center text-lg {{ $penyewa ? 'text-green-600' : 'group-hover:scale-110 transition-transform' }}"></i>
                     <span class="text-sm">Data Penyewa</span>
                 </a>
-                
-                <a href="{{ route('pengelola.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $pengelola ? $active : $inactive }}">
+
+                <a href="{{ route('admin.pengelola.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $pengelola ? $active : $inactive }}">
                     <i class="fas fa-user-shield w-5 text-center text-lg {{ $pengelola ? 'text-green-600' : 'group-hover:scale-110 transition-transform' }}"></i>
                     <span class="text-sm">Data Pengelola</span>
                 </a>
@@ -63,7 +63,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300 {{ $parepare ? 'rotate-180' : '' }}"></i>
                     </button>
-                    
+
                     <div id="menu-parepare" class="dropdown-menu overflow-hidden transition-all duration-300 ease-in-out bg-green-800/40 rounded-xl mt-1 mx-1" style="{{ $parepare ? 'max-height: 500px;' : 'max-height: 0px;' }}">
                         <div class="p-1.5 space-y-1">
                             @php $kamarPare = request()->fullUrlIs('*kamar*') && request()->fullUrlIs('*parepare*'); @endphp
@@ -94,7 +94,7 @@
                             </div>
                             <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300 {{ $pangkep ? 'rotate-180' : '' }}"></i>
                     </button>
-                    
+
                     <div id="menu-pangkep" class="dropdown-menu overflow-hidden transition-all duration-300 ease-in-out bg-green-800/40 rounded-xl mt-1 mx-1" style="{{ $pangkep ? 'max-height: 500px;' : 'max-height: 0px;' }}">
                         <div class="p-1.5 space-y-1">
                             @php $kamarPangkep = request()->fullUrlIs('*kamar*') && request()->fullUrlIs('*pangkep*'); @endphp
@@ -118,7 +118,7 @@
 
                 {{-- ... LAPORAN ... --}}
                 <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Laporan & Analitik</div>
-                
+
                 <a href="{{ route('admin.laporan.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-lg group-hover:scale-110 transition-transform"></i>
                     <span class="text-sm font-medium">Laporan Terpadu</span>
