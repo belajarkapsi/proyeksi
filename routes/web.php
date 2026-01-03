@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
 use App\Http\Controllers\Admin\InformasiCabangController;
+use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\LayananVillaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
@@ -161,6 +162,9 @@ Route::middleware(['auth:pemilik'])->group(function() {
             // Data Informasi Cabang
             Route::resource('informasi-cabang', InformasiCabangController::class);
         });
+
+        Route::resource('transaksi', TransaksiController::class)
+        ->only(['index', 'show']);
 
         // Laporan Hunian
         Route::get('/laporan', [LaporanController::class, 'index'])
