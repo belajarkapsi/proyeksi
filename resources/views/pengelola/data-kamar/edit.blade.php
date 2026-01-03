@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8 mb-6">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4 mb-6 ml-3 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -15,17 +15,17 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('pengelola.kamar.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Kamar</a>
+                <a href="{{ route('pengelola.kamar.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Layanan</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <span class="text-green-600 text-sm font-medium">Edit Data</span>
+                <span class="text-green-600 text-sm font-medium">Edit Kamar</span>
             </li>
         </ol>
     </nav>
 </div>
 
-<div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
     {{-- Header Card --}}
     <div class="bg-green-700 px-6 py-4 flex justify-between items-center">
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
