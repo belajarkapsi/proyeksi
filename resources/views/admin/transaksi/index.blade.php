@@ -1,29 +1,32 @@
 @extends('layout.admin')
+@section('title', 'Data Transaksi')
 
 @section('content')
-<div class="container-fluid py-4 px-3 px-md-5">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600">
+                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <span class="text-gray-400">/</span>
+                <span class="text-green-600 text-sm font-medium">Data Transaksi</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid mx-auto px-3 sm:px-2 md:px-4 lg:px-5 xl:px-5 py-3 lg:py-10">
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row justify-between align-items-start align-items-md-center mb-6 gap-3">
         <div>
-            {{-- Breadcrumb: Ukuran font ditingkatkan ke text-sm --}}
-            <nav class="flex mb-2" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-2 text-sm">
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-emerald-600 transition-colors">
-                            <i class="fas fa-home mr-1 text-xs"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="flex items-center text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px] mx-1"></i>
-                        <span class="font-medium text-emerald-600">Riwayat Transaksi</span>
-                    </li>
-                </ol>
-            </nav>
-            {{-- Judul: Ditingkatkan ke text-3xl --}}
             <h3 class="text-3xl font-extrabold text-gray-800 tracking-tight mb-0">
                 Riwayat Transaksi
             </h3>
-            {{-- Sub-judul: Ditingkatkan ke text-base --}}
             <p class="text-base text-gray-500 mt-1 font-medium">Pantau dan kelola seluruh aktivitas pembayaran dari semua cabang.</p>
         </div>
         <div class="flex gap-2 w-full md:w-auto">
@@ -104,8 +107,8 @@
                             </span>
                         </td>
                         <td class="px-6 py-5 whitespace-nowrap text-center">
-                            <a href="{{ route('transaksi.show', $pemesanan->id_pemesanan) }}" 
-                               class="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100 mx-auto" 
+                            <a href="{{ route('transaksi.show', $pemesanan->id_pemesanan) }}"
+                               class="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100 mx-auto"
                                title="Lihat Detail">
                                 <i class="fas fa-eye text-sm"></i>
                             </a>
@@ -141,7 +144,7 @@
     .custom-scrollbar::-webkit-scrollbar { height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    
+
     /* Font Weight Helpers */
     .font-extrabold { font-weight: 800; }
     .font-black { font-weight: 900; }

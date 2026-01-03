@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -20,9 +20,9 @@
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-5 xl:px-5 py-3 lg:py-0">
     {{-- Header Section --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 mb-8 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between md:mt-6 mb-8 gap-4">
         <div>
             <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">Layanan Villa {{ ucfirst($lokasi) }}</h2>
             <p class="text-sm text-gray-500">Kelola fasilitas tambahan dan layanan ekstra untuk penyewa.</p>
@@ -37,7 +37,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
         @forelse ($services as $service)
             <div class="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden relative">
-                
+
                 {{-- Decorative Element --}}
                 <div class="absolute top-0 right-0 p-4">
                     <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
@@ -55,7 +55,7 @@
                     </div>
 
                     {{-- Deskripsi --}}
-                    <div class="mb-6 flex-grow">
+                    <div class="mb-6 grow">
                         <p class="text-sm text-gray-500 line-clamp-3">
                             {{ $service->description ?: 'Tidak ada deskripsi untuk layanan ini.' }}
                         </p>
@@ -63,16 +63,16 @@
 
                     {{-- Action Buttons --}}
                     <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
-                        <a href="{{ route('admin.cabanglayanan-villa.edit', ['lokasi' => $lokasi, 'layanan_villa' => $service->id]) }}" 
-                           class="flex-1 inline-flex justify-center items-center py-2 text-sm font-bold text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition">
+                        <a href="{{ route('admin.cabanglayanan-villa.edit', ['lokasi' => $lokasi, 'layanan_villa' => $service->id]) }}"
+                            class="flex-1 inline-flex justify-center items-center py-2 text-sm font-bold text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition">
                             <i class="far fa-edit mr-2"></i> Edit
                         </a>
 
                         <form id="delete-form-{{ $service->id }}" action="{{ route('admin.cabanglayanan-villa.destroy', ['lokasi' => $lokasi, 'layanan_villa' => $service->id]) }}" method="POST" class="flex-1">
                             @csrf
                             @method('DELETE')
-                            <button type="button" onclick="confirmDelete('{{ $service->id }}', '{{ $service->name }}')" 
-                                    class="w-full inline-flex justify-center items-center py-2 text-sm font-bold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
+                            <button type="button" onclick="confirmDelete('{{ $service->id }}', '{{ $service->name }}')"
+                                    class="w-full inline-flex justify-center items-center py-2 text-sm font-bold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition cursor-pointer">
                                 <i class="far fa-trash-alt mr-2"></i> Hapus
                             </button>
                         </form>
@@ -95,8 +95,8 @@
         {{-- Info Status Data (Mobile: Urutan kedua, Desktop: Urutan pertama) --}}
         <div class="order-2 md:order-1 text-center md:text-left">
             <p class="text-sm text-gray-500">
-                Menampilkan <span class="font-semibold text-gray-800">{{ $services->firstItem() ?? 0 }}</span> 
-                sampai <span class="font-semibold text-gray-800">{{ $services->lastItem() ?? 0 }}</span> 
+                Menampilkan <span class="font-semibold text-gray-800">{{ $services->firstItem() ?? 0 }}</span>
+                sampai <span class="font-semibold text-gray-800">{{ $services->lastItem() ?? 0 }}</span>
                 dari <span class="font-semibold text-gray-800">{{ $services->total() }}</span> layanan
             </p>
         </div>

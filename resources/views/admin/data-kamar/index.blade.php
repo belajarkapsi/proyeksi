@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -20,7 +20,7 @@
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0">
     {{-- Header Section --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 mb-6 gap-4">
         <div>
@@ -51,7 +51,17 @@
 
                     {{-- Status Badge --}}
                     <div class="absolute top-3 right-3">
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold shadow-sm border {{ $kamar->status == 'Tersedia' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200' }}">
+                        @php
+                        $status = $kamar->status ?? '';
+                        if($status == 'Tersedia') {
+                            $badge = 'bg-green-100 text-green-700 border-green-200';
+                        } elseif ($status == 'Perbaikan') {
+                            $badge = 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                        } else {
+                            $badge = 'bg-red-100 text-red-700 border-red-200';
+                        }
+                        @endphp
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold shadow-sm border {{ $badge }}">
                             {{ $kamar->status }}
                         </span>
                     </div>

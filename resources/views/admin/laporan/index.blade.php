@@ -2,7 +2,25 @@
 @section('title', 'Laporan Terpadu SIPESTAR')
 
 @section('content')
-<div class="container mx-auto px-4 pb-12">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600">
+                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <span class="text-gray-400">/</span>
+                <span class="text-green-600 text-sm font-medium">Laporan Terpadu</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container mx-auto px-3 sm:px-2 md:px-4 lg:px-5 xl:px-5 py-3 lg:py-10">
     {{-- HEADER --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
@@ -10,12 +28,12 @@
             <p class="text-gray-500 mt-1 text-sm">Analisis Hunian dan Keuangan real-time per cabang.</p>
         </div>
 
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 justify-center">
             {{-- Tombol PDF Dinamis --}}
-            <a href="{{ route('admin.laporan.pdf', request()->query()) }}" 
-               id="btn-cetak-pdf"
-               target="_blank"
-               class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5 text-sm font-bold">
+            <a href="{{ route('admin.laporan.pdf', request()->query()) }}"
+                id="btn-cetak-pdf"
+                target="_blank"
+                class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5 text-sm font-bold">
                 <i class="fa-solid fa-file-pdf"></i> Cetak Laporan PDF
             </a>
         </div>
@@ -96,7 +114,7 @@
         {{-- Left: Income Chart --}}
         <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-blue-500"></i> Tren Pendapatan 
+                <i class="fa-solid fa-chart-line text-blue-500"></i> Tren Pendapatan
                 <span id="loading-line" class="hidden"><i class="fa-solid fa-spinner fa-spin text-xs"></i></span>
             </h3>
             <div class="h-72">

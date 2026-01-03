@@ -150,9 +150,9 @@ Route::middleware(['auth:pemilik'])->group(function() {
         Route::get('/api/admin/dashboard-stats', [AdminController::class, 'getDashboardData'])
         ->name('admin.dashboard.api');
         // Data Penyewa
-        Route::resource('penyewa', DataPenyewaController::class);
+        Route::resource('penyewa', DataPenyewaController::class)->names('admin.penyewa');
         // Data Pengelola
-        Route::resource('pengelola', DataPengelolaController::class);
+        Route::resource('pengelola', DataPengelolaController::class)->names('admin.pengelola');
         // Data Kamar
         Route::prefix('{lokasi}')->name('admin.cabang')->group(function() {
             Route::resource('kamar', DataKamarController::class);

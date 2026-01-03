@@ -2,8 +2,8 @@
 @section('title', 'Data Penyewa')
 
 @section('content')
-{{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -20,9 +20,9 @@
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 grid">
     {{-- Header Section --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 mb-6 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between md:mt-6 mb-3 gap-4">
         <h2 class="text-2xl font-bold text-gray-800">
             Data Penyewa
         </h2>
@@ -39,7 +39,7 @@
                             <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">Nama Lengkap</th>
                             <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">No. Telp</th>
                             <th class="px-6 py-3 text-start text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider">Aksi</th>
+                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase whitespace-nowrap tracking-wider md:pl-8 md:px-0">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-700 bg-white">
@@ -59,22 +59,11 @@
                                     @csrf
                                     @method('DELETE')
 
-                                    {{-- Tombol Tampilkan (Detail) --}}
-                                    <a href="{{ route('penyewa.show', $user->id_penyewa) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">
-                                        Tampilkan
-                                    </a>
-                                    
+                                    <a href="{{ route('penyewa.show', $user->id_penyewa) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
                                     <span class="text-gray-300">|</span>
-                                    
-                                    {{-- Tombol Edit --}}
-                                    <a href="{{ route('penyewa.edit', $user->id_penyewa) }}" class="text-green-600 hover:text-green-800 uppercase text-xs font-bold transition">
-                                        Edit
-                                    </a>
-                                    
+                                    <a href="{{ route('penyewa.edit', $user->id_penyewa) }}" class="text-green-600 hover:text-green-800 uppercase text-xs font-bold transition">Edit</a>
                                     <span class="text-gray-300">|</span>
-
-                                    {{-- Tombol Hapus --}}
-                                    <button type="button" onclick="confirmDelete('{{ $user->id_penyewa }}', '{{ $user->nama_lengkap }}')" class="text-red-600 hover:text-red-800 uppercase text-xs font-bold transition">
+                                    <button type="button" onclick="confirmDelete('{{ $user->id_penyewa }}', '{{ $user->nama_lengkap }}')" class="text-red-500 hover:text-red-800 uppercase text-xs font-bold transition cursor-pointer">
                                         Hapus
                                     </button>
                                 </form>
@@ -96,11 +85,11 @@
         <div class="mt-8 mb-4 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-gray-100 pt-6">
             {{-- Info Data --}}
             <div class="text-sm text-gray-500 order-2 md:order-1 text-center md:text-left">
-                Menampilkan 
-                <span class="font-semibold text-gray-800">{{ $users->firstItem() ?? 0 }}</span> 
-                sampai 
-                <span class="font-semibold text-gray-800">{{ $users->lastItem() ?? 0 }}</span> 
-                dari 
+                Menampilkan
+                <span class="font-semibold text-gray-800">{{ $users->firstItem() ?? 0 }}</span>
+                sampai
+                <span class="font-semibold text-gray-800">{{ $users->lastItem() ?? 0 }}</span>
+                dari
                 <span class="font-semibold text-gray-800">{{ $users->total() }}</span> penyewa
             </div>
 

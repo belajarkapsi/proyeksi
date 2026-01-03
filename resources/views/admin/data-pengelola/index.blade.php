@@ -2,8 +2,8 @@
 @section('title', 'Data Pengelola')
 
 @section('content')
-{{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+{{-- Breadcrumb --}}
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -20,14 +20,14 @@
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 grid">
     {{-- Header Section --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 mb-6 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between md:mt-6 mb-3 gap-4">
         <h2 class="text-2xl font-semibold text-gray-700">
             Data Pengelola
         </h2>
-        
-        <a href="{{ route('pengelola.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold shadow-sm">
+
+        <a href="{{ route('admin.pengelola.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold shadow-sm">
             + Tambah
         </a>
     </div>
@@ -52,16 +52,16 @@
                             <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{{ $pengelola->nama_lengkap }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">{{ $pengelola->email }}</td>
                             <td class="px-6 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                <form id="delete-form-{{ $pengelola->id_pengelola }}" action="{{ route('pengelola.destroy', $pengelola->id_pengelola) }}" method="POST" class="flex items-center justify-center gap-2">
+                                <form id="delete-form-{{ $pengelola->id_pengelola }}" action="{{ route('admin.pengelola.destroy', $pengelola->id_pengelola) }}" method="POST" class="flex items-center justify-center gap-2">
                                     @csrf
                                     @method('DELETE')
 
-                                    <a href="{{ route('pengelola.show', $pengelola->id_pengelola) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
-                                    
+                                    <a href="{{ route('admin.pengelola.show', $pengelola->id_pengelola) }}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-xs font-bold uppercase">Tampilkan</a>
+
                                     <span class="text-gray-300">|</span>
-                                    
-                                    <a href="{{ route('pengelola.edit', $pengelola->id_pengelola) }}" class="text-amber-600 hover:text-amber-800 uppercase text-xs font-bold">Edit</a>
-                                    
+
+                                    <a href="{{ route('admin.pengelola.edit', $pengelola->id_pengelola) }}" class="text-amber-600 hover:text-amber-800 uppercase text-xs font-bold">Edit</a>
+
                                     <span class="text-gray-300">|</span>
 
                                     <button type="button" onclick="confirmDelete('{{ $pengelola->id_pengelola }}', '{{ $pengelola->nama_lengkap }}')" class="text-red-600 hover:text-red-800 uppercase text-xs font-bold">Hapus</button>
