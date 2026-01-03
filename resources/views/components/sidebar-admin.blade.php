@@ -111,7 +111,7 @@
                 </div>
 
                 {{-- Pembayaran --}}
-                <a href="#" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
+                <a href="{{ route('transaksi.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
                     <i class="fas fa-wallet w-5 text-center text-lg group-hover:scale-110 transition-transform"></i>
                     <span class="text-sm font-medium">Transaksi</span>
                 </a>
