@@ -8,6 +8,7 @@
     <title>@yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <link rel="icon" href="{{ asset('images/logo-removebg.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
 </head>
 <body class="h-full">
