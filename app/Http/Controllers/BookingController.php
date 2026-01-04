@@ -509,6 +509,15 @@ class BookingController extends Controller
         return 'PS' . str_pad($num, 5, '0', STR_PAD_LEFT);
     }
 
+    private function getRekeningUtama()
+    {
+        return [
+            'bank'      => 'BRI',
+            'nomor'     => '3054 0103 3659 533',
+            'atas_nama' => 'Siti Hajar Baharuddin'
+        ];
+    }
+
     public function payment($id_pemesanan)
     {
         $pemesanan = Pemesanan::with(['items.kamar', 'cabang'])
@@ -520,9 +529,12 @@ class BookingController extends Controller
             $pemesanan->refresh();
         }
 
+        $rekening = $this->getRekeningUtama();
+
         return view('kamar.detail-pesanan', [
             'pemesanan' => $pemesanan,
-            'cabang' => $pemesanan->cabang,
+            'cabang'    => $pemesanan->cabang,
+            'rekening'  => $rekening,
         ]);
     }
 
@@ -597,13 +609,16 @@ class BookingController extends Controller
                 $path = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
             }
 
+            $rek = $this->getRekeningUtama();
+            $ketPembayaran = "{$rek['bank']} {$rek['nomor']}";
+
             // Simpan ke tabel
             Pembayaran::updateOrCreate(
                 ['id_pemesanan' => $pemesanan->id_pemesanan],
                 [
                     'id_penyewa'        => $pemesanan->id_penyewa,
                     'total_pembayaran'  => $pemesanan->total_harga,
-                    'kode_transaksi'    => 'BCA - 1234567890',
+                    'kode_transaksi'    => $ketPembayaran,
                     'waktu_pembayaran'  => now(),
                     'bukti_pembayaran'  => $path
                 ]
@@ -626,9 +641,9 @@ class BookingController extends Controller
     {
         // Memuat semua relasi: penyewa, cabang, item kamar, dan layanan tambahan
         $pemesanan = \App\Models\Pemesanan::with([
-            'penyewa', 
-            'cabang', 
-            'items.kamar', 
+            'penyewa',
+            'cabang',
+            'items.kamar',
             'service.service', // Relasi ke detail nama service
             'pembayaran'
         ])->where('id_pemesanan', $id)->firstOrFail();

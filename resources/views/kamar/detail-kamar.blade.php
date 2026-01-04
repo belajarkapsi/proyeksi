@@ -24,16 +24,14 @@
             <span class="text-green-700 font-medium bg-green-50 px-2 py-0.5 rounded-full">Unit {{ $room->number ?? $room->no_kamar ?? '101' }}</span>
         </nav>
 
-        {{-- ======================================================================= --}}
-        {{--                         TAMPILAN KHUSUS VILLA                           --}}
-        {{-- ======================================================================= --}}
+        {{-- TAMPILAN KHUSUS VILLA --}}
         @if(strtolower($cabang->kategori_cabang) === 'villa')
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {{-- KOLOM KIRI (Gallery & Detail) --}}
             <div class="lg:col-span-2 space-y-8">
-                
+
                 {{-- 1. Header & Title --}}
                 <div class="border-b border-gray-200 pb-4">
                     <h1 class="font-roboto text-3xl md:text-4xl font-black text-gray-900 mb-2">
@@ -47,10 +45,10 @@
                 {{-- 2. Gallery Section (Style Lebar) --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 group">
                     <div class="relative h-[400px] md:h-[500px] overflow-hidden cursor-zoom-in" onclick="openLightbox('{{ asset($room->image ?? 'images/villa.jpg') }}')">
-                        <img src="{{ asset($room->image ?? 'images/villa.jpg') }}" 
-                             alt="Foto Villa" 
-                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
+                        <img src="{{ asset($room->image ?? 'images/villa.jpg') }}"
+                            alt="Foto Villa"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-60"></div>
                         <div class="absolute bottom-6 left-6 text-white">
                             <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">
                                 {{ $room->type ?? 'Family Room' }}
@@ -69,7 +67,7 @@
                         <span class="bg-green-600 w-1.5 h-6 mr-3 rounded-full"></span>
                         Fasilitas Unit
                     </h3>
-                    
+
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8 font-noto text-sm text-gray-700">
                         @php
                             $fasilitasVilla = $room->facilities ?? ['2 Kamar Tidur', 'Full AC', 'Dapur Lengkap', 'Kulkas', 'Ruang Tamu Luas', 'TV LED', 'Alat BBQ', 'Parkir Luas'];
@@ -95,7 +93,7 @@
             {{-- KOLOM KANAN (PANEL MIRIP HALAMAN CABANG) --}}
             <aside class="lg:col-span-1">
                 <div class="bg-white rounded-xl shadow-xl border border-gray-100 p-6 sticky top-24">
-                    
+
                     {{-- Harga & Button --}}
                     <div class="mb-8 space-y-4 text-center">
                         <div>
@@ -115,7 +113,7 @@
                         Reservasi Sekarang
                         </a>
 
-                        
+
                         <a href="https://wa.me/6281234567890" class="block w-full text-center text-green-600 font-bold text-sm hover:underline">
                             Tanya Ketersediaan via WhatsApp
                         </a>
@@ -125,11 +123,11 @@
                     <h2 class="font-roboto text-lg font-bold text-gray-800 mb-4 border-b pb-2 border-gray-200">
                         Layanan Tambahan
                     </h2>
-                    
+
                     <div class="space-y-4 font-noto">
                         <!-- Item 1: Gazebo -->
                         <div class="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
-                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             </div>
                             <div class="flex-1">
@@ -140,7 +138,7 @@
 
                         <!-- Item 2: Karaoke -->
                         <div class="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
-                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                             </div>
                             <div class="flex-1">
@@ -148,9 +146,9 @@
                                 <div class="text-green-600 font-bold text-xs">Rp 50.000</div>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
-                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path fill="currentColor" d="M21 5c-1.11-.35-2.33-.5-3.5-.5C13.17 4 9.14 5.96 7 8s-2.17 4-5.5 4c1.11.35 2.33.5 3.5.5C10.83 12.5 14.86 10.54 17 8s2.17-4 5.5-4c-1.11.35-2.33.5-3.5.5zM17 9c-1.38 0-2.5 1.12-2.5 2.5S15.62 14 17 14s2.5-1.12 2.5-2.5S18.38 9 17 9z"></path></svg>
                             </div>
                             <div class="flex-1">
@@ -161,7 +159,7 @@
 
                         <!-- Item 3: Pelampung -->
                         <div class="flex items-start gap-3 last:border-0">
-                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+                            <div class="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-green-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="flex-1">
@@ -175,11 +173,8 @@
         </div>
 
 
-        {{-- ======================================================================= --}}
-        {{--                         TAMPILAN DEFAULT (KOST)                         --}}
-        {{-- ======================================================================= --}}
+        {{-- TAMPILAN DEFAULT (KOST) --}}
         @else
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
             {{-- KOLOM KIRI: Konten Utama --}}
@@ -191,8 +186,8 @@
                         {{-- Main Image (Besar Kiri) --}}
                         <div class="md:col-span-3 relative group overflow-hidden rounded-xl cursor-zoom-in" onclick="openLightbox('{{ asset($room->image ?? 'images/kamar.jpg') }}')">
                             <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}"
-                                 alt="Kamar {{ $room->number ?? '' }}"
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                alt="Kamar {{ $room->number ?? '' }}"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                         </div>
 
@@ -214,7 +209,7 @@
 
                 {{-- 2. Header Title --}}
                 <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-gray-100">
-                    <div class="flex flex-wrap justify-between items-start gap-4 mb-6"> 
+                    <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-900 mb-2 font-roboto">Tipe Kamar {{ $room->no_kamar ?? '101' }}</h1>
                             <p class="text-gray-500 flex items-center gap-2 text-sm font-roboto">
@@ -380,10 +375,10 @@
         'kamar' => $room->id_kamar ?? $room->no_kamar,
         'tipe'  => $roomType
     ]) }}"
-   class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+    class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
     </svg>
     Pesan Sekarang
 </a>
@@ -425,10 +420,10 @@
         'kamar' => $room->id_kamar ?? $room->no_kamar,
         'tipe'  => $roomType
     ]) }}"
-   class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+    class="w-full bg-green-900 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
     </svg>
     Pesan Sekarang
 </a>
@@ -457,7 +452,7 @@
                 </div>
             </aside>
         </div>
-        
+
         @endif
 
         {{-- MOBILE BOTTOM BAR (Hanya muncul di HP) --}}
@@ -474,7 +469,7 @@
                     @endif
                 </div>
                 <a href="{{ route('booking.checkout', ['kamar' => $room->id_kamar ?? $room->no_kamar]) }}"
-   class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex-1 font-roboto text-center">
+    class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex-1 font-roboto text-center">
     {{ strtolower($cabang->kategori_cabang) === 'villa' ? 'Reservasi' : 'Ajukan Sewa' }}
 </a>
 

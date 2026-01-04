@@ -126,7 +126,7 @@
                             </div>
                         </div>
 
-                        <a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20sudah%20upload%20bukti%20pembayaran%20untuk%20Pesanan%20%23{{ $pemesanan->id_pemesanan }}" target="_blank"
+                        <a href="https://wa.me/081241334241?text=Halo%20Admin,%20saya%20sudah%20upload%20bukti%20pembayaran%20untuk%20Pesanan%20%23{{ $pemesanan->id_pemesanan }}" target="_blank"
                             class="flex items-center justify-center gap-2 w-full py-3 px-6 bg-green-100 text-green-700 font-bold rounded-xl hover:bg-green-200 transition mb-4">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.512-2.96-2.626-.088-.113-.716-.953-.716-1.819 0-.866.454-1.292.614-1.457.16-.165.346-.207.461-.207s.23.003.332.007c.108.005.253-.041.396.304.148.355.506 1.233.551 1.324.045.091.075.197.015.318-.06.121-.09.197-.181.303-.09.106-.189.236-.269.318-.09.091-.184.19-.08.368.104.178.464.767.995 1.24.685.611 1.261.801 1.441.89.179.089.284.075.39-.045.105-.121.451-.523.571-.7.121-.178.241-.148.406-.088.165.06 1.05.495 1.231.585s.301.135.346.21c.045.075.045.435-.099.84z"/></svg>
                                 Hubungi Admin
@@ -139,16 +139,18 @@
                     <div class="mb-8">
                         <h3 class="text-gray-800 font-bold text-xl mb-4">Metode Transfer Bank</h3>
                         <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200">
-                                <span class="text-blue-600 font-bold italic tracking-tighter">BCA</span>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 text-center">
+                                <span class="text-blue-600 font-bold italic tracking-tighter text-lg">{{ $rekening['bank'] }}</span>
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm text-gray-500 font-medium tracking-tight">Bank Central Asia (BCA)</p>
+                                <p class="text-sm text-gray-500 font-medium tracking-tight">Transfer Manual ke:</p>
                                 <div class="flex items-center gap-3">
-                                    <p class="text-2xl font-bold text-gray-900 tracking-wide" id="rek-number">123 456 7890</p>
-                                    <button onclick="copyToClipboard('1234567890')" class="text-green-600 hover:text-green-800 text-xs font-bold bg-green-50 px-2 py-1 rounded">SALIN</button>
+                                    <p class="text-2xl font-bold text-gray-900 tracking-wide" id="rek-number">{{ $rekening['nomor'] }}</p>
+                                    <button onclick="copyToClipboard('{{ str_replace(' ', '', $rekening['nomor']) }}')" class="text-green-600 hover:text-green-800 text-xs font-bold bg-green-50 px-2 py-1 rounded transition">
+                                        SALIN
+                                    </button>
                                 </div>
-                                <p class="text-xs text-gray-400">a.n Pondok Siti Hajar</p>
+                                <p class="text-xs text-gray-400">a.n {{ $rekening['atas_nama'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -201,8 +203,8 @@
                     <p class="text-gray-500 mb-8 text-sm">Terima kasih, pembayaran Anda telah kami konfirmasi.</p>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ route('booking.cetak_invoice', $pemesanan->id_pemesanan) }}" 
-                        target="_blank" 
+                        <a href="{{ route('booking.cetak_invoice', $pemesanan->id_pemesanan) }}"
+                        target="_blank"
                         class="bg-blue-600 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
@@ -286,9 +288,9 @@
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("countdown").innerHTML = 
-                (hours < 10 ? "0" + hours : hours) + ":" + 
-                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+            document.getElementById("countdown").innerHTML =
+                (hours < 10 ? "0" + hours : hours) + ":" +
+                (minutes < 10 ? "0" + minutes : minutes) + ":" +
                 (seconds < 10 ? "0" + seconds : seconds);
         }, 1000);
     @endif

@@ -6,20 +6,20 @@
     <style>
         body { font-family: 'Helvetica', sans-serif; color: #333; line-height: 1.4; font-size: 12px; }
         .invoice-box { padding: 20px; }
-        
+
         /* HEADER STYLING */
         .header-table { width: 100%; border-bottom: 2px solid #16a34a; padding-bottom: 10px; margin-bottom: 20px; }
         .logo-section { vertical-align: middle; }
         .logo-img { height: 45px; margin-right: 10px; vertical-align: middle; }
         .brand { font-size: 20px; font-weight: bold; color: #16a34a; text-transform: uppercase; vertical-align: middle; }
-        
+
         .info-table { width: 100%; margin-bottom: 20px; }
         .info-table td { vertical-align: top; }
-        
+
         .main-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .main-table th { background: #16a34a; color: white; padding: 8px; text-align: left; }
         .main-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        
+
         .section-title { font-weight: bold; color: #16a34a; margin: 15px 0 5px 0; font-size: 13px; text-transform: uppercase; }
         .total-table { float: right; width: 250px; margin-top: 10px; border-top: 2px solid #16a34a; }
         .total-table td { padding: 5px; font-size: 14px; }
@@ -30,6 +30,7 @@
     <div class="invoice-box">
         <table class="header-table">
             <tr>
+                <img src="{{ public_path('images/logo.png') }}" height="40">
                 <td align="right" style="vertical-align: middle;">
                     <strong style="font-size: 14px;">INVOICE PEMBAYARAN</strong><br>
                     <small>{{ $pemesanan->cabang->nama_cabang }}</small>

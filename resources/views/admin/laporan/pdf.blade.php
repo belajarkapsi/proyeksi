@@ -11,7 +11,7 @@
         .system-name { color: #64748b; font-size: 9px; margin: 0; text-transform: uppercase; }
         .info-section { position: absolute; top: 0; right: 0; text-align: right; }
         .section-title { background: #f0fdf4; padding: 7px 10px; font-weight: bold; margin-top: 15px; border-left: 4px solid #16a34a; font-size: 11px; color: #166534; text-transform: uppercase; }
-        
+
         .summary-table { width: 100%; margin-top: 10px; border-spacing: 5px 0; border-collapse: separate; }
         .summary-item { width: 33.33%; padding: 12px 10px; background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 6px; }
         .summary-label { font-size: 8px; color: #16a34a; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px; }
@@ -20,7 +20,7 @@
         table.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .data-table th { background: #f8fafc; color: #334155; padding: 8px 6px; text-align: left; font-size: 9px; border-bottom: 1px solid #e2e8f0; text-transform: uppercase; }
         .data-table td { padding: 8px 6px; font-size: 9px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-        
+
         .badge-success { background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 3px; font-weight: bold; border: 1px solid #bbf7d0; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
@@ -30,8 +30,8 @@
 <body>
     <div class="header-container">
         <div>
-            <div class="logo-text">SIPESTAR</div>
-            <div class="system-name">Sistem Pengelolaan Kost & Penginapan Terpadu</div>
+            <img src="{{ public_path('images/logo.png') }}" height="40" style="margin-bottom: 5px;">
+            <div class="system-name">Sistem Pengelolaan Kost & Villa Terpadu</div>
         </div>
         <div class="info-section">
             <h3 style="margin:0; color: #14532d;">LAPORAN OPERASIONAL</h3>
@@ -112,7 +112,7 @@
     </table>
 
     {{-- Detail Service - Hanya yang induk pemesanannya berstatus Lunas --}}
-    @php 
+    @php
         $paidServices = $detailServices->filter(fn($svc) => ($svc->pemesanan->status ?? '') === 'Lunas');
     @endphp
 

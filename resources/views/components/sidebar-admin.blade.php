@@ -37,7 +37,7 @@
                 </a>
 
                 {{-- ... DATA PENGGUNA ... --}}
-                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Data Pengguna</div>
+                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-gray-200 uppercase tracking-[0.15em]">Data Pengguna</div>
 
                 <a href="{{ route('admin.penyewa.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $penyewa ? $active : $inactive }}">
                     <i class="fas fa-users w-5 text-center text-lg {{ $penyewa ? 'text-green-600' : 'group-hover:scale-110 transition-transform' }}"></i>
@@ -50,7 +50,7 @@
                 </a>
 
                 {{-- ... MANAJEMEN ... --}}
-                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Manajemen Cabang</div>
+                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-gray-200 uppercase tracking-[0.15em]">Manajemen Cabang</div>
 
                 {{-- Parepare Dropdown --}}
                 <div class="sidebar-dropdown w-full mb-1">
@@ -117,20 +117,12 @@
                 </a>
 
                 {{-- ... LAPORAN ... --}}
-                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-green-300 uppercase tracking-[0.15em]">Laporan & Analitik</div>
+                <div class="pt-6 pb-2 px-4 text-[11px] font-bold text-gray-200 uppercase tracking-[0.15em]">Laporan & Analitik</div>
 
                 <a href="{{ route('admin.laporan.index') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-lg group-hover:scale-110 transition-transform"></i>
                     <span class="text-sm font-medium">Laporan Terpadu</span>
                 </a>
-
-                {{-- Setting --}}
-                <div class="mt-4 pt-4 border-t border-green-600/50">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 group mb-1 {{ $inactive }}">
-                        <i class="fa-solid fa-sliders w-5 text-center text-lg group-hover:rotate-90 transition-transform duration-300"></i>
-                        <span class="text-sm font-medium">Pengaturan</span>
-                    </a>
-                </div>
             </nav>
         </div>
 

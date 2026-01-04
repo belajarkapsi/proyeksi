@@ -447,7 +447,6 @@
     </div>
 </div>
 
-{{-- SCRIPT INTERAKTIVITAS --}}
 <script>
     function openModal(modalID) {
         document.getElementById(modalID).classList.remove('hidden');
