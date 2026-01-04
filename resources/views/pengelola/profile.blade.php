@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-4 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex mb-4" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -13,18 +13,15 @@
                     Dashboard
                 </a>
             </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                    </svg>
-                    <span class="ms-1 text-sm font-medium text-gray-400 md:ms-2">Profil Saya</span>
-                </div>
+            <li>
+                <span class="text-gray-400">/</span>
+                <span class="text-green-600 text-sm font-medium">Profil Saya</span>
             </li>
         </ol>
     </nav>
 </div>
 
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 mt-5 grid">
 
     {{-- 2. HEADER HALO --}}
     <div class="mb-8">
@@ -49,7 +46,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {{-- Sebelah Kiri --}}
-        <div class="bg-gray-300 rounded-2xl p-6 h-fit shadow-sm">
+        <div class="bg-gray-200 rounded-2xl p-6 h-fit shadow-sm">
             <div class="flex flex-col items-center mb-6">
                 <div class="relative">
                     @if($pengelola->foto_profil)

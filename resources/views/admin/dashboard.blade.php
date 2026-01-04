@@ -1,318 +1,292 @@
 @extends('layout.admin')
-@section('title', 'Dashboard Admin')
+@section('title', 'Admin Dashboard SIPESTAR')
 
 @section('content')
-<div class="w-full px-2 py-2 mx-auto">
+<div class="w-full px-4 py-4 mx-auto">
 
     {{-- HEADER --}}
-    <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h2 class="text-3xl font-bold text-gray-800">Dashboard</h2>
-            <p class="text-gray-500 mt-1">Ringkasan statistik dan performa sistem.</p>
+            <h2 class="text-3xl font-bold text-gray-800 tracking-tight">Dashboard Admin</h2>
+            <p class="text-gray-500 mt-1">Status Properti Saat Ini: <span class="font-bold text-blue-600">{{ $persentaseHunian }}% Terisi</span></p>
+        </div>
+        <div id="sync-indicator" class="hidden flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold animate-pulse border border-blue-100">
+            <i class="fa-solid fa-sync fa-spin"></i> MENYINKRONKAN DATA...
         </div>
     </div>
 
-    {{-- GRID KARTU STATISTIK --}}
-    <div class="grid gap-6 mb-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-
-        {{-- TOTAL BOOKING --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-blue-600 bg-blue-100 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Calendar -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Total Booking</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $totalBooking }}</p>
-            </div>
-        </div>
-
-        {{-- TOTAL KAMAR --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-lg group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Home -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Total Kamar</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $totalKamar }}</p>
-            </div>
-        </div>
-
-        {{-- KAMAR TERISI --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-emerald-500 bg-emerald-100 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Key/Check -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Kamar Terisi</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $kamarTerisi }}</p>
-            </div>
-        </div>
-
-        {{-- KAMAR TERSEDIA --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-lg group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Door Open -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Kamar Tersedia</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $kamarTersedia }}</p>
-            </div>
-        </div>
-
-        {{-- TOTAL CABANG --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-indigo-500 bg-indigo-100 rounded-lg group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Building -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Total Cabang</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $totalCabang }}</p>
-            </div>
-        </div>
-
-        {{-- TOTAL LAYANAN --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-            <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-lg group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Cube/Services -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Total Layanan</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $totalLayanan }}</p>
-            </div>
-        </div>
-
-        {{-- TOTAL AKUN PENYEWA --}}
-        <div class="group flex items-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 sm:col-span-2 lg:col-span-1">
-            <div class="p-3 mr-4 text-pink-500 bg-pink-100 rounded-lg group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300">
-                <!-- Icon Users -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            </div>
-            <div>
-                <p class="mb-1 text-sm font-medium text-gray-500">Total Penyewa</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $totalPenyewa }}</p>
-            </div>
-        </div>
-
+    {{-- 7 STAT CARDS (Real-time Updated) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <x-stat-card id="totalBooking" label="Total Booking" value="{{ $totalBooking }}" color="blue" icon="fa-solid fa-calendar-check" />
+        <x-stat-card id="totalKamar" label="Total Kamar" value="{{ $totalKamar }}" color="orange" icon="fa-solid fa-hotel" />
+        <x-stat-card id="kamarTerisi" label="Kamar Terisi" value="{{ $kamarDihuni }}" color="indigo" icon="fa-solid fa-door-closed" />
+        <x-stat-card id="kamarTersedia" label="Kamar Tersedia" value="{{ $kamarTersedia }}" color="emerald" icon="fa-solid fa-circle-check" />
+        <x-stat-card id="totalCabang" label="Total Cabang" value="{{ $totalCabang }}" color="purple" icon="fa-solid fa-city" />
+        <x-stat-card id="totalLayanan" label="Total Layanan" value="{{ $totalLayanan }}" color="pink" icon="fa-solid fa-concierge-bell" />
+        <x-stat-card id="totalPenyewa" label="Total Penyewa" value="{{ $totalPenyewa }}" color="green" icon="fa-solid fa-users" />
     </div>
 
-    {{-- ===================== --}}
-    {{-- CHART SECTION --}}
-    {{-- ===================== --}}
+    {{-- ROW 1: CHARTS --}}
+    <div class="grid gap-6 mb-8 grid-cols-1 lg:grid-cols-3">
+        {{-- TREN PEMESANAN (LINE CHART) --}}
+        <div class="lg:col-span-2 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-blue-500"></i> Tren Pemesanan Mingguan
+            </h4>
+            <div class="relative h-64 w-full"><canvas id="bookingChart"></canvas></div>
+        </div>
+
+        {{-- STATUS KAMAR GLOBAL (DOUGHNUT) --}}
+        <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-indigo-500"></i> Rasio Kamar Global
+            </h4>
+            <div class="relative h-64 w-full"><canvas id="kamarDoughnutChart"></canvas></div>
+        </div>
+    </div>
+
+    {{-- ROW 2: TABLES (CABANG & LAYANAN) --}}
     <div class="grid gap-6 mb-8 grid-cols-1 lg:grid-cols-2">
-
-        {{-- CHART 1 : BOOKING / PEMESANAN --}}
-        <div class="min-w-0 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-semibold text-gray-800">Tren Pemesanan</h4>
-                <span class="text-xs font-medium text-blue-600 bg-blue-100 py-1 px-2 rounded-full">Realtime</span>
+        {{-- TABEL OKUPANSI PER CABANG --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-building-circle-check text-purple-500"></i> Okupansi Per Cabang
+                </h3>
             </div>
-            {{-- Wrapper untuk responsivitas Chart.js --}}
-            <div class="relative h-64 w-full">
-                <canvas id="bookingChart"></canvas>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3">Nama Cabang</th>
+                            <th class="px-4 py-3 text-center">Hunian (Terisi/Total)</th>
+                            <th class="px-4 py-3 text-right">Persentase</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="cabang-table-body">
+                        @foreach($hunianPerCabang as $row)
+                        @php $persen = $row->total_kamar > 0 ? round(($row->dihuni / $row->total_kamar) * 100) : 0; @endphp
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 font-medium text-gray-700">{{ $row->nama_cabang }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-gray-600 font-mono text-xs">
+                                    {{ $row->dihuni }} / {{ $row->total_kamar }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-end gap-3">
+                                    <span class="font-bold {{ $persen > 80 ? 'text-red-600' : 'text-blue-600' }} text-xs">{{ $persen }}%</span>
+                                    <div class="w-24 bg-gray-100 rounded-full h-1.5">
+                                        <div class="h-1.5 rounded-full {{ $persen > 80 ? 'bg-red-500' : 'bg-blue-500' }}" style="width: {{ $persen }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        {{-- CHART 2 : RINGKASAN DATA --}}
-        <div class="min-w-0 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-semibold text-gray-800">Ringkasan Sistem</h4>
-                <span class="text-xs font-medium text-gray-500">Status Saat Ini</span>
+        {{-- TABEL RINGKASAN LAYANAN (PENGGANTI CHART) --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-concierge-bell text-pink-500"></i> Ringkasan Layanan
+                </h3>
             </div>
-            <div class="relative h-64 w-full">
-                <canvas id="summaryChart"></canvas>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3">Nama Layanan</th>
+                            <th class="px-4 py-3 text-right">Total Dipesan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="layanan-table-body">
+                        @foreach($dataLayanan as $layanan)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 font-medium text-gray-700">{{ $layanan->name }}</td>
+                            <td class="px-4 py-3 text-right font-bold text-pink-600">
+                                {{ $layanan->pemesanan_service_count }} <span class="text-[10px] text-gray-400 font-normal">Kali</span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
 
+    {{-- ROW 3: PENYEWA TERBARU --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-user-clock text-green-500"></i> 
+                {{ count($penyewaTerbaru) }} Penyewa Terbaru
+            </h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead>
+                    <tr class="text-xs font-bold text-gray-400 uppercase border-b bg-gray-50">
+                        <th class="py-3 px-4">Nama Lengkap</th>
+                        <th class="py-3 px-4">Username</th>
+                        <th class="py-3 px-4 text-right">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="penyewa-table-body">
+                    @foreach($penyewaTerbaru as $p)
+                    <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td class="py-3 px-4 font-medium text-gray-700">{{ $p->nama_lengkap }}</td>
+                        <td class="py-3 px-4 text-gray-500">@<span>{{ $p->username }}</span></td>
+                        <td class="py-3 px-4 text-right">
+                            <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-600 uppercase">Aktif</span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-{{-- Load Chart.js 2.8 --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-
 <script>
-/* ===============================
-   DATA DARI BACKEND
-================================ */
-const bookingLabels = @json($areaChart->pluck('tanggal'));
-const bookingData   = @json($areaChart->pluck('total'));
+    let charts = {};
 
-const summaryLabels = [
-    'Booking', 'Kamar', 'Terisi', 'Tersedia', 'Cabang', 'Layanan', 'Penyewa'
-];
-
-const summaryData = [
-    {{ $totalBooking }},
-    {{ $totalKamar }},
-    {{ $kamarTerisi }},
-    {{ $kamarTersedia }},
-    {{ $totalCabang }},
-    {{ $totalLayanan }},
-    {{ $totalPenyewa }}
-];
-
-/* ===============================
-   KONFIGURASI UMUM (STYLING)
-================================ */
-// Font family default agar sesuai dengan UI
-Chart.defaults.global.defaultFontFamily = "'Inter', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif";
-Chart.defaults.global.defaultFontColor = '#6B7280'; // gray-500
-
-/* ===============================
-   CHART 1 : BOOKING (Line Chart)
-================================ */
-const ctxBooking = document.getElementById('bookingChart').getContext('2d');
-
-// Membuat Gradient fill untuk area chart
-const gradientBooking = ctxBooking.createLinearGradient(0, 0, 0, 400);
-gradientBooking.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue start
-gradientBooking.addColorStop(1, 'rgba(59, 130, 246, 0.05)'); // Blue end
-
-const bookingChart = new Chart(ctxBooking, {
-    type: 'line',
-    data: {
-        labels: bookingLabels,
-        datasets: [{
-            label: 'Booking',
-            data: bookingData,
-            backgroundColor: gradientBooking,
-            borderColor: '#3B82F6', // Blue-500
-            borderWidth: 2,
-            pointBackgroundColor: '#ffffff',
-            pointBorderColor: '#3B82F6',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            lineTension: 0.4, // Membuat garis melengkung halus
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: { display: false },
-        tooltips: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            titleFontColor: '#1F2937',
-            bodyFontColor: '#4B5563',
-            borderColor: '#E5E7EB',
-            borderWidth: 1,
-            xPadding: 10,
-            yPadding: 10,
-            displayColors: false,
-            cornerRadius: 4
-        },
-        scales: {
-            xAxes: [{
-                gridLines: {
-                    display: false,
-                    drawBorder: false
-                },
-                ticks: {
-                    maxTicksLimit: 7
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 5,
-                    padding: 10
-                },
-                gridLines: {
-                    color: '#F3F4F6', // gray-100
-                    borderDash: [5, 5],
-                    drawBorder: false,
-                    zeroLineColor: '#F3F4F6'
-                }
-            }]
-        }
-    }
-});
-
-/* ===============================
-   CHART 2 : RINGKASAN (Bar Chart)
-================================ */
-const summaryChart = new Chart(
-    document.getElementById('summaryChart'),
-    {
-        type: 'bar',
-        data: {
-            labels: summaryLabels,
-            datasets: [{
-                label: 'Jumlah',
-                data: summaryData,
-                backgroundColor: [
-                    '#3B82F6', // Blue
-                    '#F97316', // Orange
-                    '#10B981', // Emerald
-                    '#EF4444', // Red
-                    '#6366F1', // Indigo
-                    '#A855F7', // Purple
-                    '#EC4899'  // Pink
-                ],
-                borderWidth: 0,
-                barPercentage: 0.6,
-                categoryPercentage: 0.8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: { display: false },
-            tooltips: {
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                titleFontColor: '#1F2937',
-                bodyFontColor: '#4B5563',
-                borderColor: '#E5E7EB',
-                borderWidth: 1,
-                xPadding: 10,
-                yPadding: 10,
-                cornerRadius: 4,
-                displayColors: true
-            },
-            scales: {
-                xAxes: [{
-                    gridLines: { display: false, drawBorder: false },
-                }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        maxTicksLimit: 5,
-                        padding: 10
-                    },
-                    gridLines: {
-                        color: '#F3F4F6',
-                        borderDash: [5, 5],
-                        drawBorder: false,
-                        zeroLineColor: '#F3F4F6'
-                    }
+    function initCharts() {
+        // Line Chart - Tren Booking
+        charts.booking = new Chart(document.getElementById('bookingChart'), {
+            type: 'line',
+            data: { 
+                labels: @json($areaChart->pluck('tanggal')), 
+                datasets: [{ 
+                    label: 'Booking', 
+                    data: @json($areaChart->pluck('total')), 
+                    borderColor: '#3B82F6', 
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                    fill: true, 
+                    lineTension: 0.3,
+                    pointBackgroundColor: '#3B82F6'
                 }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                legend: { display: false },
+                scales: {
+                    yAxes: [{ ticks: { beginAtZero: true, precision: 0 } }]
+                }
             }
-        }
-    }
-);
-
-/* ===============================
-   REALTIME POLLING
-================================ */
-setInterval(() => {
-    fetch('/api/admin/chart')
-        .then(res => res.json())
-        .then(res => {
-            // Update Line Chart Data
-            bookingChart.data.labels = res.area.map(i => i.tanggal);
-            bookingChart.data.datasets[0].data = res.area.map(i => i.total);
-            bookingChart.update();
         });
-}, 5000);
+
+        // Doughnut Chart - Rasio Kamar
+        charts.kamar = new Chart(document.getElementById('kamarDoughnutChart'), {
+            type: 'doughnut',
+            data: { 
+                labels: ['Dihuni', 'Tersedia'], 
+                datasets: [{ 
+                    data: [{{ $kamarDihuni }}, {{ $kamarTersedia }}], 
+                    backgroundColor: ['#6366F1', '#10B981'],
+                    borderWidth: 0
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                cutoutPercentage: 75,
+                legend: { position: 'bottom', labels: { boxWidth: 12 } }
+            }
+        });
+    }
+
+    function refreshData() {
+        document.getElementById('sync-indicator').classList.remove('hidden');
+
+        fetch('{{ route("admin.dashboard.api") }}')
+            .then(res => res.json())
+            .then(res => {
+                const s = res.stats;
+                
+                // 1. Update Stat Cards (Real-time)
+                document.getElementById('val-totalBooking').innerText = s.totalBooking;
+                document.getElementById('val-totalKamar').innerText = s.totalKamar;
+                document.getElementById('val-kamarTerisi').innerText = s.kamarDihuni;
+                document.getElementById('val-kamarTersedia').innerText = s.kamarTersedia;
+                document.getElementById('val-totalCabang').innerText = s.totalCabang;
+                document.getElementById('val-totalLayanan').innerText = s.totalLayanan;
+                document.getElementById('val-totalPenyewa').innerText = s.totalPenyewa;
+
+                // 2. Update Charts
+                charts.booking.data.labels = res.area.labels;
+                charts.booking.data.datasets[0].data = res.area.values;
+                charts.kamar.data.datasets[0].data = [s.kamarDihuni, s.kamarTersedia];
+
+                // 3. Update Tabel Cabang (Real-time Progress Bar)
+                let cabangHtml = '';
+                res.hunianPerCabang.forEach(row => {
+                    const p = row.total_kamar > 0 ? Math.round((row.dihuni / row.total_kamar) * 100) : 0;
+                    cabangHtml += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 font-medium text-gray-700">${row.nama_cabang}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="px-2 py-1 bg-gray-100 rounded text-gray-600 font-mono text-xs">${row.dihuni} / ${row.total_kamar}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-end gap-3">
+                                    <span class="font-bold ${p > 80 ? 'text-red-600' : 'text-blue-600'} text-xs">${p}%</span>
+                                    <div class="w-24 bg-gray-100 rounded-full h-1.5">
+                                        <div class="h-1.5 rounded-full ${p > 80 ? 'bg-red-500' : 'bg-blue-500'}" style="width: ${p}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById('cabang-table-body').innerHTML = cabangHtml;
+
+                // 4. Update Tabel Layanan (Real-time Data)
+                let layananHtml = '';
+                // 'res.layananRaw' harus dikirim dari controller (data mentah layanan)
+                res.layananRaw.forEach(layanan => {
+                    layananHtml += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 font-medium text-gray-700">${layanan.name}</td>
+                            <td class="px-4 py-3 text-right font-bold text-pink-600">
+                                ${layanan.pemesanan_service_count} <span class="text-[10px] text-gray-400 font-normal">Kali</span>
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById('layanan-table-body').innerHTML = layananHtml;
+
+                // 5. Update Tabel Penyewa
+                let penyewaHtml = '';
+                res.penyewaTerbaru.forEach(p => {
+                    penyewaHtml += `
+                        <tr class="border-b border-gray-50 hover:bg-gray-50">
+                            <td class="py-3 px-4 font-medium text-gray-700">${p.nama_lengkap}</td>
+                            <td class="py-3 px-4 text-gray-500">@${p.username}</td>
+                            <td class="py-3 px-4 text-right">
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-600 uppercase">Aktif</span>
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById('penyewa-table-body').innerHTML = penyewaHtml;
+
+                // Refresh Visual Charts
+                Object.values(charts).forEach(c => c.update());
+                
+                // Hide Sync Indicator
+                setTimeout(() => document.getElementById('sync-indicator').classList.add('hidden'), 1000);
+            })
+            .catch(err => console.error("Refresh Error:", err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initCharts();
+        setInterval(refreshData, 15000); // Sinkronisasi otomatis tiap 15 detik
+    });
 </script>
 @endpush

@@ -4,10 +4,12 @@ use App\Http\Controllers\Admin\DataPengelolaController;
 use App\Http\Controllers\Admin\DataPenyewaController;
 use App\Http\Controllers\Admin\DataKamarController;
 use App\Http\Controllers\Admin\InformasiCabangController;
+use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\LayananVillaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CabangController;
+use App\Http\Controllers\Pengelola\DaftarPemesananController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -19,19 +21,14 @@ use App\Http\Controllers\Pengelola\DataKamarController as PengelolaDataKamarCont
 use App\Http\Controllers\Pengelola\DataPenyewaController as PengelolaDataPenyewaController;
 use App\Http\Controllers\Pengelola\DataServiceController;
 use App\Http\Controllers\PengelolaController;
-use App\Http\Controllers\Admin\HunianController;
-use App\Http\Controllers\Admin\KeuanganController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Pengelola\LaporanController as PengelolaLaporanController;
 use App\Models\Pemesanan;
 
 // Route utama saat membuka sistem/aplikasi
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
-
-// routes/web.php
-Route::view('/pusat-bantuan', 'pusat-bantuan')
-->name('pusat-bantuan');
-
 // Redirect sama ke dashboard
 Route::redirect('/dashboard', '/');
 
@@ -58,6 +55,10 @@ Route::middleware('validasi.cabang')->group(function() {
 });
 
 
+// Route pusat bantuan
+Route::view('/pusat-bantuan', 'pusat-bantuan')
+->name('pusat-bantuan');
+
 // Route untuk Login / user belum login
 Route::middleware('guest.only')->group(function() {
     Route::get('login', [LoginController::class, 'login'])->name('login');
@@ -81,7 +82,7 @@ Route::post('logout', [LoginController::class, 'destroy'])
     ->name('logout');
 
 
-// Route Booking
+// Route Booking (untuk penyewa)
 Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
     // Halaman pilih kamar + checkout (GET dari card / POST dari form)
     Route::match(['get', 'post'],'/booking', [BookingController::class, 'checkout'])
@@ -107,6 +108,14 @@ Route::middleware(['auth:web', 'lengkapi.profil'])->group(function() {
         // Route Batal Pesanan (dipanggil dari tombol "Batalkan Pesanan")
         Route::post('/booking/cancel/{id_pemesanan}', [BookingController::class, 'cancel'])
             ->name('booking.batal');
+
+        // Route upload bukti pembayaran
+        Route::post('/pesanan/pembayaran/{id_pemesanan}', [BookingController::class, 'uploadBukti'])
+            ->name('booking.upload_bukti');
+
+        // Route Cetak Invoice
+        Route::get('/booking/invoice/{id}', [BookingController::class, 'cetakInvoice'])
+            ->name('booking.cetak_invoice');
     });
 });
 
@@ -137,10 +146,13 @@ Route::middleware(['auth:pemilik'])->group(function() {
             ];
         });
 
+        // Agar Chart Data bisa Real-Time
+        Route::get('/api/admin/dashboard-stats', [AdminController::class, 'getDashboardData'])
+        ->name('admin.dashboard.api');
         // Data Penyewa
-        Route::resource('penyewa', DataPenyewaController::class);
+        Route::resource('penyewa', DataPenyewaController::class)->names('admin.penyewa');
         // Data Pengelola
-        Route::resource('pengelola', DataPengelolaController::class);
+        Route::resource('pengelola', DataPengelolaController::class)->names('admin.pengelola');
         // Data Kamar
         Route::prefix('{lokasi}')->name('admin.cabang')->group(function() {
             Route::resource('kamar', DataKamarController::class);
@@ -151,19 +163,19 @@ Route::middleware(['auth:pemilik'])->group(function() {
             Route::resource('informasi-cabang', InformasiCabangController::class);
         });
 
+        Route::resource('transaksi', TransaksiController::class)
+        ->only(['index', 'show']);
+
         // Laporan Hunian
-        Route::get('laporan-hunian', [HunianController::class, 'index'])
-        ->name('laporan-hunian.index');
-        
-        Route::get('laporan-keuangan', [KeuanganController::class, 'index'])
-            ->name('laporan-keuangan.index');
-        
-        Route::get('/admin/laporan-hunian/pdf', [HunianController::class,'pdf'])
-            ->name('laporan-hunian.pdf');
+        Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('admin.laporan.index');
 
-        Route::get('/admin/laporan-keuangan/pdf', [KeuanganController::class,'pdf'])
-            ->name('laporan-keuangan.pdf');
+        // Route PDF Terpadu (Fungsi Stream yang baru dibuat)
+        Route::get('/laporan/pdf-lengkap', [LaporanController::class, 'downloadPdf'])
+            ->name('admin.laporan.pdf');
 
+        Route::get('/admin/laporan/chart-data', [LaporanController::class, 'getChartData'])
+        ->name('admin.laporan.api');
 
         // Route Profil Admin
         Route::get('/profil', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
@@ -197,6 +209,15 @@ Route::middleware(['auth:pengelola'])->group(function() {
         // Batalkan Pemesanan
         Route::patch('pemesanan/{id}/batalkan', [PengelolaDaftarPemesananController::class, 'batalkan'])
             ->name('pengelola.pemesanan.batalkan');
+        // Check-out Pemesanan
+        Route::patch('pemesanan/{id}/checkout', [PengelolaDaftarPemesananController::class, 'checkout'])
+            ->name('pengelola.pemesanan.checkout');
+        // Check Penyewa
+        Route::get('/check-penyewa', [DaftarPemesananController::class, 'checkPenyewa']);
+
+        // Data Laporan
+        Route::get('/laporan', [PengelolaLaporanController::class, 'index'])->name('pengelola.laporan.index');
+        Route::get('/laporan/cetak', [PengelolaLaporanController::class, 'cetak'])->name('pengelola.laporan.cetak');
 
         // Route Profil Pengelola
         Route::get('/profil', [PengelolaController::class, 'edit'])->name('pengelola.profile.edit');

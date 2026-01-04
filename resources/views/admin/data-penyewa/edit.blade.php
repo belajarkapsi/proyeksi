@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8 mb-6">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -15,7 +15,7 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
+                <a href="{{ route('admin.penyewa.index') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">Data Penyewa</a>
             </li>
             <li>
                 <span class="text-gray-400">/</span>
@@ -25,12 +25,12 @@
     </nav>
 </div>
 
-<div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
+<div class="max-w-5xl mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 mt-5 md:mt-10 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-10">
     <div class="bg-green-700 px-6 py-4 flex justify-between items-center">
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square"></i> Edit Data Penyewa
         </h3>
-        <a href="{{ route('penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('admin.penyewa.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -38,7 +38,7 @@
     {{-- Form Start --}}
     {{-- PENTING: enctype="multipart/form-data" wajib ada untuk upload foto --}}
     {{-- Route menggunakan parameter $user->id_penyewa karena primary key custom --}}
-    <form action="{{ route('penyewa.update', $user->id_penyewa) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
+    <form action="{{ route('admin.penyewa.update', $user->id_penyewa) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
         @csrf
         @method('PUT')
 
@@ -127,7 +127,7 @@
             <div class="col-span-1 md:col-span-2">
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password Baru</label>
                 <input type="password" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" placeholder="Kosongkan jika tidak ingin mengganti password">
-                <p class="mt-1 text-xs text-gray-500">Minimal 6 karakter.</p>
+                <p class="mt-1 text-xs text-gray-500">Minimal 8 karakter.</p>
                 @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 

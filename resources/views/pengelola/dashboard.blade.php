@@ -133,16 +133,16 @@
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } } }
         });
 
-        // --- 2. INIT CHART BAR UTILISASI (BARU) ---
+        // --- 2. INIT CHART BAR UTILISASI ---
         const ctxBar = document.getElementById('chartBarLayanan').getContext('2d');
         const chartBar = new Chart(ctxBar, {
             type: 'bar',
             data: {
                 // Label Sumbu X
-                labels: ['Unit Kamar', 'Service Villa'],
+                labels: [],
                 datasets: [
                     {
-                        label: 'Total Layanan', // Bar Kiri
+                        label: 'Total Unit',
                         data: [],
                         backgroundColor: '#3b82f6', // Biru
                         borderRadius: 4,
@@ -150,9 +150,17 @@
                         categoryPercentage: 0.8
                     },
                     {
-                        label: 'Sedang Dipesan', // Bar Kanan
+                        label: 'Sedang Dihuni/Dipesan',
                         data: [],
                         backgroundColor: '#ef4444', // Merah
+                        borderRadius: 4,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Sedang Perbaikan',
+                        data: [],
+                        backgroundColor: '#f59e0b', // Oranye/Kuning
                         borderRadius: 4,
                         barPercentage: 0.6,
                         categoryPercentage: 0.8
@@ -170,7 +178,8 @@
                     tooltip: {
                         mode: 'index',
                         intersect: false,
-                    }
+                    },
+                    legend: { position: 'top' }
                 }
             }
         });
@@ -213,10 +222,11 @@
                     chartPenyewa.data.datasets[0].data = data.chart_line;
                     chartPenyewa.update();
 
-                    // Update Chart Bar (Baru)
-                    // Dataset 0 = Total, Dataset 1 = Terpakai
-                    chartBar.data.datasets[0].data = data.chart_bar_total;
-                    chartBar.data.datasets[1].data = data.chart_bar_terpakai;
+                    // Update Chart Bar
+                    chartBar.data.labels = data.bar_labels;
+                    chartBar.data.datasets[0].data = data.bar_data_total;
+                    chartBar.data.datasets[1].data = data.bar_data_dihuni;
+                    chartBar.data.datasets[2].data = data.bar_data_perbaikan;
                     chartBar.update();
 
                     // Update Chart Doughnut (Jika Kost)

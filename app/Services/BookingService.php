@@ -28,11 +28,11 @@ class BookingService
             // Update status dan timestamp jika kolom tersedia
             $pemesanan->update([
                 'status'       => 'Dibatalkan',
-                'cancelled_at' => now(), // Selalu set waktu sekarang
-                'alasan_batal' => $alasan // <--- INI YANG TADINYA HILANG
+                'cancelled_at' => now(),
+                'alasan_batal' => $alasan
             ]);
 
-            $items = $pemesanan->items; // Menggunakan relasi yang sudah ada di model
+            $items = $pemesanan->items;
 
             foreach ($items as $item) {
                 // Pastikan item punya ID Kamar

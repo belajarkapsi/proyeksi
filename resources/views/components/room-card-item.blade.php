@@ -2,19 +2,24 @@
 @props(['room', 'isAvailable'])
 
 @php
+    $statusRaw = strtolower($room->status ?? '');
+    $isMaintenance = ($statusRaw === 'perbaikan' || $statusRaw === 'maintenance');
+    if ($isMaintenance) {
+        $isAvailable = false;
+    }
+
     // gunakan nomor kamar sebagai identifier yang konsisten dengan kode Anda
+    $roomIdDisplay = strtoupper($room->no_kamar);
     $roomId = $room->no_kamar;
     $bookingUrl = route('booking.checkout', ['kamar' => $roomId]);
 
     $cabang = $room->cabang;
     $detailUrl = route('cabang.kamar.show', [
-        // Format URL slug manual (kecil semua, spasi jadi strip)
         'lokasi'   => str_replace(' ', '-', strtolower($cabang->lokasi)),
         'kategori' => str_replace(' ', '-', strtolower($cabang->kategori_cabang)),
         'no_kamar' => $roomId
     ]);
 
-    // Make detail URL tipe-aware (tambahkan query param ?tipe=)
     $tipeParam = urlencode($room->tipe_kamar ?? $room->type ?? '');
     $detailUrlWithTipe = $detailUrl . (str_contains($detailUrl, '?') ? '&' : '?') . 'tipe=' . $tipeParam;
 
@@ -23,35 +28,29 @@
 @endphp
 
 <article
-  id="card-{{ $roomId }}"
-  class="room-card relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 select-none
-  {{ $isAvailable
-     ? 'cursor-pointer hover:shadow-lg group hover:border-green-200'
-     : 'cursor-not-allowed opacity-75 grayscale bg-gray-50' }}"
+    id="card-{{ $roomId }}"
+    class="room-card relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 select-none
+    {{ $isAvailable ? 'cursor-pointer hover:shadow-lg group hover:border-green-200' : 'cursor-not-allowed opacity-75 grayscale bg-gray-50' }}"
+    data-id="{{ $roomId }}"
+    data-available="{{ $isAvailable ? '1' : '0' }}"
+    data-booking-url="{{ $bookingUrl }}"
+    data-price="{{ $rawPrice }}"
+    data-room-price="{{ $rawPrice }}"
+    data-detail-url="{{ $detailUrlWithTipe }}"
+    data-room-type="{{ $room->tipe_kamar ?? $room->type ?? '' }}"
 
-  data-id="{{ $roomId }}"
-  data-available="{{ $isAvailable ? '1' : '0' }}"
-  data-booking-url="{{ $bookingUrl }}"
-  data-price="{{ $rawPrice }}"                 {{-- tetap ada --}}
-  data-room-price="{{ $rawPrice }}"            {{-- tambahan fallback untuk skrip yang membaca data-room-price --}}
-  data-detail-url="{{ $detailUrlWithTipe }}"   {{-- URL detail yang menyertakan tipe --}}
-  data-room-type="{{ $room->tipe_kamar ?? $room->type ?? '' }}"
-
-  {{-- Event hanya aktif jika tersedia --}}
-  @if($isAvailable)
-    onmousedown="startPress('{{ $roomId }}')"
-    onmouseup="cancelPress('{{ $roomId }}')"
-    onmouseleave="cancelPress('{{ $roomId }}')"   {{-- perbaikan: gunakan onmouseleave --}}
-    ontouchstart="startPress('{{ $roomId }}')"
-    ontouchend="cancelPress('{{ $roomId }}')"
-    ontouchmove="cancelPress('{{ $roomId }}')"
-    onclick="handleCardClick('{{ $roomId }}', event)"
-  @endif
+    @if($isAvailable)
+        onmousedown="startPress('{{ $roomId }}')"
+        onmouseup="cancelPress('{{ $roomId }}')"
+        onmouseleave="cancelPress('{{ $roomId }}')"
+        ontouchstart="startPress('{{ $roomId }}')"
+        ontouchend="cancelPress('{{ $roomId }}')"
+        ontouchmove="cancelPress('{{ $roomId }}')"
+        onclick="handleCardClick('{{ $roomId }}', event)"
+    @endif
 >
     {{-- Checkbox (Hanya jika tersedia) --}}
     @if($isAvailable)
-        {{-- Pastikan name sama dengan yang digunakan di JS/controller (selected_rooms[]) --}}
-        {{-- tambahkan data-price & form untuk menghindari edge-case ketika elemen dipindah di DOM --}}
         <input
             type="checkbox"
             name="selected_rooms[]"
@@ -63,7 +62,7 @@
         >
 
         {{-- Overlay Hijau --}}
-        <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-20 hidden border-2 border-green-500 rounded-xl flex items-center justify-center pointer-events-none">
+        <div id="overlay-{{ $roomId }}" class="absolute inset-0 bg-green-600/10 z-20 hidden border-2 border-green-500 rounded-xl items-center justify-center pointer-events-none">
             <div class="bg-green-600 text-white rounded-full p-2 shadow-md transform scale-110">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
             </div>
@@ -73,15 +72,29 @@
     {{-- Gambar Kamar --}}
     <div class="relative h-44 overflow-hidden bg-gray-100">
         <img src="{{ asset($room->image ?? 'images/kamar.jpg') }}"
-             class="w-full h-full object-cover transition-transform duration-500 {{ $isAvailable ? 'group-hover:scale-105' : '' }}"
-             ondragstart="return false;">
+            class="w-full h-full object-cover transition-transform duration-500 {{ $isAvailable ? 'group-hover:scale-105' : '' }}"
+            ondragstart="return false;">
 
         @if($isAvailable)
             <div id="loader-{{ $roomId }}" class="absolute bottom-0 left-0 h-1 bg-green-500 w-0 z-30"></div>
         @else
             {{-- Overlay Hitam untuk Dihuni --}}
             <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                <span class="bg-black/60 text-white px-3 py-1 rounded font-bold text-xs border border-white/20 uppercase tracking-wider">DIHUNI</span>
+                @if($isMaintenance)
+                    {{-- Tampilan Maintenance --}}
+                    <span class="bg-orange-500/90 text-white px-3 py-1 rounded font-bold text-xs border border-white/20 uppercase tracking-wider shadow-sm flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        PERBAIKAN
+                    </span>
+                @else
+                    {{-- Tampilan Dihuni (Default unavailable) --}}
+                    <span class="bg-black/60 text-white px-3 py-1 rounded font-bold text-xs border border-white/20 uppercase tracking-wider">
+                        DIHUNI
+                    </span>
+                @endif
             </div>
         @endif
 
@@ -95,7 +108,7 @@
     <div class="p-4">
         <div class="flex justify-between items-start">
             <div>
-                <div class="text-xs text-gray-400 font-bold mb-0.5">NOMOR {{ $room->no_kamar }}</div>
+                <div class="text-xs text-gray-400 font-bold mb-0.5">NOMOR {{ $roomIdDisplay }}</div>
                 <div class="text-lg font-bold {{ $isAvailable ? 'text-gray-800 group-hover:text-green-700' : 'text-gray-500' }} transition-colors">
                     Rp {{ number_format($room->harga ?? $room->harga_kamar ?? 0, 0, ',', '.') }}
                 </div>
@@ -105,7 +118,11 @@
             @if($isAvailable)
                 <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded border border-green-100">Tersedia</span>
             @else
-                <span class="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-1 rounded border border-red-100">Terisi</span>
+                @if($isMaintenance)
+                    <span class="bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-1 rounded border border-orange-100">Perbaikan</span>
+                @else
+                    <span class="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-1 rounded border border-red-100">Terisi</span>
+                @endif
             @endif
         </div>
 
@@ -116,7 +133,11 @@
             </a>
         @else
             <button disabled class="mt-4 block w-full text-center py-2 rounded-lg bg-gray-100 text-gray-400 font-bold text-xs border border-gray-200 cursor-not-allowed">
-                DETAIL
+                @if($isMaintenance)
+                    PERBAIKAN
+                @else
+                    DIHUNI
+                @endif
             </button>
         @endif
     </div>

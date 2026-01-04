@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Navbar Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-4">
+<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-0 -mt-4 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -14,22 +14,18 @@
             </li>
             <li>
                 <span class="text-gray-400">/</span>
-                <span class="text-green-600 text-sm font-medium">Data Kamar & Layanan</span>
+                <span class="text-green-600 text-sm font-medium">Data Layanan</span>
             </li>
         </ol>
     </nav>
 </div>
 
 {{-- Main Content --}}
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto pb-10">
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0">
 
     {{-- Header & Tombol Tambah Kamar --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-5 mb-6 gap-4">
         <div>
-            <a href="{{ route('pengelola.dashboard') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-green-600 text-sm transition-colors mb-2">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali</span>
-            </a>
             <h2 class="text-2xl font-bold text-gray-800">Data Kamar</h2>
             <p class="text-sm text-gray-500">Kelola ketersediaan kamar dan informasi hunian.</p>
         </div>
@@ -45,6 +41,7 @@
     @php
         $kamarTersedia = $kamars->where('status', 'Tersedia');
         $kamarDihuni = $kamars->where('status', 'Dihuni');
+        $kamarPerbaikan = $kamars->where('status', 'Perbaikan');
     @endphp
 
     {{-- SECTION 1: KAMAR TERSEDIA --}}
@@ -181,18 +178,14 @@
                             </div>
 
                             {{-- Actions Buttons --}}
-                            <div class="flex items-center gap-2 mt-auto pt-3 border-t border-gray-200">
+                            {{-- <div class="flex items-center gap-2 mt-auto pt-3 border-t border-gray-200">
                                 <a href="#" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-gray-700 bg-white rounded border border-gray-300 hover:bg-gray-50 hover:text-green-600 transition">
                                     <i class="far fa-eye"></i>
                                 </a>
                                 <a href="{{ route('pengelola.kamar.edit', $kamar->id_kamar) }}" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-amber-600 bg-white rounded border border-amber-200 hover:bg-amber-50 transition">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                {{-- Tombol Hapus Disabled untuk Kamar Dihuni (Opsional) --}}
-                                <button type="button" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-medium text-gray-400 bg-gray-100 rounded border border-gray-200 cursor-not-allowed" title="Tidak bisa menghapus kamar yang sedang dihuni">
-                                    <i class="far fa-trash-alt"></i>
-                                </button>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 @endforeach
@@ -205,10 +198,62 @@
         @endif
     </div>
 
-    {{-- ========================================================= --}}
-    {{-- BAGIAN DATA SERVICE / LAYANAN VILLA (HANYA UNTUK VILLA) --}}
-    {{-- ========================================================= --}}
+    {{-- SECTION 3: KAMAR PERBAIKAN --}}
+    @if($kamarPerbaikan->count() > 0)
+    <div class="mt-10">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="bg-orange-100 text-orange-700 p-2 rounded-lg">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800">Dalam Perbaikan / Maintenance <span class="text-sm font-normal text-gray-500">({{ $kamarPerbaikan->count() }})</span></h3>
+        </div>
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($kamarPerbaikan as $kamar)
+                <div class="group bg-white rounded-xl border border-orange-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden ring-1 ring-orange-100 opacity-90">
+
+                    {{-- Gambar Gelap --}}
+                    <div class="relative h-48 bg-gray-100 overflow-hidden">
+                        <div class="absolute inset-0 bg-orange-900/40 z-10 flex flex-col items-center justify-center text-white">
+                            <i class="fas fa-wrench text-3xl mb-2 drop-shadow-md"></i>
+                            <span class="font-bold border-2 border-white px-3 py-1 rounded uppercase tracking-wider text-xs">Under Maintenance</span>
+                        </div>
+                        @if($kamar->gambar)
+                            <img src="{{ asset('storage/' . $kamar->gambar) }}" class="w-full h-full object-cover grayscale blur-[1px]">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image fa-2x"></i></div>
+                        @endif
+                    </div>
+
+                    {{-- Konten --}}
+                    <div class="p-4 flex flex-col grow bg-orange-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-900">No. {{ $kamar->no_kamar }}</h4>
+                            <span class="text-xs font-medium px-2 py-0.5 rounded bg-white text-orange-600 border border-orange-200">
+                                {{ $kamar->tipe_kamar }}
+                            </span>
+                        </div>
+
+                        <p class="text-sm text-gray-600 mb-4 grow">
+                            <i class="fas fa-info-circle mr-1"></i> Kamar sedang tidak bisa dipesan karena dalam perbaikan.
+                        </p>
+
+                        {{-- Action Buttons (Hanya Edit Status agar bisa diaktifkan lagi) --}}
+                        <div class="flex items-center gap-2 mt-auto pt-3 border-t border-orange-200">
+                            @can('update', $kamar)
+                            <a href="{{ route('pengelola.kamar.edit', $kamar->id_kamar) }}" class="flex-1 inline-flex justify-center items-center py-2 px-3 text-sm font-bold text-green-700 bg-white rounded border border-green-200 hover:bg-green-50 transition shadow-sm">
+                                <i class="fas fa-check-circle mr-2"></i> Aktifkan
+                            </a>
+                            @endcan
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    {{-- Jika Villa --}}
     @if(isset($services) && Str::lower(auth('pengelola')->user()->cabang->kategori_cabang) === 'villa')
 
         {{-- PEMISAH --}}
@@ -221,11 +266,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Layanan Villa</h2>
-                <p class="text-sm text-gray-500">Kelola item tambahan seperti Extra Bed, Gazebo, dll.</p>
+                <p class="text-sm text-gray-500">Kelola layanan seperti Kolam Renang, Gazebo, dll.</p>
             </div>
 
             @can('create', App\Models\Service::class)
-            <a href="{{ route('pengelola.service.create') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-semibold text-sm">
+            <a href="{{ route('pengelola.service.create') }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-800 transition shadow-sm font-semibold text-sm">
                 <i class="fa-solid fa-plus mr-2"></i> Tambah Layanan
             </a>
             @endcan

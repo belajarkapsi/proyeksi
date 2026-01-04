@@ -69,7 +69,7 @@ class DataPengelolaController extends Controller
         Pengelola::create($data);
 
         Alert::success('Berhasil!', 'Data Pengelola Berhasil Ditambahkan!');
-        return redirect()->route('pengelola.index');
+        return redirect()->route('admin.pengelola.index');
     }
 
     public function show(string $id)
@@ -136,7 +136,7 @@ class DataPengelolaController extends Controller
         $pengelola->update($validasiData);
 
         Alert::success('Berhasil!', 'Data Pengelola Berhasil Diperbarui!');
-        return redirect()->route('pengelola.index');
+        return redirect()->route('admin.pengelola.index');
     }
 
     public function destroy(string $id)
@@ -150,6 +150,6 @@ class DataPengelolaController extends Controller
         $pengelola->delete();
 
         Alert::success('Berhasil!', 'Data Pengelola Berhasil Dihapus!');
-        return redirect()->route('pengelola.index');
+        return redirect()->route('admin.pengelola.index');
     }
 }

@@ -62,17 +62,7 @@
                             <span class="text-gray-300 group-hover/sub:text-green-500 text-xl font-light leading-none">+</span>
                         </button>
                         <div class="faq-answer hidden mt-3 p-4 bg-gray-50 rounded-lg text-gray-600 text-sm leading-relaxed border-l-4 border-green-500 animate-fadeIn">
-                            Pastikan email dan password benar. Jika lupa password, gunakan fitur "Lupa Password". Jika tetap tidak bisa, hubungi admin.
-                        </div>
-                    </div>
-
-                    <div class="py-2">
-                        <button class="faq-question w-full text-left font-medium text-gray-700 hover:text-green-600 flex items-center justify-between group/sub py-2 transition-colors">
-                            <span>Email verifikasi tidak diterima</span>
-                            <span class="text-gray-300 group-hover/sub:text-green-500 text-xl font-light leading-none">+</span>
-                        </button>
-                        <div class="faq-answer hidden mt-3 p-4 bg-gray-50 rounded-lg text-gray-600 text-sm leading-relaxed border-l-4 border-green-500 animate-fadeIn">
-                            Cek folder spam atau promosi. Jika tidak ada, coba kirim ulang verifikasi dari halaman profil.
+                            Pastikan email dan password benar. Jika tetap tidak bisa, hubungi admin.
                         </div>
                     </div>
 
@@ -110,7 +100,7 @@
                             <span class="text-gray-300 group-hover/sub:text-green-500 text-xl font-light leading-none">+</span>
                         </button>
                         <div class="faq-answer hidden mt-3 p-4 bg-gray-50 rounded-lg text-gray-600 text-sm leading-relaxed border-l-4 border-blue-500 animate-fadeIn">
-                            Sistem otomatis mendeteksi jika kamar sudah dipesan. Coba pilih kamar lain atau hubungi admin jika kamu yakin ini kesalahan.
+                            Sistem otomatis mendeteksi jika kamar sudah dipesan. Silahkan menyelesaikan pembayaran terlebih dahulu atau hubungi admin jika kamu yakin ini kesalahan.
                         </div>
                     </div>
                     <div class="py-2">

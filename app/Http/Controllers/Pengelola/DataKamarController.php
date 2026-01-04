@@ -82,7 +82,7 @@ class DataKamarController extends Controller
             'tipe_kamar'    => ['required', 'in:Ekonomis,Standar'],
             'harga_kamar'   => ['required', 'numeric'],
             'deskripsi'     => ['required'],
-            'status'        => ['required', 'in:Tersedia,Dihuni'],
+            'status'        => ['required', 'in:Tersedia,Dihuni,Perbaikan'],
             'gambar'        => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 
@@ -154,7 +154,7 @@ class DataKamarController extends Controller
             'tipe_kamar'    => ['required', 'in:Ekonomis,Standar'],
             'harga_kamar'   => ['required', 'numeric'],
             'deskripsi'     => ['required'],
-            'status'        => ['required', 'in:Tersedia,Dihuni'],
+            'status'        => ['required', 'in:Tersedia,Dihuni,Perbaikan'],
             'gambar'        => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 

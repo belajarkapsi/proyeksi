@@ -7,14 +7,19 @@ use App\Models\Pemesanan;
 use App\Models\PemesananItem;
 use App\Models\Service;
 use App\Models\Cabang;
+use App\Models\Pembayaran;
 use App\Services\BookingService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class BookingController extends Controller
 {
@@ -323,9 +328,22 @@ class BookingController extends Controller
 
         $validated = $request->validate($rules);
 
-        $kamarIds = isset($validated['kamar_ids'])
-            ? array_values(array_unique($validated['kamar_ids']))
-            : [];
+        // --- Tambahkan Mulai Sini ---
+        $kamarIds = isset($validated['kamar_ids']) ? array_values(array_unique($validated['kamar_ids'])) : [];
+
+        if (!empty($kamarIds)) {
+                // --- START: Validasi Global (Satu user hanya boleh punya satu pesanan menggantung) ---
+            $existingBooking = Pemesanan::where('id_penyewa', Auth::user()->id_penyewa)
+                ->where('status', 'Belum Dibayar')
+                ->exists();
+
+            if ($existingBooking) {
+                Alert::warning('Peringatan', 'Anda masih memiliki pesanan yang belum dibayar. Silakan selesaikan pembayaran sebelumnya atau batalkan pesanan tersebut sebelum memesan kembali.');
+                return back();
+            }
+            // --- END: Validasi Global ---
+        }
+        // --- Sampai Sini ---
 
         $kamars = collect();
 
@@ -468,7 +486,7 @@ class BookingController extends Controller
 
                 return $pemesanan;
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e->getMessage());
             return back()->withErrors(['booking' => $e->getMessage()]);
         }
@@ -491,20 +509,32 @@ class BookingController extends Controller
         return 'PS' . str_pad($num, 5, '0', STR_PAD_LEFT);
     }
 
+    private function getRekeningUtama()
+    {
+        return [
+            'bank'      => 'BRI',
+            'nomor'     => '3054 0103 3659 533',
+            'atas_nama' => 'Siti Hajar Baharuddin'
+        ];
+    }
+
     public function payment($id_pemesanan)
     {
         $pemesanan = Pemesanan::with(['items.kamar', 'cabang'])
             ->where('id_pemesanan', $id_pemesanan)
             ->firstOrFail();
 
-        if (now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
+        if ($pemesanan->expired_at && now()->greaterThan($pemesanan->expired_at) && $pemesanan->status === 'Belum Dibayar') {
             $pemesanan->update(['status' => 'Dibatalkan']);
             $pemesanan->refresh();
         }
 
+        $rekening = $this->getRekeningUtama();
+
         return view('kamar.detail-pesanan', [
             'pemesanan' => $pemesanan,
-            'cabang' => $pemesanan->cabang,
+            'cabang'    => $pemesanan->cabang,
+            'rekening'  => $rekening,
         ]);
     }
 
@@ -516,7 +546,7 @@ class BookingController extends Controller
             return response()->json(['status' => '404']);
         }
 
-        if ($pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
+        if ($pemesanan->expired_at && $pemesanan->status === 'Belum Dibayar' && now()->greaterThan($pemesanan->expired_at)) {
             $pemesanan->update(['status' => 'Dibatalkan']);
             $pemesanan->refresh();
         }
@@ -553,10 +583,79 @@ class BookingController extends Controller
             $bookingService->cancelBooking($id_pemesanan, $request->input('alasan_batal'));
 
             Alert::success('Dibatalkan', 'Pesanan berhasil dibatalkan.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Alert::error('Gagal', 'Terjadi kesalahan.');
         }
 
         return back();
+    }
+
+    public function uploadBukti(Request $request, $id_pemesanan)
+    {
+        // Validasi bukti bayar
+        $request->validate([
+            'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:1024'
+        ]);
+
+        // Cari pesanan
+        $pemesanan = Pemesanan::where('id_pemesanan', $id_pemesanan)
+            ->where('id_penyewa', Auth::user()->id_penyewa ?? Auth::id())->firstOrFail();
+
+        try {
+            DB::beginTransaction();
+
+            // Upload bukti_bayar ke folder
+            if($request->hasFile('bukti_bayar')) {
+                $path = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+            }
+
+            $rek = $this->getRekeningUtama();
+            $ketPembayaran = "{$rek['bank']} {$rek['nomor']}";
+
+            // Simpan ke tabel
+            Pembayaran::updateOrCreate(
+                ['id_pemesanan' => $pemesanan->id_pemesanan],
+                [
+                    'id_penyewa'        => $pemesanan->id_penyewa,
+                    'total_pembayaran'  => $pemesanan->total_harga,
+                    'kode_transaksi'    => $ketPembayaran,
+                    'waktu_pembayaran'  => now(),
+                    'bukti_pembayaran'  => $path
+                ]
+            );
+            DB::commit();
+
+            Alert::success('Berhasil', 'Bukti pembayaran berhasil diupload! Mohon tunggu verifikasi pengelola.');
+            return back();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            if(isset($path)) Storage::disk('public')->delete($path);
+
+            Alert::error('Gagal', 'Terjadi kesalahan saat upload: ' . $e->getMessage());
+            return back();
+        }
+    }
+
+    public function cetakInvoice($id)
+    {
+        // Memuat semua relasi: penyewa, cabang, item kamar, dan layanan tambahan
+        $pemesanan = \App\Models\Pemesanan::with([
+            'penyewa',
+            'cabang',
+            'items.kamar',
+            'service.service', // Relasi ke detail nama service
+            'pembayaran'
+        ])->where('id_pemesanan', $id)->firstOrFail();
+
+        if ($pemesanan->status !== 'Lunas') {
+            return redirect()->back()->with('error', 'Invoice hanya tersedia untuk pesanan lunas.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kamar.invoice-pdf', compact('pemesanan'))
+                ->setPaper('a4', 'portrait');
+
+        // Mengubah download() menjadi stream() agar muncul di browser
+        return $pdf->stream('Invoice-' . $pemesanan->id_pemesanan . '.pdf');
     }
 }

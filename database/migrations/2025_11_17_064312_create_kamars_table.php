@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('tipe_kamar', ['Ekonomis', 'Standar']);
             $table->integer('harga_kamar');
             $table->text('deskripsi');
-            $table->enum('status', ['Tersedia', 'Dihuni'])->default('Tersedia');
+            $table->enum('status', ['Tersedia', 'Dihuni', 'Perbaikan'])->default('Tersedia');
             $table->string('gambar', 255)->nullable();
             $table->timestamps();
         });

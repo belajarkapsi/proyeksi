@@ -44,7 +44,7 @@ class PengelolaController extends Controller
             ->where('status', 'Belum Dibayar')
             ->count();
 
-        // Data Chart
+        // Data Chart Line
         $chartPenyewa = Pemesanan::select( //tren penyewa
             DB::raw('MONTH(waktu_pemesanan) as bulan'),
             DB::raw('COUNT(*) as total')
@@ -62,6 +62,7 @@ class PengelolaController extends Controller
             $dataBulan[] = $chartPenyewa[$i] ?? 0;
         }
 
+        // Chart donat distribusi tipe kamar
         $labelTipe = [];
         $dataTipe = [];
         if ($kategori === 'kost') {
@@ -74,12 +75,14 @@ class PengelolaController extends Controller
         }
 
         // Bar chart
-        $kamarTerpakai = Kamar::where('id_cabang', $id_cabang)
-            ->where('status', 'Dihuni')
-            ->count();
+        // Kamar
+        $kamarDihuni    = Kamar::where('id_cabang', $id_cabang)->where('status', 'Dihuni')->count();
+        $kamarPerbaikan = Kamar::where('id_cabang', $id_cabang)->where('status', 'Perbaikan')->count();
 
-        $serviceTotalStok = 0;
-        $serviceTerpakai  = 0;
+        // Service
+        $serviceTotalStok  = 0;
+        $serviceTerpakai   = 0;
+        $servicePerbaikan  = 0;
         if ($kategori === 'villa') {
             $serviceTotalStok = Service::where('id_cabang', $id_cabang)->sum('stock');
 
@@ -91,20 +94,33 @@ class PengelolaController extends Controller
             }], 'quantity')->get();
             $serviceTerpakai = $services->sum('used');
         }
-        $barTotal    = [$totalKamar, $serviceTotalStok];
-        $barTerpakai = [$kamarTerpakai, $serviceTerpakai];
+
+        // Susun Data Bar Chart
+        if ($kategori === 'villa') {
+            $barLabels    = ['Unit Kamar', 'Service Villa'];
+            $barTotal     = [$totalKamar, $serviceTotalStok];
+            $barDihuni    = [$kamarDihuni, $serviceTerpakai];
+            $barPerbaikan = [$kamarPerbaikan, 0];
+        } else {
+            $barLabels    = ['Unit Kamar'];
+            $barTotal     = [$totalKamar];
+            $barDihuni    = [$kamarDihuni];
+            $barPerbaikan = [$kamarPerbaikan];
+        }
 
 
         return response()->json([
-            'total_kamar'           => $totalKamar,
-            'total_penyewa'         => $totalPenyewa,
-            'total_pesanan'         => $totalPesanan,
-            'total_belum_konfirmasi'=> $pesananBelumDikonfirmasi,
-            'chart_line'            => $dataBulan,
-            'chart_doughnut_labels' => $labelTipe,
-            'chart_doughnut_data'   => $dataTipe,
-            'chart_bar_total'       => $barTotal,
-            'chart_bar_terpakai'    => $barTerpakai
+            'total_kamar'            => $totalKamar,
+            'total_penyewa'          => $totalPenyewa,
+            'total_pesanan'          => $totalPesanan,
+            'total_belum_konfirmasi' => $pesananBelumDikonfirmasi,
+            'chart_line'             => $dataBulan,
+            'chart_doughnut_labels'  => $labelTipe,
+            'chart_doughnut_data'    => $dataTipe,
+            'bar_labels'             => $barLabels,
+            'bar_data_total'         => $barTotal,
+            'bar_data_dihuni'        => $barDihuni,
+            'bar_data_perbaikan'     => $barPerbaikan
         ]);
     }
 

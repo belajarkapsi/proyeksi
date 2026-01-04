@@ -10,9 +10,10 @@ class PemesananService extends Model
 
     protected $fillable = [
         'id_pemesanan',
-        'service_id',
-        'qty',
-        'price_at_booking',
+        'id_service',
+        'quantity',
+        'price',
+        'subtotal',
         'created_at',
         'updated_at',
     ];
@@ -20,7 +21,7 @@ class PemesananService extends Model
     // Jika kamu ingin helper relation:
     public function service()
     {
-        return $this->belongsTo(\App\Models\Service::class, 'service_id', 'id');
+        return $this->belongsTo(\App\Models\Service::class, 'id_service', 'id');
     }
 
     public function pemesanan()

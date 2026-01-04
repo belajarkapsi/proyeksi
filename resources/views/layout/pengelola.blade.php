@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title') - Pondok Siti Hajar</title>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <link rel="icon" href="{{ asset('images/logo-removebg.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 <body class="bg-gray-100">
@@ -25,6 +27,8 @@
             @yield('content')
         </div>
     </main>
+
+    <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
 
     @include('sweetalert::alert')
     @stack('scripts')

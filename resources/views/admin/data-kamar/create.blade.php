@@ -3,7 +3,7 @@
 
 @section('content')
 {{-- Breadcrumb --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8 mb-6">
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -25,7 +25,7 @@
     </nav>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+<div class="max-w-7xl mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0 mt-5 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
     {{-- Alert Error Validation --}}
     @if ($errors->any())
         <div id="alert-error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
@@ -47,7 +47,7 @@
             <i class="fa-solid fa-bed"></i> Tambah Kamar ({{ ucfirst($lokasi) }})
         </h3>
         {{-- Tombol Kembali membawa parameter lokasi --}}
-        <a href="{{ route('admin.cabangkamar.index', $lokasi) }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('admin.cabangkamar.index', $lokasi) }}" class="text-white hover:bg-green-600 md:px-3 md:py-1 rounded-md text-sm transition-colors hover:border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>

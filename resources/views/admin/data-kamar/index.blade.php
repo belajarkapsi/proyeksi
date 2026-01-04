@@ -2,14 +2,13 @@
 @section('title', 'Data Kamar')
 
 @section('content')
-{{-- Navbar --}}
-<div class="px-0 sm:px-1 py-3 lg:py-0 md:px-2 lg:px-4 -mt-8">
+{{-- Navbar Breadcrumb --}}
+<div class="px-0 sm:px-1 py-6 md:py-3 lg:py-0 md:px-2 lg:px-0 -mt-6 ml-3 sm:ml-0 lg:ml-0">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-green-600 transition-colors">
-                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                    </svg>
+                    <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/></svg>
                     Dashboard
                 </a>
             </li>
@@ -21,91 +20,127 @@
     </nav>
 </div>
 
-{{-- Kontent --}}
-<div class="w-full px-0 sm:px-2 md:px-4 lg:px-6 xl:px-10 mx-auto grid">
-    <h2 class="py-4 text-2xl font-semibold text-gray-700">
-        Data Kamar {{ Str::ucfirst($lokasi) }}
-    </h2>
-
-    <a href="{{ route('admin.cabangkamar.create', ['lokasi' => $lokasi]) }}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition uppercase text-sm font-bold mb-2">Tambah</a>
-
-    {{-- CONTAINER TABEL YANG AMAN UNTUK MOBILE --}}
-    <div class="flex flex-col w-full min-w-0 mb-6">
-        <div class="w-full overflow-x-auto rounded-lg border border-neutral-700 bg-white">
-            <div class="inline-block min-w-full align-middle">
-                <table class="min-w-full divide-y divide-neutral-700">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            {{-- Gunakan whitespace-nowrap agar teks tidak turun ke bawah --}}
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">No. Kamar</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Gambar</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Cabang</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Kategori Cabang</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Tipe</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Harga</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Status</th>
-                            <th class="px-4 py-3 text-center text-sm font-bold text-gray-500 uppercase whitespace-nowrap">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-neutral-700 bg-white">
-                        @forelse ($kamars as $kamar)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">{{ $kamar->no_kamar }}</td>
-                            <td class="px-4 py-3 text-center">
-                                @if($kamar->gambar)
-                                    {{-- Menampilkan gambar dari folder storage --}}
-                                    <img src="{{ asset('storage/' . $kamar->gambar) }}" alt="Kamar {{ $kamar->no_kamar }}" class="h-12 w-16 object-cover rounded border border-gray-200 mx-auto">
-                                @else
-                                    {{-- Placeholder jika tidak ada gambar --}}
-                                    <div class="h-12 w-16 bg-gray-100 rounded border border-gray-200 mx-auto flex items-center justify-center text-gray-400">
-                                        <i class="fa-regular fa-image"></i>
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">{{ $kamar->cabang->lokasi ?? '-'}}</td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">
-                                @php
-                                // Ambil kategori dari relasi kamar -> cabang
-                                $kategori = Str::lower($kamar->cabang->kategori_cabang ?? '');
-                                $badgeClass = ($kategori === 'villa')
-                                ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
-                                : 'bg-purple-100 text-purple-800 border-purple-200';
-                                @endphp
-                                <span class="px-2.5 py-0.5 rounded border {{ $badgeClass }} text-xs">
-                                    {{ Str::ucfirst($kamar->cabang->kategori_cabang ?? '-') }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-800 whitespace-nowrap">{{ $kamar->tipe_kamar }}</td>
-                            <td class="px-4 py-3 text-center text-sm text-gray-800 whitespace-nowrap">Rp {{ number_format($kamar->harga_kamar, 0, ',', '.') }}</td>
-                            <td class="px-4 py-3 text-center text-sm whitespace-nowrap">
-                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $kamar->status == 'Tersedia' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $kamar->status }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-center text-sm font-medium whitespace-nowrap">
-                                <form id="delete-form-{{ $kamar->id_kamar }}" action="{{ route('admin.cabangkamar.destroy',['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <a href="{{ route('admin.cabangkamar.edit', ['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" class="uppercase text-amber-600 hover:text-amber-800">Edit</a>
-                                    <span class="text-gray-500">|</span>
-
-                                    <button type="button" onclick="confirmDelete('{{ $kamar->id_kamar }}', '{{ $kamar->no_kamar }}')" class="uppercase text-red-600 hover:text-red-800 font-bold">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="9" class="px-4 py-6 text-center text-sm text-gray-500">Data tidak ada.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+<div class="w-full mx-auto px-3 sm:px-2 md:px-4 lg:px-0 xl:px-0 py-3 lg:py-0">
+    {{-- Header Section --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mt-6 mb-6 gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Data Kamar {{ Str::ucfirst($lokasi) }}</h2>
+            <p class="text-sm text-gray-500">Kelola informasi seluruh unit kamar di cabang ini.</p>
         </div>
-        {{-- ✨ Pagination Links --}}
-        <div class="mt-4">
-            {{ $kamars->appends(['lokasi' => $lokasi])->links() }}
+
+        <a href="{{ route('admin.cabangkamar.create', ['lokasi' => $lokasi]) }}" class="inline-flex items-center justify-center px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm font-semibold text-sm uppercase">
+            <i class="fa-solid fa-plus mr-2"></i> Tambah Kamar
+        </a>
+    </div>
+
+    {{-- Grid Kartu --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        @forelse ($kamars as $kamar)
+            <div class="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden">
+
+                {{-- Bagian Gambar & Badge Status --}}
+                <div class="relative h-48 bg-gray-100 overflow-hidden">
+                    @if($kamar->gambar)
+                        <img src="{{ asset('storage/' . $kamar->gambar) }}" alt="Kamar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    @else
+                        <div class="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                            <i class="fa-regular fa-image fa-2x mb-2"></i>
+                            <span class="text-xs">Tidak ada gambar</span>
+                        </div>
+                    @endif
+
+                    {{-- Status Badge --}}
+                    <div class="absolute top-3 right-3">
+                        @php
+                        $status = $kamar->status ?? '';
+                        if($status == 'Tersedia') {
+                            $badge = 'bg-green-100 text-green-700 border-green-200';
+                        } elseif ($status == 'Perbaikan') {
+                            $badge = 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                        } else {
+                            $badge = 'bg-red-100 text-red-700 border-red-200';
+                        }
+                        @endphp
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold shadow-sm border {{ $badge }}">
+                            {{ $kamar->status }}
+                        </span>
+                    </div>
+
+                    {{-- Kategori Badge (Villa/Lainnya) --}}
+                    <div class="absolute bottom-3 left-3">
+                        @php
+                            $kategori = Str::lower($kamar->cabang->kategori_cabang ?? '');
+                            $badgeClass = ($kategori === 'villa')
+                                ? 'bg-yellow-500 text-white'
+                                : 'bg-purple-600 text-white';
+                        @endphp
+                        <span class="{{ $badgeClass }} text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded shadow-lg">
+                            {{ $kamar->cabang->kategori_cabang ?? '-' }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Konten Informasi --}}
+                <div class="p-4 flex flex-col grow">
+                    <div class="flex justify-between items-start mb-1">
+                        <h3 class="text-lg font-bold text-gray-900 leading-tight">No. {{ $kamar->no_kamar }}</h3>
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ $kamar->tipe_kamar }}</span>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-3 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-xs"></i>
+                        Cabang: {{ $kamar->cabang->lokasi ?? '-' }}
+                    </p>
+
+                    <div class="mt-auto">
+                        <p class="text-green-600 font-bold text-lg">
+                            Rp {{ number_format($kamar->harga_kamar, 0, ',', '.') }}
+                            <span class="text-gray-400 text-xs font-normal">/malam</span>
+                        </p>
+
+                        {{-- Action Buttons --}}
+                        <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-50">
+                            <a href="{{ route('admin.cabangkamar.edit', ['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}"
+                                class="flex-1 inline-flex justify-center items-center py-2 text-sm font-bold text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition">
+                                <i class="far fa-edit mr-2"></i> Edit
+                            </a>
+
+                            <form id="delete-form-{{ $kamar->id_kamar }}" action="{{ route('admin.cabangkamar.destroy',['lokasi' => $lokasi, 'kamar' => $kamar->id_kamar]) }}" method="POST" class="flex-1">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmDelete('{{ $kamar->id_kamar }}', '{{ $kamar->no_kamar }}')"
+                                        class="w-full inline-flex justify-center items-center py-2 text-sm font-bold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
+                                    <i class="far fa-trash-alt mr-2"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-span-full bg-gray-50 rounded-xl border border-dashed border-gray-300 py-12 text-center">
+                <i class="fa-solid fa-folder-open text-gray-300 text-4xl mb-3"></i>
+                <p class="text-gray-500 font-medium">Data kamar belum tersedia untuk lokasi ini.</p>
+            </div>
+        @endforelse
+    </div>
+
+    {{-- ✨ Footer Konten (Pagination) yang Responsif ✨ --}}
+    <div class="mt-10 mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-gray-200 pt-8">
+        {{-- Info Status Data --}}
+        <div class="order-2 md:order-1 text-center md:text-left">
+            <p class="text-sm text-gray-500">
+                Menampilkan <span class="font-semibold text-gray-800">{{ $kamars->firstItem() ?? 0 }}</span>
+                sampai <span class="font-semibold text-gray-800">{{ $kamars->lastItem() ?? 0 }}</span>
+                dari <span class="font-semibold text-gray-800">{{ $kamars->total() }}</span> unit kamar
+            </p>
+        </div>
+
+        {{-- Navigasi Pagination --}}
+        <div class="order-1 md:order-2 w-full md:w-auto overflow-x-auto flex justify-center">
+            <div class="px-2 pb-2 md:pb-0">
+                {{ $kamars->appends(['lokasi' => $lokasi])->links() }}
+            </div>
         </div>
     </div>
 </div>
@@ -114,20 +149,19 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function confirmDelete(userId, userName) {
+    function confirmDelete(id, noKamar) {
         Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data kamar \"" + userName + "\" akan dihapus permanen! Data yang dihapus tidak bisa dikembalikan.",
+            title: 'Hapus Kamar ' + noKamar + '?',
+            text: "Seluruh data terkait kamar ini akan dihapus permanen dan tidak bisa dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33', // Warna merah untuk tombol hapus
-            cancelButtonColor: '#3085d6', // Warna biru untuk batal
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7280',
             confirmButtonText: 'Ya, Hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Jika user klik "Ya, Hapus!", cari form berdasarkan ID unik dan submit
-                document.getElementById('delete-form-' + userId).submit();
+                document.getElementById('delete-form-' + id).submit();
             }
         })
     }
