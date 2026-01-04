@@ -16,16 +16,16 @@ return new class extends Migration
             $table->string('nama_cabang', 255);
             $table->text('deskripsi');
             $table->integer('jumlah_kamar');
-            $table->string('lokasi', 255);
+            $table->text('lokasi');
             $table->enum('kategori_cabang', ['kost', 'villa']);
             $table->string('gambar_cabang', 255)->nullable();
             $table->unsignedBigInteger('id_pemilik');
             $table->timestamps();
 
             $table->foreign('id_pemilik')
-                  ->references('id_pemilik')
-                  ->on('pemilik')
-                  ->onDelete('cascade');
+                ->references('id_pemilik')
+                ->on('pemilik')
+                ->onDelete('cascade');
         });
     }
 

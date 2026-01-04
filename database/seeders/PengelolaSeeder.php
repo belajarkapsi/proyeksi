@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Cabang;
 use App\Models\Pengelola;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker;
 

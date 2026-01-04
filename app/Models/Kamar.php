@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Kamar extends Model
 {
     use HasFactory;
+    use Encryptable;
+
     protected $table = 'kamar';
     protected $primaryKey = 'id_kamar';
     protected $fillable = [
@@ -20,6 +23,10 @@ class Kamar extends Model
         'deskripsi',
         'status',
         'gambar',
+    ];
+
+    protected $encryptedColumns = [
+        'deskripsi'
     ];
 
     // Tambahkan Eager Loading

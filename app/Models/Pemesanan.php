@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Pemesanan extends Model
 {
+    use Encryptable;
+
     protected $table = 'pemesanan';
     protected $primaryKey = 'id_pemesanan';
     public $incrementing = false;
@@ -28,6 +31,10 @@ class Pemesanan extends Model
         'waktu_pemesanan' => 'datetime',
         'expired_at' => 'datetime',
         'cancelled_at' => 'datetime',
+    ];
+
+    protected $encryptedColumns = [
+        'alasan_batal'
     ];
 
     // relasi

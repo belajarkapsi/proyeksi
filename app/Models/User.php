@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Traits\Encryptable;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,6 +18,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use Encryptable;
 
     /**
      * The attributes that are mass assignable.
@@ -69,38 +71,6 @@ class User extends Authenticatable
         'asal',
         'alamat',
     ];
-
-    protected static function booted()
-    {
-        static::saving(function ($model) {
-            foreach ($model->encryptedColumns as $column) {
-                if(!empty($model->$column) && $model->isDirty($column)) {
-                    try {
-                        $model->$column = Crypt::encryptString($model->$column);
-                    } catch (Exception $e) {
-                        $e->getMessage();
-                    }
-                }
-            }
-        });
-    }
-
-    public function getAttribute($key)
-    {
-        $value = parent::getAttribute($key);
-
-        if(in_array($key, $this->encryptedColumns)) {
-            if(!is_null($value) && $value !== '') {
-                try {
-                    return Crypt::decryptString($value);
-                } catch (Throwable $e) {
-                    return $value;
-                }
-            }
-        }
-
-        return $value;
-    }
 
     public function pemesanan()
     {

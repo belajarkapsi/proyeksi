@@ -19,9 +19,9 @@ return new class extends Migration
             )->onUpdate('cascade')->onDelete('cascade');
             $table->string('id_pemesanan', 20);
             $table->integer('total_pembayaran');
-            $table->string('kode_transaksi', 100);
+            $table->text('kode_transaksi');
             $table->date('waktu_pembayaran');
-            $table->string('bukti_pembayaran', 255);
+            $table->text('bukti_pembayaran');
             $table->timestamps();
 
             $table->foreign('id_pemesanan')

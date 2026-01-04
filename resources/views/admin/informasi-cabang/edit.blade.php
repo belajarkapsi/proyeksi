@@ -38,6 +38,8 @@
         @csrf
         @method('PUT')
 
+        <input type="hidden" name="lokasi" value="{{ $lokasi }}">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {{-- Nama Cabang --}}
             <div class="md:col-span-2">

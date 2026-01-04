@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 class Pemilik extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use Encryptable;
 
     protected $table = 'pemilik';
     protected $primaryKey = 'id_pemilik';
@@ -28,6 +30,11 @@ class Pemilik extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token'
+    ];
+
+    protected $encryptedColumns = [
+        'nama_lengkap',
+        'no_telp'
     ];
 
     protected function casts()

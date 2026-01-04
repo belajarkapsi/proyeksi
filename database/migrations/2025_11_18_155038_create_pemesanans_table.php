@@ -25,7 +25,6 @@ return new class extends Migration
             $table->timestamp('expired_at')->nullable();
             $table->integer('total_harga')->default(0);
             $table->enum('status', ['Belum Dibayar', 'Lunas', 'Dibatalkan'])->default('Belum Dibayar');
-            // tambahan kecil: simpan kapan dibatalkan (nullable)
             $table->timestamp('cancelled_at')->nullable();
             $table->text('alasan_batal')->nullable();
             $table->timestamps();

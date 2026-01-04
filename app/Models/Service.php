@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Service extends Model
 {
+    use Encryptable;
+
     protected $table = 'services';
 
     protected $fillable = [
@@ -17,6 +20,8 @@ class Service extends Model
         'price',
         'stock'
     ];
+
+    protected $encryptedColumns = ['description'];
 
     // Relasi ke Cabang
     public function cabang(): BelongsTo

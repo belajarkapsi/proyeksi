@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pembayaran extends Model
 {
+    use Encryptable;
+
     protected $table = 'pembayaran';
     protected $primaryKey = 'id_pembayaran';
 
@@ -21,6 +24,11 @@ class Pembayaran extends Model
 
     protected $casts = [
         'waktu_pembayaran' => 'date',
+    ];
+
+    protected $encryptedColumns = [
+        'kode_transaksi',
+        'bukti_pembayaran'
     ];
 
     public function pemesanan(): BelongsTo
