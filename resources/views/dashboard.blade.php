@@ -33,7 +33,7 @@
                     class="bg-green-600 hover:bg-green-700 text-white hover:drop-shadow-lg font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-green-600/30 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
                     Pesan Sekarang
                 </a>
-                <a href="#" class="px-8 py-3 rounded-full border-2 border-green-600 text-green-700 font-semibold hover:bg-green-50 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
+                <a href="https://wa.me/6281241334241?text=Halo%20Admin,%20saya%20ingin%20bertanya%20terkait%20penginapan%20anda" target="_blank" rel="noopener noreferrer" class="px-8 py-3 rounded-full border-2 border-green-600 text-green-700 font-semibold hover:bg-green-50 transition-all transform hover:-translate-y-1 text-center cursor-pointer">
                     Hubungi Kami
                 </a>
             </div>
