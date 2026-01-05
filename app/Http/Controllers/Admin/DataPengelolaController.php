@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cabang;
 use App\Models\Pengelola;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -21,13 +22,16 @@ class DataPengelolaController extends Controller
 
     public function create()
     {
-        return view('admin.data-pengelola.create');
+        $cabangs = Cabang::doesntHave('pengelola')->get();
+
+        return view('admin.data-pengelola.create', compact('cabangs'));
     }
 
     public function store(Request $request)
     {
         // Validasi
         $validasiData = $request->validate([
+            'id_cabang'     => ['required', 'exists:cabang,id_cabang', 'unique:pengelola,id_cabang'],
             'nama_lengkap'  => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]*$/'],
             'no_telp'       => ['required', 'numeric'],
             'email'         => ['required', 'email', 'unique:pengelola,email'],
@@ -45,11 +49,14 @@ class DataPengelolaController extends Controller
                 'email.unique'          => 'Email sudah digunakan!',
                 'nama_lengkap.regex'    => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
                 'username.min'          => 'Username minimal memiliki panjang 8 karakter',
-                'tanggal_lahir.before'  => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.'
+                'tanggal_lahir.before'  => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.',
+                'id_cabang.unique'      => 'Cabang ini sudah memiliki pengelola! Silakan pilih cabang lain atau hapus pengelola sebelumnya.',
+                'id_cabang.required'    => 'Harap pilih cabang penempatan.',
         ]);
 
         // Siapkan data yang akan disimpan
         $data =[
+            'id_cabang'     => $validasiData['id_cabang'],
             'nama_lengkap'  => $validasiData['nama_lengkap'],
             'no_telp'       => $validasiData['no_telp'],
             'email'         => $validasiData['email'],
@@ -74,7 +81,7 @@ class DataPengelolaController extends Controller
 
     public function show(string $id)
     {
-        $pengelola = Pengelola::findOrFail($id);
+        $pengelola = Pengelola::with('cabang')->findOrFail($id);
 
         return view('admin.data-pengelola.show', compact('pengelola'));
     }
@@ -82,8 +89,11 @@ class DataPengelolaController extends Controller
     public function edit(string $id)
     {
         $pengelola = Pengelola::findOrFail($id);
+        $cabangs = Cabang::whereDoesntHave('pengelola')
+                    ->orWhere('id_cabang', $pengelola->id_cabang)
+                    ->get();
 
-        return view('admin.data-pengelola.edit', compact('pengelola'));
+        return view('admin.data-pengelola.edit', compact('pengelola', 'cabangs'));
 
     }
 
@@ -93,6 +103,7 @@ class DataPengelolaController extends Controller
 
         // Validasi
         $validasiData = $request->validate([
+            'id_cabang'     => ['required', 'exists:cabang,id_cabang', Rule::unique('pengelola', 'id_cabang')->ignore($pengelola->id_pengelola, 'id_pengelola')],
             'nama_lengkap'  => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]*$/'],
             'no_telp'       => ['required', 'numeric'],
             'email'         => ['required', 'email', Rule::unique('pengelola', 'email')->ignore($pengelola->id_pengelola, 'id_pengelola')],
@@ -110,7 +121,8 @@ class DataPengelolaController extends Controller
                 'email.unique'          => 'Email sudah digunakan!',
                 'nama_lengkap.regex'    => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
                 'username.min'          => 'Username minimal memiliki panjang 8 karakter',
-                'tanggal_lahir.before'  => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.'
+                'tanggal_lahir.before'  => 'Usia anda terlalu muda, minimal lebih dari 10 tahun.',
+                'id_cabang.unique'      => 'Cabang ini sudah memiliki pengelola lain!',
         ]);
 
         // Cek Password apakah diubah atau tidak

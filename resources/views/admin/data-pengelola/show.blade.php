@@ -74,6 +74,11 @@
                     <p class="text-md text-gray-800">{{ $pengelola->no_telp }}</p>
                 </div>
 
+                <div class="rounded-lg bg-green-100 px-2 flex items-center gap-2">
+                    <label class="font-bold text-gray-700">Cabang:</label>
+                    <p>{{ $pengelola->cabang->nama_cabang ?? 'Belum ditentukan' }}</p>
+                </div>
+
                 <div class="col-span-1 md:col-span-2 mt-2">
                     <label class="text-xs text-gray-500 uppercase tracking-wide font-bold">Bergabung Sejak:</label>
                     <p class="text-sm text-gray-600">

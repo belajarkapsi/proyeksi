@@ -179,7 +179,7 @@ class BookingController extends Controller
             if ($services->isNotEmpty()) {
                 $serviceOnly = true;
             } else {
-                Alert::error('Gagal', 'Kamar yang kamu pilih telah dipesan.');
+                Alert::error('Gagal', 'Selesaikan Pembayaran Terlebih Dahulu.');
                 return redirect()->route('dashboard');
             }
         }

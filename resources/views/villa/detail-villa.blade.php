@@ -12,6 +12,13 @@
     .font-noto { font-family: 'Noto Serif', serif; }
 </style>
 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sticky top-20 z-30 pointer-events-none font-roboto">
+    <a href="/dashboard" class="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 text-green-700 text-sm font-semibold rounded-full shadow-sm hover:shadow-md hover:bg-green-600 hover:text-white transition-all duration-300 group transform hover:-translate-y-0.5">
+        <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Kembali ke Dashboard
+    </a>
+</div>
+
 <div class="bg-gray-50 min-h-screen pb-20">
 
     <!-- SIMPLE HEADER -->
@@ -136,10 +143,12 @@
 
                     <!-- BUTTON PESAN SEKARANG (MOBILE TOP / DESKTOP) -->
                     <div class="mb-6">
-                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-roboto font-bold py-4 rounded-lg shadow-lg transform transition hover:-translate-y-1 text-lg flex justify-center items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            PESAN SEKARANG
-                        </button>
+                        <a href="{{ route('cabang.kamar.index', $cabang->route_params) }}" class="block">
+                            <button class="w-full bg-green-600 hover:bg-green-700 text-white font-roboto font-bold py-4 rounded-lg shadow-lg transform transition hover:-translate-y-1 text-lg flex justify-center items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                RESERVASI SEKARANG
+                            </button>
+                        </a>
                         <p class="text-xs text-center text-gray-400 mt-2 font-noto">Reservasi mudah & cepat</p>
                     </div>
 

@@ -30,7 +30,7 @@
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square"></i> Edit Data Pengelola
         </h3>
-        <a href="{{ route('admin.pengelola.index') }}" class="text-white hover:bg-green-600 px-3 py-1 rounded-md text-sm transition-colors border border-green-500">
+        <a href="{{ route('admin.pengelola.index') }}" class="text-white hover:bg-green-600 py-1 px-3 rounded-md text-sm transition-colors border border-green-500">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -41,6 +41,22 @@
         @method('PUT')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {{-- Cabang --}}
+            <div class="col-span-1 md:col-span-2">
+                <label for="id_cabang" class="block mb-2 text-sm font-medium text-gray-900">Penempatan Cabang<span class="text-red-500">*</span></label>
+                    <select id="id_cabang" name="id_cabang" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                        <option value="" disabled>-- Pilih Cabang --</option>
+                        @foreach($cabangs as $cabang)
+                            <option value="{{ $cabang->id_cabang }}"
+                                {{-- Logika Selected: Jika validasi gagal (old) ATAU data dari database cocok --}}
+                                {{ old('id_cabang', $pengelola->id_cabang) == $cabang->id_cabang ? 'selected' : '' }}>
+                                {{ $cabang->nama_cabang }} ({{ $cabang->lokasi }})
+                            </option>
+                        @endforeach
+                    </select>
+                @error('id_cabang') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
 
             {{-- Nama Lengkap --}}
             <div class="col-span-1 md:col-span-2">

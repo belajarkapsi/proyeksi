@@ -54,6 +54,20 @@
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Cabang --}}
+            <div class="col-span-1 md:col-span-2">
+                <label for="id_cabang" class="block mb-2 text-sm font-medium text-gray-900">Penempatan Cabang<span class="text-red-500">*</span></label>
+                <select id="id_cabang" name="id_cabang" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                    <option value="" selected disabled>-- Pilih Cabang --</option>
+                    @foreach($cabangs as $cabang)
+                        <option value="{{ $cabang->id_cabang }}" {{ old('id_cabang') == $cabang->id_cabang ? 'selected' : '' }}>
+                            {{ $cabang->nama_cabang }} ({{ $cabang->lokasi }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('id_cabang') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
+
             {{-- Nama Lengkap --}}
             <div>
                 <label for="nama_lengkap" class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap<span class="text-red-500">*</span></label>
